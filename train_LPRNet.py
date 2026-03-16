@@ -73,6 +73,11 @@ def get_parser():
     parser.add_argument('--ocr_resize_kernel', default='nn', choices=['nn', 'bilinear'], help='board-aligned OCR resize kernel')
     parser.add_argument('--ocr_preproc', default='none', choices=['none', 'raw', 'gray', 'gray3', 'bin'], help='board-aligned OCR crop preprocess')
     parser.add_argument('--ocr_min_occ_ratio', default=0.90, type=float, help='board-aligned recrop threshold')
+    parser.add_argument('--train_plate_box_aug_mode', default='none', choices=['none', 'jitter_refine'], help='train-only plate box augmentation profile')
+    parser.add_argument('--train_plate_box_aug_prob', default=0.0, type=float, help='probability of applying train-only plate box augmentation')
+    parser.add_argument('--train_plate_box_aug_x', default=0.06, type=float, help='train-only horizontal bbox jitter fraction')
+    parser.add_argument('--train_plate_box_aug_y', default=0.12, type=float, help='train-only vertical bbox jitter fraction')
+    parser.add_argument('--train_plate_box_aug_min_iou', default=0.75, type=float, help='minimum IoU to keep train-only augmented bbox')
     parser.add_argument('--train_batch_size', default=64, type=int, help='training batch size.')
     parser.add_argument('--test_batch_size', default=120, type=int, help='testing batch size.')
     parser.add_argument('--phase_train', default=True, type=str2bool, help='train or test phase flag.')
@@ -169,7 +174,7 @@ def train():
     train_img_dirs = os.path.expanduser(args.train_img_dirs)
     test_img_dirs = os.path.expanduser(args.test_img_dirs)
     if args.data_mode == 'ccpd_board':
-        dataset_kwargs = dict(
+        common_dataset_kwargs = dict(
             ocr_channel_order=args.ocr_channel_order,
             ocr_crop_mode=args.ocr_crop_mode,
             ocr_resize_mode=args.ocr_resize_mode,
@@ -177,8 +182,25 @@ def train():
             ocr_preproc=args.ocr_preproc,
             ocr_min_occ_ratio=args.ocr_min_occ_ratio,
         )
-        train_dataset = CCPDBoardDataLoader(train_img_dirs.split(','), args.img_size, args.lpr_max_len, txt_file=args.train_txt_file, **dataset_kwargs)
-        test_dataset = CCPDBoardDataLoader(test_img_dirs.split(','), args.img_size, args.lpr_max_len, txt_file=args.test_txt_file, **dataset_kwargs)
+        train_dataset = CCPDBoardDataLoader(
+            train_img_dirs.split(','),
+            args.img_size,
+            args.lpr_max_len,
+            txt_file=args.train_txt_file,
+            plate_box_aug_mode=args.train_plate_box_aug_mode,
+            plate_box_aug_prob=args.train_plate_box_aug_prob,
+            plate_box_aug_x=args.train_plate_box_aug_x,
+            plate_box_aug_y=args.train_plate_box_aug_y,
+            plate_box_aug_min_iou=args.train_plate_box_aug_min_iou,
+            **common_dataset_kwargs,
+        )
+        test_dataset = CCPDBoardDataLoader(
+            test_img_dirs.split(','),
+            args.img_size,
+            args.lpr_max_len,
+            txt_file=args.test_txt_file,
+            **common_dataset_kwargs,
+        )
     else:
         train_dataset = LPRDataLoader(train_img_dirs.split(','), args.img_size, args.lpr_max_len, txt_file=args.train_txt_file)
         test_dataset = LPRDataLoader(test_img_dirs.split(','), args.img_size, args.lpr_max_len, txt_file=args.test_txt_file)
@@ -186,7 +208,10 @@ def train():
         raise RuntimeError(f"No training samples found. train_img_dirs={args.train_img_dirs} train_txt_file={args.train_txt_file}")
     if len(test_dataset) == 0:
         raise RuntimeError(f"No test samples found. test_img_dirs={args.test_img_dirs} test_txt_file={args.test_txt_file}")
-    print(f"[Data] mode={args.data_mode} train_samples={len(train_dataset)} test_samples={len(test_dataset)}")
+    print(
+        f"[Data] mode={args.data_mode} train_samples={len(train_dataset)} test_samples={len(test_dataset)} "
+        f"train_plate_box_aug={args.train_plate_box_aug_mode} prob={args.train_plate_box_aug_prob:.2f}"
+    )
 
     epoch_size = len(train_dataset) // args.train_batch_size
     if epoch_size == 0:

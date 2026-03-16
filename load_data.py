@@ -155,6 +155,49 @@ def compute_match_ytrim_crop(src, in_w, in_h, min_occ_ratio):
     return Box(src.x1, y1, src.x2, y2)
 
 
+def box_iou(a, b):
+    ix1 = max(a.x1, b.x1)
+    iy1 = max(a.y1, b.y1)
+    ix2 = min(a.x2, b.x2)
+    iy2 = min(a.y2, b.y2)
+    if ix2 < ix1 or iy2 < iy1:
+        return 0.0
+    inter = float((ix2 - ix1 + 1) * (iy2 - iy1 + 1))
+    area_a = float(a.w * a.h)
+    area_b = float(b.w * b.h)
+    denom = area_a + area_b - inter
+    if denom <= 0.0:
+        return 0.0
+    return inter / denom
+
+
+def simulate_refined_plate_box(src, img_w, img_h, jitter_x, jitter_y, min_iou, max_tries=8):
+    bw = src.w
+    bh = src.h
+    if bw <= 1 or bh <= 1:
+        return src
+
+    max_dx = max(1, int(bw * max(0.0, jitter_x) + 0.5))
+    max_dy = max(1, int(bh * max(0.0, jitter_y) + 0.5))
+    min_w = max(4, int(bw * 0.60 + 0.5))
+    min_h = max(4, int(bh * 0.60 + 0.5))
+    min_iou = max(0.0, min(1.0, min_iou))
+
+    for _ in range(max_tries):
+        cand = Box(
+            src.x1 + random.randint(-max_dx, max_dx),
+            src.y1 + random.randint(-max_dy, max_dy),
+            src.x2 + random.randint(-max_dx, max_dx),
+            src.y2 + random.randint(-max_dy, max_dy),
+        )
+        cand = clamp_box(cand, img_w, img_h)
+        if cand.w < min_w or cand.h < min_h:
+            continue
+        if box_iou(src, cand) >= min_iou:
+            return cand
+    return src
+
+
 def resize_bgr_with_kernel(src, dst_w, dst_h, kernel):
     interp = cv2.INTER_LINEAR if kernel == 'bilinear' else cv2.INTER_NEAREST
     return cv2.resize(src, (dst_w, dst_h), interpolation=interp)
@@ -315,6 +358,11 @@ class CCPDBoardDataLoader(Dataset):
         ocr_resize_kernel='nn',
         ocr_preproc='none',
         ocr_min_occ_ratio=0.90,
+        plate_box_aug_mode='none',
+        plate_box_aug_prob=0.0,
+        plate_box_aug_x=0.06,
+        plate_box_aug_y=0.12,
+        plate_box_aug_min_iou=0.75,
     ):
         self.img_paths = []
         self.img_labels = []
@@ -327,6 +375,11 @@ class CCPDBoardDataLoader(Dataset):
         self.ocr_resize_kernel = ocr_resize_kernel
         self.ocr_preproc = ocr_preproc
         self.ocr_min_occ_ratio = ocr_min_occ_ratio
+        self.plate_box_aug_mode = plate_box_aug_mode
+        self.plate_box_aug_prob = plate_box_aug_prob
+        self.plate_box_aug_x = plate_box_aug_x
+        self.plate_box_aug_y = plate_box_aug_y
+        self.plate_box_aug_min_iou = plate_box_aug_min_iou
 
         label_items = []
         if os.path.exists(txt_file):
@@ -385,6 +438,17 @@ class CCPDBoardDataLoader(Dataset):
             raise RuntimeError(f'Cannot parse CCPD bbox from path: {rel_path}')
 
         bbox = clamp_box(bbox, img_w, img_h)
+        if self.plate_box_aug_mode != 'none' and self.plate_box_aug_prob > 0.0:
+            if random.random() < self.plate_box_aug_prob:
+                if self.plate_box_aug_mode == 'jitter_refine':
+                    bbox = simulate_refined_plate_box(
+                        bbox,
+                        img_w,
+                        img_h,
+                        self.plate_box_aug_x,
+                        self.plate_box_aug_y,
+                        self.plate_box_aug_min_iou,
+                    )
         crop_box = compute_ocr_crop_box(bbox, img_w, img_h, self.ocr_crop_mode)
         occ_ratio = estimate_ocr_occ_ratio(crop_box.w, crop_box.h, self.img_size[0], self.img_size[1], self.ocr_resize_mode)
         if self.ocr_min_occ_ratio > 0.0 and occ_ratio < self.ocr_min_occ_ratio and self.ocr_crop_mode != 'tight':

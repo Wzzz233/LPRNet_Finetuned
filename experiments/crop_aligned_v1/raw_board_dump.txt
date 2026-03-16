@@ -1,0 +1,11 @@
+[baseline]
+image=/home/wzzz/LPRNet/ocrin_0021_f000042.ppm
+weights=/home/wzzz/LPRNet/experiments/first_board_baseline_v1/weights/Final_LPRNet_model.pth
+pred=N8P8F8
+pos1_top5=[('-', 0.49505043029785156), ('R', 0.025942523032426834), ('藏', 0.023609943687915802), ('I', 0.023273540660738945), ('O', 0.023270344361662865)]
+
+[crop-aligned]
+image=/home/wzzz/LPRNet/ocrin_0021_f000042.ppm
+weights=/home/wzzz/LPRNet/experiments/crop_aligned_v1/weights/Final_LPRNet_model.pth
+pred=N8P8F8
+pos1_top5=[('-', 0.3901926279067993), ('I', 0.036111827939748764), ('O', 0.036101359874010086), ('藏', 0.03462575376033783), ('宁', 0.033637333661317825)]

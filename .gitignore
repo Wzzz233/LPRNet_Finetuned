@@ -15,8 +15,11 @@ weights_red_stage3/
 experiments/*
 !experiments/first_board_baseline_v1/
 !experiments/first_board_baseline_v1/**
+!experiments/crop_aligned_v1/
+!experiments/crop_aligned_v1/**
 
 weights_board_aligned/
 weights_local/
+ocrin_*.ppm
 
 运行日志.txt
