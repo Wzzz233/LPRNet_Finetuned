@@ -64,7 +64,7 @@ echo "[3/4] Evaluate on val"
   --cuda true \
   --out_json "${OUT_DIR}/val_metrics.json" | tee "${OUT_DIR}/val_metrics.stdout.json"
 
-echo "[4/4] Evaluate on test"
+echo "[4/5] Evaluate on test"
 "${ENV_PY}" "${ROOT_DIR}/eval_lpr_detailed.py" \
   --test_img_dirs "${ROOT_DIR}/CCPD2019" \
   --txt_file "${TEST_TXT}" \
@@ -80,5 +80,27 @@ echo "[4/4] Evaluate on test"
   --num_workers 4 \
   --cuda true \
   --out_json "${OUT_DIR}/test_metrics.json" | tee "${OUT_DIR}/test_metrics.stdout.json"
+
+echo "[5/5] Write experiment report"
+"${ENV_PY}" "${ROOT_DIR}/generate_experiment_report.py" \
+  --experiment_name "First Board Baseline V1" \
+  --run_dir "${OUT_DIR}" \
+  --train_txt "${TRAIN_TXT}" \
+  --val_txt "${VAL_TXT}" \
+  --test_txt "${TEST_TXT}" \
+  --data_mode ccpd_board \
+  --ocr_channel_order bgr \
+  --ocr_crop_mode match \
+  --ocr_resize_mode letterbox \
+  --ocr_resize_kernel nn \
+  --ocr_preproc none \
+  --ocr_min_occ_ratio 0.90 \
+  --pretrained_model "${ROOT_DIR}/weights_red_stage3/Final_LPRNet_model.pth" \
+  --learning_rate 0.001 \
+  --lr_schedule "4,8,12,14,16" \
+  --max_epoch 15 \
+  --train_batch_size 64 \
+  --test_batch_size 120 \
+  --report_path "${OUT_DIR}/EXPERIMENT_REPORT.md"
 
 echo "Done. Output dir: ${OUT_DIR}"

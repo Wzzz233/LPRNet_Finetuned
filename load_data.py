@@ -17,6 +17,7 @@ CHARS = ['京', '沪', '津', '渝', '冀', '晋', '蒙', '辽', '吉', '黑',
          ]
 
 CHARS_DICT = {char:i for i, char in enumerate(CHARS)}
+PROVINCE_COUNT = 31
 
 OCR_CROP_WIDTH = 150
 OCR_CROP_HEIGHT = 50
@@ -55,6 +56,52 @@ def parse_ccpd_bbox_from_name(image_name):
         return Box(int(x1s), int(y1s), int(x2s), int(y2s))
     except ValueError:
         return None
+
+
+def read_ppm_p6_payload(path):
+    with open(path, 'rb') as f:
+        blob = f.read()
+    if not blob.startswith(b'P6'):
+        raise ValueError(f'unsupported ppm format: {path}')
+    i = 2
+    tokens = []
+    n = len(blob)
+    while len(tokens) < 3:
+        while i < n and blob[i] in b' \t\r\n':
+            i += 1
+        if i < n and blob[i] == ord('#'):
+            while i < n and blob[i] not in b'\r\n':
+                i += 1
+            continue
+        j = i
+        while j < n and blob[j] not in b' \t\r\n':
+            j += 1
+        tokens.append(blob[i:j].decode('ascii'))
+        i = j
+    w, h, maxv = map(int, tokens)
+    if maxv != 255:
+        raise ValueError(f'unsupported ppm max value {maxv} in {path}')
+    while i < n and blob[i] in b' \t\r\n':
+        i += 1
+    payload = np.frombuffer(blob[i:], dtype=np.uint8)
+    if payload.size != w * h * 3:
+        raise ValueError(f'invalid ppm payload size in {path}: expect {w*h*3}, got {payload.size}')
+    return payload.reshape(h, w, 3).copy()
+
+
+def load_label_items(txt_file):
+    label_items = []
+    if os.path.exists(txt_file):
+        with open(txt_file, 'r', encoding='utf-8') as f:
+            for line in f:
+                parts = line.strip().split(maxsplit=1)
+                if len(parts) == 2:
+                    rel_path = os.path.normpath(parts[0].replace('\\', '/'))
+                    filename = os.path.basename(rel_path)
+                    label_items.append((rel_path, filename, parts[1]))
+    else:
+        print(f"【严重警告】找不到标签文件 {txt_file}")
+    return label_items
 
 
 def clamp_box(box, img_w, img_h):
@@ -263,17 +310,9 @@ class LPRDataLoader(Dataset):
         self.img_rel_paths = []
 
         # --- 核心修改：读取我们的标准答案 txt 文件 ---
-        label_items = []
-        if os.path.exists(txt_file):
-            with open(txt_file, 'r', encoding='utf-8') as f:
-                for line in f:
-                    parts = line.strip().split(maxsplit=1)
-                    if len(parts) == 2:
-                        rel_path = os.path.normpath(parts[0].replace('\\', '/'))
-                        filename = os.path.basename(rel_path)
-                        label_items.append((rel_path, filename, parts[1]))
-        else:
-            print(f"【严重警告】找不到标签文件 {txt_file}，请确保它和运行代码在同一文件夹！")
+        label_items = load_label_items(txt_file)
+        if not label_items:
+            print(f"【严重警告】标签文件为空或无有效记录 {txt_file}，请确保它和运行代码在同一文件夹！")
 
         # 遍历文件夹，把存在的图片和标签配对。
         # 优先支持带子目录的相对路径（例如 CCPD2019/splits/train.txt 生成的 ccpd_base/xxx.jpg），
@@ -381,17 +420,7 @@ class CCPDBoardDataLoader(Dataset):
         self.plate_box_aug_y = plate_box_aug_y
         self.plate_box_aug_min_iou = plate_box_aug_min_iou
 
-        label_items = []
-        if os.path.exists(txt_file):
-            with open(txt_file, 'r', encoding='utf-8') as f:
-                for line in f:
-                    parts = line.strip().split(maxsplit=1)
-                    if len(parts) == 2:
-                        rel_path = os.path.normpath(parts[0].replace('\\', '/'))
-                        filename = os.path.basename(rel_path)
-                        label_items.append((rel_path, filename, parts[1]))
-        else:
-            print(f"【严重警告】找不到标签文件 {txt_file}")
+        label_items = load_label_items(txt_file)
 
         seen_paths = set()
         for img_folder in img_dir:
@@ -479,3 +508,58 @@ class CCPDBoardDataLoader(Dataset):
         for c in text_label:
             label.append(CHARS_DICT[c])
         return crop_bgr, label, len(label)
+
+
+class BoardDumpDataLoader(Dataset):
+    def __init__(self, img_dir, imgSize, lpr_max_len, txt_file):
+        self.img_paths = []
+        self.img_labels = []
+        self.img_size = imgSize
+        self.lpr_max_len = lpr_max_len
+
+        label_items = load_label_items(txt_file)
+        seen_paths = set()
+        for img_folder in img_dir:
+            root_dir = os.path.normpath(img_folder)
+            for rel_path, filename, label in label_items:
+                candidate_paths = [
+                    os.path.join(root_dir, rel_path),
+                    os.path.join(root_dir, filename),
+                ]
+                for full_path in candidate_paths:
+                    norm_full_path = os.path.normpath(full_path)
+                    if os.path.exists(norm_full_path) and norm_full_path not in seen_paths:
+                        self.img_paths.append(norm_full_path)
+                        self.img_labels.append(label)
+                        seen_paths.add(norm_full_path)
+                        break
+
+        combined = list(zip(self.img_paths, self.img_labels))
+        random.shuffle(combined)
+        if combined:
+            self.img_paths, self.img_labels = zip(*combined)
+            self.img_paths = list(self.img_paths)
+            self.img_labels = list(self.img_labels)
+
+    def __len__(self):
+        return len(self.img_paths)
+
+    def __getitem__(self, index):
+        img_path = self.img_paths[index]
+        text_label = self.img_labels[index]
+        image = read_ppm_p6_payload(img_path)
+        img_h, img_w = image.shape[:2]
+        if img_w != self.img_size[0] or img_h != self.img_size[1]:
+            raise RuntimeError(
+                f'Board dump size mismatch for {img_path}: got {(img_w, img_h)} expect {tuple(self.img_size)}'
+            )
+
+        image = image.astype('float32')
+        image -= 127.5
+        image *= 0.0078125
+        image = np.transpose(image, (2, 0, 1))
+
+        label = []
+        for c in text_label:
+            label.append(CHARS_DICT[c])
+        return image, label, len(label)

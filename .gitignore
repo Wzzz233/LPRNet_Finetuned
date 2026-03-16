@@ -17,6 +17,23 @@ experiments/*
 !experiments/first_board_baseline_v1/**
 !experiments/crop_aligned_v1/
 !experiments/crop_aligned_v1/**
+!experiments/first_char_guard_v1/
+experiments/first_char_guard_v1/*
+!experiments/first_char_guard_v1/EXPERIMENT_REPORT.md
+!experiments/first_char_guard_v1/split_stats.json
+!experiments/first_char_guard_v1/split_stats.stdout.json
+!experiments/first_char_guard_v1/val_metrics.json
+!experiments/first_char_guard_v1/val_metrics.stdout.json
+!experiments/first_char_guard_v1/test_metrics.json
+!experiments/first_char_guard_v1/test_metrics.stdout.json
+!experiments/first_char_guard_v1/board_anchor_metrics.json
+!experiments/first_char_guard_v1/board_anchor_metrics.stdout.json
+!experiments/first_char_guard_v1/train.log
+!experiments/first_char_guard_v1/weights/
+experiments/first_char_guard_v1/weights/*
+!experiments/first_char_guard_v1/weights/Final_LPRNet_model.pth
+!experiments/first_char_guard_v1/weights/LPRNet_stage3_rk3568_fp16.onnx
+!experiments/first_char_guard_v1/weights/LPRNet_stage3_rk3568_fp16.rknn
 
 weights_board_aligned/
 weights_local/

@@ -1,0 +1,37 @@
+{
+  "model": "/home/wzzz/LPRNet/experiments/first_char_guard_v1/weights/Final_LPRNet_model.pth",
+  "sample_count": 1,
+  "exact_plate_acc": 1.0,
+  "first_char_acc": 1.0,
+  "blank_top1_mean": 0.5,
+  "details": [
+    {
+      "image_path": "/home/wzzz/LPRNet/ocrin_0021_f000042.ppm",
+      "gt": "京N8P8F8",
+      "pred": "京N8P8F8",
+      "blank_top1_ratio": 0.5,
+      "first_char_top5": [
+        [
+          "京",
+          0.9973893761634827
+        ],
+        [
+          "豫",
+          0.0019108972046524286
+        ],
+        [
+          "赣",
+          0.00011949829786317423
+        ],
+        [
+          "津",
+          0.00010249342449242249
+        ],
+        [
+          "苏",
+          9.954943379852921e-05
+        ]
+      ]
+    }
+  ]
+}

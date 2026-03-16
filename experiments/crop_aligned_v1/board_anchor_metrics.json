@@ -1,0 +1,37 @@
+{
+  "model": "experiments/crop_aligned_v1/weights/Final_LPRNet_model.pth",
+  "sample_count": 1,
+  "exact_plate_acc": 0.0,
+  "first_char_acc": 0.0,
+  "blank_top1_mean": 0.6111111111111112,
+  "details": [
+    {
+      "image_path": "ocrin_0021_f000042.ppm",
+      "gt": "京N8P8F8",
+      "pred": "N8P8F8",
+      "blank_top1_ratio": 0.6111111111111112,
+      "first_char_top5": [
+        [
+          "藏",
+          0.07556901127099991
+        ],
+        [
+          "吉",
+          0.07391538470983505
+        ],
+        [
+          "宁",
+          0.07351440191268921
+        ],
+        [
+          "新",
+          0.07287833839654922
+        ],
+        [
+          "桂",
+          0.07281886786222458
+        ]
+      ]
+    }
+  ]
+}
