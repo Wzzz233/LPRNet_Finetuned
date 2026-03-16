@@ -82,6 +82,10 @@ def get_parser():
     parser.add_argument('--board_anchor_img_dirs', default='.', help='directories for raw board OCR dump images')
     parser.add_argument('--board_anchor_txt_file', default='', help='label txt for raw board OCR dump anchors')
     parser.add_argument('--board_anchor_sample_weight', default=512.0, type=float, help='sampler weight multiplier for board anchor samples')
+    parser.add_argument('--pseudo_anchor_img_dirs', default='', help='directories for CCPD pseudo-anchor images')
+    parser.add_argument('--pseudo_anchor_train_txt_file', default='', help='label txt for CCPD pseudo-anchor train split')
+    parser.add_argument('--pseudo_anchor_val_txt_file', default='', help='label txt for CCPD pseudo-anchor validation split')
+    parser.add_argument('--pseudo_anchor_sample_weight', default=192.0, type=float, help='sampler weight multiplier for CCPD pseudo-anchor train samples')
     parser.add_argument('--province_balance_mode', default='inv_sqrt', choices=['none', 'inv_sqrt'], help='province rebalance mode for training sampler and first-char loss')
     parser.add_argument('--first_char_aux_weight', default=0.4, type=float, help='auxiliary loss weight for first province character')
     parser.add_argument('--first_char_time_steps', default=6, type=int, help='number of early time steps used for first-char auxiliary head proxy')
@@ -151,17 +155,19 @@ def build_province_weights(texts, mode):
     return raw.astype(np.float32)
 
 
-def build_sample_weights(texts, is_board_mask, province_mode, board_anchor_sample_weight):
+def build_sample_weights(texts, sample_sources, province_mode, board_anchor_sample_weight, pseudo_anchor_sample_weight):
     province_weights = build_province_weights(texts, province_mode)
     sample_weights = []
-    for text, is_board in zip(texts, is_board_mask):
+    for text, source in zip(texts, sample_sources):
         weight = 1.0
         if text:
             idx = CHARS_DICT.get(text[0], -1)
             if 0 <= idx < PROVINCE_COUNT:
                 weight *= float(province_weights[idx])
-        if is_board:
+        if source == 'board':
             weight *= float(board_anchor_sample_weight)
+        elif source == 'pseudo':
+            weight *= float(pseudo_anchor_sample_weight)
         sample_weights.append(weight)
     return np.asarray(sample_weights, dtype=np.float64), province_weights
 
@@ -177,7 +183,7 @@ def make_train_loader(dataset, sample_weights, batch_size, num_workers):
     return DataLoader(dataset, batch_size, sampler=sampler, num_workers=num_workers, collate_fn=collate_fn)
 
 
-def evaluate_board_anchor_dataset(net, dataset, batch_size, num_workers, use_cuda, first_char_time_steps):
+def evaluate_first_char_dataset(net, dataset, batch_size, num_workers, use_cuda, first_char_time_steps, detail_limit=0):
     if dataset is None or len(dataset) == 0:
         return None
     loader = DataLoader(dataset, min(batch_size, max(1, len(dataset))), shuffle=False, num_workers=num_workers, collate_fn=collate_fn)
@@ -187,6 +193,7 @@ def evaluate_board_anchor_dataset(net, dataset, batch_size, num_workers, use_cud
     blank_ratio_sum = 0.0
     total = 0
     details = []
+    seen = 0
     with torch.no_grad():
         for images, labels, lengths in loader:
             start = 0
@@ -213,13 +220,19 @@ def evaluate_board_anchor_dataset(net, dataset, batch_size, num_workers, use_cud
                 blank_ratio_sum += float(blank_ratio[i])
                 topk = torch.topk(first_proxy[i], k=min(5, PROVINCE_COUNT))
                 top5 = [(CHARS[int(idx)], float(val)) for val, idx in zip(topk.values.tolist(), topk.indices.tolist())]
-                details.append({
-                    'gt': gt_text,
-                    'pred': pred_text,
-                    'first_char_top5': top5,
-                    'blank_top1_ratio': float(blank_ratio[i]),
-                })
+                if detail_limit <= 0 or len(details) < detail_limit:
+                    row = {
+                        'gt': gt_text,
+                        'pred': pred_text,
+                        'first_char_top5': top5,
+                        'blank_top1_ratio': float(blank_ratio[i]),
+                    }
+                    img_paths = getattr(dataset, 'img_paths', None)
+                    if img_paths is not None and (seen + i) < len(img_paths):
+                        row['image_path'] = img_paths[seen + i]
+                    details.append(row)
                 total += 1
+            seen += len(decoded)
     net.train()
     return {
         'sample_count': total,
@@ -230,18 +243,26 @@ def evaluate_board_anchor_dataset(net, dataset, batch_size, num_workers, use_cud
     }
 
 
+def evaluate_board_anchor_dataset(net, dataset, batch_size, num_workers, use_cuda, first_char_time_steps):
+    return evaluate_first_char_dataset(net, dataset, batch_size, num_workers, use_cuda, first_char_time_steps, detail_limit=8)
+
+
 def better_board_metric(current, best):
     if best is None:
         return True
     current_key = (
         current['first_char_acc'],
         current['exact_plate_acc'],
+        current.get('pseudo_first_char_acc', -1.0),
+        current.get('pseudo_exact_plate_acc', -1.0),
         current.get('proxy_exact_plate_acc', -1.0),
         -current['blank_top1_mean'],
     )
     best_key = (
         best['first_char_acc'],
         best['exact_plate_acc'],
+        best.get('pseudo_first_char_acc', -1.0),
+        best.get('pseudo_exact_plate_acc', -1.0),
         best.get('proxy_exact_plate_acc', -1.0),
         -best['blank_top1_mean'],
     )
@@ -338,10 +359,12 @@ def train():
     train_img_dirs = os.path.expanduser(args.train_img_dirs)
     test_img_dirs = os.path.expanduser(args.test_img_dirs)
     board_anchor_img_dirs = os.path.expanduser(args.board_anchor_img_dirs)
+    pseudo_anchor_img_dirs = os.path.expanduser(args.pseudo_anchor_img_dirs) if args.pseudo_anchor_img_dirs else train_img_dirs
 
     board_anchor_eval_dataset = None
+    pseudo_anchor_val_dataset = None
     train_texts = []
-    is_board_mask = []
+    sample_sources = []
 
     if args.data_mode == 'ccpd_board':
         common_dataset_kwargs = dict(
@@ -382,7 +405,43 @@ def train():
 
     train_dataset = train_main_dataset
     train_texts.extend(list(getattr(train_main_dataset, 'img_labels', [])))
-    is_board_mask.extend([False] * len(train_texts))
+    sample_sources.extend(['main'] * len(getattr(train_main_dataset, 'img_labels', [])))
+
+    if args.pseudo_anchor_train_txt_file:
+        if args.data_mode != 'ccpd_board':
+            raise RuntimeError('pseudo anchors require --data_mode ccpd_board')
+        pseudo_anchor_train_dataset = CCPDBoardDataLoader(
+            pseudo_anchor_img_dirs.split(','),
+            args.img_size,
+            args.lpr_max_len,
+            txt_file=args.pseudo_anchor_train_txt_file,
+            plate_box_aug_mode=args.train_plate_box_aug_mode,
+            plate_box_aug_prob=args.train_plate_box_aug_prob,
+            plate_box_aug_x=args.train_plate_box_aug_x,
+            plate_box_aug_y=args.train_plate_box_aug_y,
+            plate_box_aug_min_iou=args.train_plate_box_aug_min_iou,
+            **common_dataset_kwargs,
+        )
+        if len(pseudo_anchor_train_dataset) > 0:
+            train_dataset = ConcatDataset([train_dataset, pseudo_anchor_train_dataset])
+            train_texts.extend(list(pseudo_anchor_train_dataset.img_labels))
+            sample_sources.extend(['pseudo'] * len(pseudo_anchor_train_dataset))
+        else:
+            print(f"[PseudoAnchorTrain] no valid samples from {args.pseudo_anchor_train_txt_file}, disable pseudo-anchor training")
+
+    if args.pseudo_anchor_val_txt_file:
+        if args.data_mode != 'ccpd_board':
+            raise RuntimeError('pseudo anchors require --data_mode ccpd_board')
+        pseudo_anchor_val_dataset = CCPDBoardDataLoader(
+            pseudo_anchor_img_dirs.split(','),
+            args.img_size,
+            args.lpr_max_len,
+            txt_file=args.pseudo_anchor_val_txt_file,
+            **common_dataset_kwargs,
+        )
+        if len(pseudo_anchor_val_dataset) == 0:
+            print(f"[PseudoAnchorVal] no valid samples from {args.pseudo_anchor_val_txt_file}, disable pseudo-anchor validation")
+            pseudo_anchor_val_dataset = None
 
     if args.board_anchor_txt_file:
         board_anchor_eval_dataset = BoardDumpDataLoader(
@@ -392,18 +451,19 @@ def train():
             txt_file=args.board_anchor_txt_file,
         )
         if len(board_anchor_eval_dataset) > 0:
-            train_dataset = ConcatDataset([train_main_dataset, board_anchor_eval_dataset])
+            train_dataset = ConcatDataset([train_dataset, board_anchor_eval_dataset])
             train_texts.extend(list(board_anchor_eval_dataset.img_labels))
-            is_board_mask.extend([True] * len(board_anchor_eval_dataset))
+            sample_sources.extend(['board'] * len(board_anchor_eval_dataset))
         else:
             print(f"[BoardAnchor] no valid samples from {args.board_anchor_txt_file}, disable anchor training")
             board_anchor_eval_dataset = None
 
     sample_weights, province_weights = build_sample_weights(
         train_texts,
-        is_board_mask,
+        sample_sources,
         args.province_balance_mode,
         args.board_anchor_sample_weight,
+        args.pseudo_anchor_sample_weight,
     )
     province_ce_weights = torch.tensor(province_weights, dtype=torch.float32, device=device)
     train_loader = make_train_loader(train_dataset, sample_weights, args.train_batch_size, args.num_workers)
@@ -418,6 +478,7 @@ def train():
         f"[Data] mode={args.data_mode} train_samples={len(train_dataset)} test_samples={len(test_dataset)} "
         f"train_plate_box_aug={args.train_plate_box_aug_mode} prob={args.train_plate_box_aug_prob:.2f} "
         f"board_anchors={(len(board_anchor_eval_dataset) if board_anchor_eval_dataset else 0)} "
+        f"pseudo_train={(sample_sources.count('pseudo'))} pseudo_val={(len(pseudo_anchor_val_dataset) if pseudo_anchor_val_dataset else 0)} "
         f"province_balance={args.province_balance_mode} first_char_aux={args.first_char_aux_weight:.2f}"
     )
 
@@ -494,6 +555,15 @@ def train():
             args.cuda,
             args.first_char_time_steps,
         )
+        pseudo_metrics = evaluate_first_char_dataset(
+            lprnet,
+            pseudo_anchor_val_dataset,
+            args.test_batch_size,
+            args.num_workers,
+            args.cuda,
+            args.first_char_time_steps,
+            detail_limit=0,
+        )
         proxy_exact = evaluate_exact_plate_subset(
             lprnet,
             test_dataset,
@@ -510,14 +580,27 @@ def train():
                     min(args.selection_proxy_eval_samples, len(test_dataset)),
                 )
             )
+        if pseudo_metrics is not None:
+            print(
+                '[PseudoAnchorVal] Epoch {} exact {:.4f} first_char {:.4f} blank_mean {:.4f}'.format(
+                    epoch,
+                    pseudo_metrics['exact_plate_acc'],
+                    pseudo_metrics['first_char_acc'],
+                    pseudo_metrics['blank_top1_mean'],
+                )
+            )
         if board_metrics is not None:
             board_metrics['proxy_exact_plate_acc'] = proxy_exact if proxy_exact is not None else -1.0
+            board_metrics['pseudo_first_char_acc'] = pseudo_metrics['first_char_acc'] if pseudo_metrics is not None else -1.0
+            board_metrics['pseudo_exact_plate_acc'] = pseudo_metrics['exact_plate_acc'] if pseudo_metrics is not None else -1.0
             print(
-                '[BoardAnchor] Epoch {} exact {:.4f} first_char {:.4f} blank_mean {:.4f} proxy_exact {:.4f}'.format(
+                '[BoardAnchor] Epoch {} exact {:.4f} first_char {:.4f} blank_mean {:.4f} pseudo_first {:.4f} pseudo_exact {:.4f} proxy_exact {:.4f}'.format(
                     epoch,
                     board_metrics['exact_plate_acc'],
                     board_metrics['first_char_acc'],
                     board_metrics['blank_top1_mean'],
+                    board_metrics['pseudo_first_char_acc'],
+                    board_metrics['pseudo_exact_plate_acc'],
                     board_metrics['proxy_exact_plate_acc'],
                 )
             )
@@ -547,10 +630,12 @@ def train():
     print('[Training Done] Best Test Accuracy: {:.6f}'.format(best_proxy_acc))
     if best_board_metric is not None:
         print(
-            '[Training Done] Best board anchor metrics: exact {:.4f} first_char {:.4f} blank_mean {:.4f} proxy_exact {:.4f}'.format(
+            '[Training Done] Best board anchor metrics: exact {:.4f} first_char {:.4f} blank_mean {:.4f} pseudo_first {:.4f} pseudo_exact {:.4f} proxy_exact {:.4f}'.format(
                 best_board_metric['exact_plate_acc'],
                 best_board_metric['first_char_acc'],
                 best_board_metric['blank_top1_mean'],
+                best_board_metric.get('pseudo_first_char_acc', -1.0),
+                best_board_metric.get('pseudo_exact_plate_acc', -1.0),
                 best_board_metric.get('proxy_exact_plate_acc', -1.0),
             )
         )

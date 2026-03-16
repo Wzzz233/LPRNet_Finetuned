@@ -1,0 +1,189 @@
+{
+  "model": "/home/wzzz/LPRNet/experiments/pseudo_anchor_guard_v2/weights/Final_LPRNet_model.pth",
+  "data_mode": "ccpd_board",
+  "sample_count": 36,
+  "exact_plate_acc": 0.7222222222222222,
+  "length_correct_acc": 0.9444444444444444,
+  "char_acc": 0.9365079365079365,
+  "province_first_char_acc": 0.8055555555555556,
+  "position_accuracy": {
+    "pos1_province": 0.8055555555555556,
+    "pos2_alpha": 1.0,
+    "pos3plus_alnum": 0.95
+  },
+  "province_breakdown": {
+    "云": {
+      "sample_count": 1,
+      "exact_plate_acc": 0.0,
+      "first_char_acc": 0.0
+    },
+    "京": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "冀": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "川": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "新": {
+      "sample_count": 1,
+      "exact_plate_acc": 0.0,
+      "first_char_acc": 0.0
+    },
+    "晋": {
+      "sample_count": 1,
+      "exact_plate_acc": 0.0,
+      "first_char_acc": 0.0
+    },
+    "沪": {
+      "sample_count": 1,
+      "exact_plate_acc": 0.0,
+      "first_char_acc": 0.0
+    },
+    "津": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "浙": {
+      "sample_count": 5,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "渝": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "湘": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "皖": {
+      "sample_count": 1,
+      "exact_plate_acc": 0.0,
+      "first_char_acc": 1.0
+    },
+    "粤": {
+      "sample_count": 5,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "苏": {
+      "sample_count": 5,
+      "exact_plate_acc": 0.8,
+      "first_char_acc": 1.0
+    },
+    "蒙": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "豫": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "贵": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "赣": {
+      "sample_count": 1,
+      "exact_plate_acc": 0.0,
+      "first_char_acc": 0.0
+    },
+    "辽": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "鄂": {
+      "sample_count": 1,
+      "exact_plate_acc": 0.0,
+      "first_char_acc": 1.0
+    },
+    "闽": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "陕": {
+      "sample_count": 1,
+      "exact_plate_acc": 0.0,
+      "first_char_acc": 0.0
+    },
+    "鲁": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "黑": {
+      "sample_count": 1,
+      "exact_plate_acc": 0.0,
+      "first_char_acc": 0.0
+    }
+  },
+  "throughput_sec_per_sample": 0.0236114329761929,
+  "bad_cases": [
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0701-0_7-196&440_606&583-606&579_216&583_196&444_586&440-26_0_24_31_33_25_21-100-35.jpg",
+      "gt": "陕A0791X",
+      "pred": "蒙A0791X"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0534-20_31-279&423_527&603-527&603_299&519_279&423_507&507-14_4_28_32_5_32_32-86-243.jpg",
+      "gt": "赣E48F88",
+      "pred": "鲁E48F88"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0206-0_2-348&434_572&511-570&509_348&511_350&436_572&434-24_0_5_14_33_29_32-80-25.jpg",
+      "gt": "云AFQ958",
+      "pred": "吉AF0958"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0261-0_23-250&529_523&609-523&609_282&606_250&529_491&532-0_0_33_24_28_32_32-134-40.jpg",
+      "gt": "皖A90488",
+      "pred": "皖A9488"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0203-3_26-237&486_442&569-442&569_266&557_237&486_413&498-1_2_13_26_25_32_29-78-21.jpg",
+      "gt": "沪CP2185",
+      "pred": "豫CP2L185"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0370-0_0-200&468_544&558-544&558_200&555_200&468_544&471-17_4_7_28_13_31_32-62-42.jpg",
+      "gt": "鄂EH4P78",
+      "pred": "鄂EH4B78"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0341-3_4-325&546_587&655-587&655_327&641_325&546_585&560-30_15_32_0_24_24_25-86-13.jpg",
+      "gt": "新R8A001",
+      "pred": "蒙R8A001"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0538-12_11-246&303_536&458-533&458_246&392_249&303_536&369-9_0_9_29_29_30_11-98-166.jpg",
+      "gt": "黑AK556M",
+      "pred": "鲁AK556M"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0240-1_9-274&463_510&548-510&548_285&543_274&463_499&468-10_4_21_7_25_30_24-114-18.jpg",
+      "gt": "苏EXH160",
+      "pred": "苏EXH760"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0408-5_5-160&607_449&725-449&698_160&725_160&634_449&607-5_3_23_32_25_26_25-55-40.jpg",
+      "gt": "晋DZ8121",
+      "pred": "吉DZ8121"
+    }
+  ]
+}

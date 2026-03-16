@@ -1,0 +1,209 @@
+{
+  "model": "/home/wzzz/LPRNet/experiments/pseudo_anchor_guard_v1/weights/Final_LPRNet_model.pth",
+  "data_mode": "ccpd_board",
+  "sample_count": 53,
+  "exact_plate_acc": 0.7358490566037735,
+  "length_correct_acc": 0.8867924528301887,
+  "char_acc": 0.921832884097035,
+  "province_first_char_acc": 0.8867924528301887,
+  "position_accuracy": {
+    "pos1_province": 0.8867924528301887,
+    "pos2_alpha": 0.9622641509433962,
+    "pos3plus_alnum": 0.9207547169811321
+  },
+  "province_breakdown": {
+    "云": {
+      "sample_count": 1,
+      "exact_plate_acc": 0.0,
+      "first_char_acc": 0.0
+    },
+    "京": {
+      "sample_count": 2,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "冀": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "川": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "新": {
+      "sample_count": 1,
+      "exact_plate_acc": 0.0,
+      "first_char_acc": 0.0
+    },
+    "晋": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "沪": {
+      "sample_count": 2,
+      "exact_plate_acc": 0.5,
+      "first_char_acc": 1.0
+    },
+    "津": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "浙": {
+      "sample_count": 10,
+      "exact_plate_acc": 0.7,
+      "first_char_acc": 0.9
+    },
+    "渝": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "湘": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "皖": {
+      "sample_count": 2,
+      "exact_plate_acc": 0.5,
+      "first_char_acc": 1.0
+    },
+    "粤": {
+      "sample_count": 5,
+      "exact_plate_acc": 0.8,
+      "first_char_acc": 1.0
+    },
+    "苏": {
+      "sample_count": 10,
+      "exact_plate_acc": 0.9,
+      "first_char_acc": 1.0
+    },
+    "蒙": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "豫": {
+      "sample_count": 2,
+      "exact_plate_acc": 0.0,
+      "first_char_acc": 1.0
+    },
+    "贵": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "赣": {
+      "sample_count": 2,
+      "exact_plate_acc": 0.5,
+      "first_char_acc": 0.5
+    },
+    "辽": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "鄂": {
+      "sample_count": 2,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "闽": {
+      "sample_count": 1,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "陕": {
+      "sample_count": 1,
+      "exact_plate_acc": 0.0,
+      "first_char_acc": 0.0
+    },
+    "鲁": {
+      "sample_count": 2,
+      "exact_plate_acc": 1.0,
+      "first_char_acc": 1.0
+    },
+    "黑": {
+      "sample_count": 1,
+      "exact_plate_acc": 0.0,
+      "first_char_acc": 0.0
+    }
+  },
+  "throughput_sec_per_sample": 0.008871231438978663,
+  "bad_cases": [
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0096-1_5-343&458_492&512-492&512_346&507_343&458_489&463-11_0_32_7_9_26_25-66-5.jpg",
+      "gt": "浙A8HK21",
+      "pred": "浙A8HMK21"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0701-0_7-196&440_606&583-606&579_216&583_196&444_586&440-26_0_24_31_33_25_21-100-35.jpg",
+      "gt": "陕A0791X",
+      "pred": "赣A0791X"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0110-3_0-366&494_515&556-515&547_369&556_366&503_512&494-0_0_4_12_31_31_33-92-17.jpg",
+      "gt": "皖AEN779",
+      "pred": "皖AEFN779"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0341-3_4-325&546_587&655-587&655_327&641_325&546_585&560-30_15_32_0_24_24_25-86-13.jpg",
+      "gt": "新R8A001",
+      "pred": "鄂R8A001"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0060-2_0-312&490_432&532-430&532_312&527_314&490_432&495-11_5_30_19_26_32_31-138-11.jpg",
+      "gt": "浙F6V287",
+      "pred": "鲁F6V287"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0660-15_18-125&405_423&590-418&509_125&590_130&486_423&405-10_1_27_23_3_27_30-79-195.jpg",
+      "gt": "苏B3ZD36",
+      "pred": "苏B3Z036"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0538-12_11-246&303_536&458-533&458_246&392_249&303_536&369-9_0_9_29_29_30_11-98-166.jpg",
+      "gt": "黑AK556M",
+      "pred": "鲁AK556M"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0758-8_12-306&419_656&600-647&549_306&600_315&470_656&419-1_2_32_5_24_5_32-53-30.jpg",
+      "gt": "沪C8F0F8",
+      "pred": "沪PC8F0F8"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0278-0_8-166&422_450&504-450&504_177&502_166&422_439&424-16_15_32_32_30_29_0-71-26.jpg",
+      "gt": "豫R8865A",
+      "pred": "豫R865A"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0367-0_0-177&451_481&552-481&550_177&552_177&453_481&451-16_12_32_33_12_25_27-76-19.jpg",
+      "gt": "豫N89N13",
+      "pred": "豫N89N3"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0391-4_12-258&634_547&747-534&724_258&747_271&657_547&634-14_4_30_29_33_1_32-50-71.jpg",
+      "gt": "赣E659B8",
+      "pred": "蒙E659B8"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0206-0_2-348&434_572&511-570&509_348&511_350&436_572&434-24_0_5_14_33_29_32-80-25.jpg",
+      "gt": "云AFQ958",
+      "pred": "吉AF0958"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0378-4_8-266&520_551&631-544&611_266&631_273&540_551&520-11_2_24_30_1_16_31-168-158.jpg",
+      "gt": "浙C06BS7",
+      "pred": "浙606BS7"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_weather/0613-4_1-125&314_476&460-476&434_138&460_125&340_463&314-19_1_32_5_25_24_4-101-59.jpg",
+      "gt": "粤B8F10E",
+      "pred": "粤B8F170E"
+    }
+  ]
+}

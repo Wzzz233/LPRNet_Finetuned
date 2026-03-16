@@ -65,6 +65,22 @@ def summarize_generalization(val_metrics, test_metrics):
     )
 
 
+def summarize_province_rows(metrics, focused):
+    if not metrics:
+        return []
+    rows = []
+    province_breakdown = metrics.get('province_breakdown', {})
+    for province in focused:
+        row = province_breakdown.get(province)
+        if not row:
+            rows.append(f"{province}: n=0")
+            continue
+        rows.append(
+            f"{province}: n={row['sample_count']} exact={fmt_pct(row['exact_plate_acc'])} first={fmt_pct(row['first_char_acc'])}"
+        )
+    return rows
+
+
 def parse_args():
     ap = argparse.ArgumentParser(description='Generate markdown report for an experiment run.')
     ap.add_argument('--experiment_name', required=True)
@@ -73,6 +89,8 @@ def parse_args():
     ap.add_argument('--val_txt', required=True)
     ap.add_argument('--test_txt', required=True)
     ap.add_argument('--board_anchor_txt', default='')
+    ap.add_argument('--pseudo_anchor_train_txt', default='')
+    ap.add_argument('--pseudo_anchor_val_txt', default='')
     ap.add_argument('--data_mode', default='')
     ap.add_argument('--ocr_channel_order', default='')
     ap.add_argument('--ocr_crop_mode', default='')
@@ -93,9 +111,11 @@ def parse_args():
     ap.add_argument('--train_plate_box_aug_min_iou', default='')
     ap.add_argument('--province_balance_mode', default='')
     ap.add_argument('--board_anchor_sample_weight', default='')
+    ap.add_argument('--pseudo_anchor_sample_weight', default='')
     ap.add_argument('--first_char_aux_weight', default='')
     ap.add_argument('--first_char_time_steps', default='')
     ap.add_argument('--selection_proxy_eval_samples', default='')
+    ap.add_argument('--focused_provinces', default='粤,晋,黑,苏,浙')
     ap.add_argument('--report_path', default='')
     return ap.parse_args()
 
@@ -109,7 +129,10 @@ def main():
     val_metrics = read_json(str(run_dir / 'val_metrics.json'))
     test_metrics = read_json(str(run_dir / 'test_metrics.json'))
     board_metrics = read_json(str(run_dir / 'board_anchor_metrics.json'))
+    pseudo_stats = read_json(str(run_dir / 'pseudo_anchor_stats.json'))
+    pseudo_val_metrics = read_json(str(run_dir / 'pseudo_anchor_val_metrics.json'))
     train_info = parse_train_log(str(run_dir / 'train.log'))
+    focused_provinces = [item.strip() for item in args.focused_provinces.split(',') if item.strip()]
 
     lines = []
     lines.append(f"# {args.experiment_name}")
@@ -125,6 +148,9 @@ def main():
     if board_metrics:
         lines.append(f"- 真实板图锚点整牌准确率：`{board_metrics['exact_plate_acc']:.6f}`")
         lines.append(f"- 真实板图锚点首字准确率：`{board_metrics['first_char_acc']:.6f}`")
+    if pseudo_val_metrics:
+        lines.append(f"- 伪锚点验证集整牌准确率：`{pseudo_val_metrics['exact_plate_acc']:.6f}`")
+        lines.append(f"- 伪锚点验证集首字准确率：`{pseudo_val_metrics['province_first_char_acc']:.6f}`")
     lines.append("")
 
     lines.append("## 数据")
@@ -133,6 +159,10 @@ def main():
     lines.append(f"- 测试标签：`{args.test_txt}`")
     if args.board_anchor_txt:
         lines.append(f"- 真实板图锚点：`{args.board_anchor_txt}`")
+    if args.pseudo_anchor_train_txt:
+        lines.append(f"- 伪锚点训练集：`{args.pseudo_anchor_train_txt}`")
+    if args.pseudo_anchor_val_txt:
+        lines.append(f"- 伪锚点验证集：`{args.pseudo_anchor_val_txt}`")
     if split_stats:
         lines.append(f"- 训练样本数：`{split_stats['train']['sample_count']}`")
         lines.append(f"- 验证样本数：`{split_stats['val']['sample_count']}`")
@@ -140,6 +170,14 @@ def main():
         lines.append(
             f"- 切分重叠：train/val=`{split_stats['overlap']['train_val']}` "
             f"train/test=`{split_stats['overlap']['train_test']}` val/test=`{split_stats['overlap']['val_test']}`"
+        )
+    if pseudo_stats:
+        lines.append(
+            f"- 伪锚点去重：train/val=`{pseudo_stats['overlap']['train_val']}` "
+            f"train/existing=`{pseudo_stats['overlap']['train_existing']}` val/existing=`{pseudo_stats['overlap']['val_existing']}`"
+        )
+        lines.append(
+            f"- 伪锚点样本数：train=`{pseudo_stats['train']['sample_count']}` val=`{pseudo_stats['val']['sample_count']}`"
         )
     lines.append("")
 
@@ -158,6 +196,8 @@ def main():
         lines.append(f"- 省份重平衡：`{args.province_balance_mode}`")
     if args.board_anchor_sample_weight:
         lines.append(f"- 真实锚点采样权重：`{args.board_anchor_sample_weight}`")
+    if args.pseudo_anchor_sample_weight:
+        lines.append(f"- 伪锚点采样权重：`{args.pseudo_anchor_sample_weight}`")
     if args.first_char_aux_weight:
         lines.append(f"- 首字辅助损失：`weight={args.first_char_aux_weight}` `time_steps={args.first_char_time_steps}`")
     if args.selection_proxy_eval_samples:
@@ -185,6 +225,13 @@ def main():
             lines.append(
                 f"- 锚点样本：`{Path(item['image_path']).name}` gt=`{item['gt']}` pred=`{item['pred']}` top5={item['first_char_top5']}"
             )
+    if pseudo_val_metrics:
+        lines.append(
+            f"- 伪锚点验证集：整牌 `{fmt_pct(pseudo_val_metrics['exact_plate_acc'])}`，首字 `{fmt_pct(pseudo_val_metrics['province_first_char_acc'])}`，字符 `{fmt_pct(pseudo_val_metrics['char_acc'])}`"
+        )
+        focused_rows = summarize_province_rows(pseudo_val_metrics, focused_provinces)
+        if focused_rows:
+            lines.append(f"- 易混省份：{' | '.join(focused_rows)}")
     lines.append("")
 
     lines.append("## 泛化与过拟合判断")
@@ -193,6 +240,9 @@ def main():
         lines.append(
             "- 训练损失持续下降但测试集仍明显低于验证集时，更应优先怀疑部署域差、真实板图样本不足或训练分布偏置，而不是单纯增加 epoch。"
         )
+    if pseudo_val_metrics:
+        focused_rows = summarize_province_rows(pseudo_val_metrics, focused_provinces)
+        lines.append(f"- 伪锚点验证集重点关注：{' | '.join(focused_rows)}")
     lines.append("")
 
     lines.append("## 产物")
@@ -202,7 +252,7 @@ def main():
         path = run_dir / 'weights' / name
         if path.exists():
             lines.append(f"- `{path}`")
-    for name in ['val_metrics.json', 'test_metrics.json', 'board_anchor_metrics.json', 'train.log']:
+    for name in ['val_metrics.json', 'test_metrics.json', 'board_anchor_metrics.json', 'pseudo_anchor_val_metrics.json', 'pseudo_anchor_stats.json', 'train.log']:
         path = run_dir / name
         if path.exists():
             lines.append(f"- `{path}`")

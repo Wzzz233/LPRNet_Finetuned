@@ -1,0 +1,401 @@
+{
+  "dataset_root": "/home/wzzz/LPRNet/CCPD2019",
+  "existing_txts": [
+    "/home/wzzz/LPRNet/prepared_labels/ccpd2019/train_labels.txt",
+    "/home/wzzz/LPRNet/prepared_labels/ccpd2019/val_labels.txt",
+    "/home/wzzz/LPRNet/prepared_labels/ccpd2019/test_labels.txt"
+  ],
+  "focused_provinces": [
+    "晋",
+    "浙",
+    "粤",
+    "苏",
+    "黑"
+  ],
+  "seed": 20260316,
+  "skip_stats": {
+    "used_paths_skipped": 341978,
+    "invalid_decode_skipped": 3047,
+    "invalid_bbox_skipped": 0
+  },
+  "overlap": {
+    "train_val": 0,
+    "train_existing": 0,
+    "val_existing": 0
+  },
+  "train": {
+    "sample_count": 218,
+    "province_distribution": {
+      "云": 1,
+      "京": 10,
+      "冀": 4,
+      "吉": 1,
+      "宁": 1,
+      "川": 4,
+      "新": 3,
+      "晋": 4,
+      "沪": 10,
+      "津": 3,
+      "浙": 40,
+      "渝": 2,
+      "湘": 5,
+      "琼": 1,
+      "甘": 1,
+      "皖": 10,
+      "粤": 21,
+      "苏": 40,
+      "蒙": 4,
+      "豫": 10,
+      "贵": 1,
+      "赣": 8,
+      "辽": 3,
+      "鄂": 10,
+      "闽": 4,
+      "陕": 4,
+      "青": 1,
+      "鲁": 10,
+      "黑": 2
+    }
+  },
+  "val": {
+    "sample_count": 53,
+    "province_distribution": {
+      "云": 1,
+      "京": 2,
+      "冀": 1,
+      "川": 1,
+      "新": 1,
+      "晋": 1,
+      "沪": 2,
+      "津": 1,
+      "浙": 10,
+      "渝": 1,
+      "湘": 1,
+      "皖": 2,
+      "粤": 5,
+      "苏": 10,
+      "蒙": 1,
+      "豫": 2,
+      "贵": 1,
+      "赣": 2,
+      "辽": 1,
+      "鄂": 2,
+      "闽": 1,
+      "陕": 1,
+      "鲁": 2,
+      "黑": 1
+    }
+  },
+  "province_stats": {
+    "京": {
+      "available": 16,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 10,
+      "val_selected": 2,
+      "train_shortfall": 0,
+      "val_shortfall": 0
+    },
+    "沪": {
+      "available": 45,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 10,
+      "val_selected": 2,
+      "train_shortfall": 0,
+      "val_shortfall": 0
+    },
+    "津": {
+      "available": 4,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 3,
+      "val_selected": 1,
+      "train_shortfall": 7,
+      "val_shortfall": 1
+    },
+    "渝": {
+      "available": 3,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 2,
+      "val_selected": 1,
+      "train_shortfall": 8,
+      "val_shortfall": 1
+    },
+    "冀": {
+      "available": 5,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 4,
+      "val_selected": 1,
+      "train_shortfall": 6,
+      "val_shortfall": 1
+    },
+    "晋": {
+      "available": 5,
+      "focused": true,
+      "train_target_cap": 40,
+      "val_target_cap": 10,
+      "train_selected": 4,
+      "val_selected": 1,
+      "train_shortfall": 36,
+      "val_shortfall": 9
+    },
+    "蒙": {
+      "available": 5,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 4,
+      "val_selected": 1,
+      "train_shortfall": 6,
+      "val_shortfall": 1
+    },
+    "辽": {
+      "available": 4,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 3,
+      "val_selected": 1,
+      "train_shortfall": 7,
+      "val_shortfall": 1
+    },
+    "吉": {
+      "available": 1,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 1,
+      "val_selected": 0,
+      "train_shortfall": 9,
+      "val_shortfall": 2
+    },
+    "黑": {
+      "available": 3,
+      "focused": true,
+      "train_target_cap": 40,
+      "val_target_cap": 10,
+      "train_selected": 2,
+      "val_selected": 1,
+      "train_shortfall": 38,
+      "val_shortfall": 9
+    },
+    "苏": {
+      "available": 212,
+      "focused": true,
+      "train_target_cap": 40,
+      "val_target_cap": 10,
+      "train_selected": 40,
+      "val_selected": 10,
+      "train_shortfall": 0,
+      "val_shortfall": 0
+    },
+    "浙": {
+      "available": 83,
+      "focused": true,
+      "train_target_cap": 40,
+      "val_target_cap": 10,
+      "train_selected": 40,
+      "val_selected": 10,
+      "train_shortfall": 0,
+      "val_shortfall": 0
+    },
+    "皖": {
+      "available": 9491,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 10,
+      "val_selected": 2,
+      "train_shortfall": 0,
+      "val_shortfall": 0
+    },
+    "闽": {
+      "available": 5,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 4,
+      "val_selected": 1,
+      "train_shortfall": 6,
+      "val_shortfall": 1
+    },
+    "赣": {
+      "available": 10,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 8,
+      "val_selected": 2,
+      "train_shortfall": 2,
+      "val_shortfall": 0
+    },
+    "鲁": {
+      "available": 12,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 10,
+      "val_selected": 2,
+      "train_shortfall": 0,
+      "val_shortfall": 0
+    },
+    "豫": {
+      "available": 19,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 10,
+      "val_selected": 2,
+      "train_shortfall": 0,
+      "val_shortfall": 0
+    },
+    "鄂": {
+      "available": 22,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 10,
+      "val_selected": 2,
+      "train_shortfall": 0,
+      "val_shortfall": 0
+    },
+    "湘": {
+      "available": 6,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 5,
+      "val_selected": 1,
+      "train_shortfall": 5,
+      "val_shortfall": 1
+    },
+    "粤": {
+      "available": 26,
+      "focused": true,
+      "train_target_cap": 40,
+      "val_target_cap": 10,
+      "train_selected": 21,
+      "val_selected": 5,
+      "train_shortfall": 19,
+      "val_shortfall": 5
+    },
+    "桂": {
+      "available": 0,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 0,
+      "val_selected": 0,
+      "train_shortfall": 10,
+      "val_shortfall": 2
+    },
+    "琼": {
+      "available": 1,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 1,
+      "val_selected": 0,
+      "train_shortfall": 9,
+      "val_shortfall": 2
+    },
+    "川": {
+      "available": 5,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 4,
+      "val_selected": 1,
+      "train_shortfall": 6,
+      "val_shortfall": 1
+    },
+    "贵": {
+      "available": 2,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 1,
+      "val_selected": 1,
+      "train_shortfall": 9,
+      "val_shortfall": 1
+    },
+    "云": {
+      "available": 2,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 1,
+      "val_selected": 1,
+      "train_shortfall": 9,
+      "val_shortfall": 1
+    },
+    "藏": {
+      "available": 0,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 0,
+      "val_selected": 0,
+      "train_shortfall": 10,
+      "val_shortfall": 2
+    },
+    "陕": {
+      "available": 5,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 4,
+      "val_selected": 1,
+      "train_shortfall": 6,
+      "val_shortfall": 1
+    },
+    "甘": {
+      "available": 1,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 1,
+      "val_selected": 0,
+      "train_shortfall": 9,
+      "val_shortfall": 2
+    },
+    "青": {
+      "available": 1,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 1,
+      "val_selected": 0,
+      "train_shortfall": 9,
+      "val_shortfall": 2
+    },
+    "宁": {
+      "available": 1,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 1,
+      "val_selected": 0,
+      "train_shortfall": 9,
+      "val_shortfall": 2
+    },
+    "新": {
+      "available": 4,
+      "focused": false,
+      "train_target_cap": 10,
+      "val_target_cap": 2,
+      "train_selected": 3,
+      "val_selected": 1,
+      "train_shortfall": 7,
+      "val_shortfall": 1
+    }
+  }
+}

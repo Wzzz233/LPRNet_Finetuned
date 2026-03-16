@@ -1,0 +1,269 @@
+{
+  "model": "/home/wzzz/LPRNet/experiments/pseudo_anchor_guard_v1/weights/Final_LPRNet_model.pth",
+  "data_mode": "ccpd_board",
+  "sample_count": 141982,
+  "exact_plate_acc": 0.06476877350650083,
+  "length_correct_acc": 0.4204476623797383,
+  "char_acc": 0.40652839293512055,
+  "province_first_char_acc": 0.189016917637447,
+  "position_accuracy": {
+    "pos1_province": 0.189016917637447,
+    "pos2_alpha": 0.5679241030553168,
+    "pos3plus_alnum": 0.417751545970616
+  },
+  "province_breakdown": {
+    "云": {
+      "sample_count": 128,
+      "exact_plate_acc": 0.078125,
+      "first_char_acc": 0.0859375
+    },
+    "京": {
+      "sample_count": 797,
+      "exact_plate_acc": 0.0740276035131744,
+      "first_char_acc": 0.14052697616060225
+    },
+    "冀": {
+      "sample_count": 486,
+      "exact_plate_acc": 0.05761316872427984,
+      "first_char_acc": 0.09053497942386832
+    },
+    "吉": {
+      "sample_count": 13,
+      "exact_plate_acc": 0.07692307692307693,
+      "first_char_acc": 0.3076923076923077
+    },
+    "宁": {
+      "sample_count": 2,
+      "exact_plate_acc": 0.0,
+      "first_char_acc": 0.0
+    },
+    "川": {
+      "sample_count": 315,
+      "exact_plate_acc": 0.17777777777777778,
+      "first_char_acc": 0.47619047619047616
+    },
+    "新": {
+      "sample_count": 16,
+      "exact_plate_acc": 0.25,
+      "first_char_acc": 0.3125
+    },
+    "晋": {
+      "sample_count": 364,
+      "exact_plate_acc": 0.38186813186813184,
+      "first_char_acc": 0.489010989010989
+    },
+    "桂": {
+      "sample_count": 25,
+      "exact_plate_acc": 0.2,
+      "first_char_acc": 0.2
+    },
+    "沪": {
+      "sample_count": 904,
+      "exact_plate_acc": 0.15486725663716813,
+      "first_char_acc": 0.375
+    },
+    "津": {
+      "sample_count": 353,
+      "exact_plate_acc": 0.28328611898017,
+      "first_char_acc": 0.43909348441926344
+    },
+    "浙": {
+      "sample_count": 2132,
+      "exact_plate_acc": 0.13836772983114445,
+      "first_char_acc": 0.2847091932457786
+    },
+    "渝": {
+      "sample_count": 320,
+      "exact_plate_acc": 0.190625,
+      "first_char_acc": 0.25625
+    },
+    "湘": {
+      "sample_count": 642,
+      "exact_plate_acc": 0.338006230529595,
+      "first_char_acc": 0.43613707165109034
+    },
+    "琼": {
+      "sample_count": 4,
+      "exact_plate_acc": 0.0,
+      "first_char_acc": 0.0
+    },
+    "甘": {
+      "sample_count": 79,
+      "exact_plate_acc": 0.13924050632911392,
+      "first_char_acc": 0.16455696202531644
+    },
+    "皖": {
+      "sample_count": 125268,
+      "exact_plate_acc": 0.050364019542101734,
+      "first_char_acc": 0.16636331704824855
+    },
+    "粤": {
+      "sample_count": 938,
+      "exact_plate_acc": 0.22921108742004265,
+      "first_char_acc": 0.4520255863539446
+    },
+    "苏": {
+      "sample_count": 4174,
+      "exact_plate_acc": 0.13200766650694779,
+      "first_char_acc": 0.45256348826066123
+    },
+    "蒙": {
+      "sample_count": 26,
+      "exact_plate_acc": 0.7307692307692307,
+      "first_char_acc": 0.9230769230769231
+    },
+    "豫": {
+      "sample_count": 975,
+      "exact_plate_acc": 0.13230769230769232,
+      "first_char_acc": 0.2882051282051282
+    },
+    "贵": {
+      "sample_count": 36,
+      "exact_plate_acc": 0.25,
+      "first_char_acc": 0.25
+    },
+    "赣": {
+      "sample_count": 648,
+      "exact_plate_acc": 0.18518518518518517,
+      "first_char_acc": 0.2515432098765432
+    },
+    "辽": {
+      "sample_count": 257,
+      "exact_plate_acc": 0.19066147859922178,
+      "first_char_acc": 0.35797665369649806
+    },
+    "鄂": {
+      "sample_count": 862,
+      "exact_plate_acc": 0.3190255220417633,
+      "first_char_acc": 0.5812064965197216
+    },
+    "闽": {
+      "sample_count": 657,
+      "exact_plate_acc": 0.1202435312024353,
+      "first_char_acc": 0.1856925418569254
+    },
+    "陕": {
+      "sample_count": 546,
+      "exact_plate_acc": 0.152014652014652,
+      "first_char_acc": 0.18315018315018314
+    },
+    "青": {
+      "sample_count": 3,
+      "exact_plate_acc": 0.0,
+      "first_char_acc": 0.3333333333333333
+    },
+    "鲁": {
+      "sample_count": 892,
+      "exact_plate_acc": 0.23094170403587444,
+      "first_char_acc": 0.41591928251121074
+    },
+    "黑": {
+      "sample_count": 120,
+      "exact_plate_acc": 0.21666666666666667,
+      "first_char_acc": 0.2916666666666667
+    }
+  },
+  "throughput_sec_per_sample": 0.0005948855496714308,
+  "bad_cases": [
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_challenge/0104-2_1-338&449_461&520-457&520_338&515_342&449_461&454-0_0_7_1_29_26_27-101-25.jpg",
+      "gt": "皖AHB523",
+      "pred": "蒙AHB93"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_tilt/0284-18_16-281&436_461&568-459&568_281&509_283&436_461&495-4_0_18_24_27_29_5-78-100.jpg",
+      "gt": "冀AU035F",
+      "pred": "冀AU035E"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_tilt/0319-19_16-215&394_387&549-387&489_220&549_215&454_382&394-0_0_11_30_31_33_3-136-40.jpg",
+      "gt": "皖AM679D",
+      "pred": "KAM619D"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_db/0621-5_16-244&493_615&633-615&633_265&601_244&493_594&525-0_7_10_9_30_25_30-21-19.jpg",
+      "gt": "皖HLK616",
+      "pred": "苏66"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_blur/0255-5_16-219&454_420&560-420&560_236&541_219&454_403&473-0_0_1_30_27_32_27-41-3.jpg",
+      "gt": "皖AB6383",
+      "pred": "沪393"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_tilt/0531-15_32-424&400_682&572-648&510_424&572_458&462_682&400-0_0_23_30_24_32_8-81-65.jpg",
+      "gt": "皖AZ608J",
+      "pred": "皖AZ6U83"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_tilt/0283-29_23-414&509_568&663-560&663_414&580_422&509_568&592-0_0_10_30_3_26_33-26-24.jpg",
+      "gt": "皖AL6D29",
+      "pred": "辽AZ60228"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_challenge/0346-20_9-249&428_438&581-421&581_249&518_266&428_438&491-0_0_23_3_28_29_24-105-5.jpg",
+      "gt": "皖AZD450",
+      "pred": "苏30"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_tilt/0870-15_19-207&437_539&656-530&566_207&656_216&527_539&437-0_0_26_27_27_19_30-143-11.jpg",
+      "gt": "皖A233V6",
+      "pred": "津A233V5"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_db/0273-5_15-254&420_502&512-489&491_254&512_267&441_502&420-0_0_21_11_29_29_32-18-2.jpg",
+      "gt": "皖AXM558",
+      "pred": "苏4WM58"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_challenge/0224-1_4-263&501_486&585-486&585_267&580_263&501_482&506-0_0_8_29_26_25_26-91-3.jpg",
+      "gt": "皖AJ5212",
+      "pred": "鄂J7"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_tilt/0364-21_23-327&461_521&618-518&543_327&618_330&536_521&461-0_0_32_32_14_27_27-99-125.jpg",
+      "gt": "皖A88Q33",
+      "pred": "MA88Q33"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_challenge/0292-10_13-301&475_498&599-493&565_301&599_306&509_498&475-0_0_27_27_14_27_30-134-14.jpg",
+      "gt": "皖A33Q36",
+      "pred": "新A33939"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_blur/0523-1_3-204&513_551&639-547&631_204&639_208&521_551&513-0_0_27_25_30_11_26-39-5.jpg",
+      "gt": "皖A316M2",
+      "pred": "苏367"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_tilt/0649-16_46-216&651_543&817-543&817_264&735_216&651_495&733-0_0_8_8_29_26_30-79-21.jpg",
+      "gt": "皖AJJ526",
+      "pred": "皖32U9"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_challenge/0327-21_28-289&481_468&634-457&569_289&634_300&546_468&481-0_3_25_29_26_24_26-142-23.jpg",
+      "gt": "皖D15202",
+      "pred": "新M3M"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_blur/0367-8_12-261&449_503&576-503&576_268&541_261&449_496&484-0_0_21_17_27_28_24-132-4.jpg",
+      "gt": "皖AXT340",
+      "pred": "鲁1131"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_tilt/0219-16_24-320&440_484&552-475&506_320&552_329&486_484&440-0_6_27_24_29_26_26-97-51.jpg",
+      "gt": "皖G30522",
+      "pred": "KG3052"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_blur/0460-7_3-231&500_504&641-496&641_231&604_239&500_504&537-0_0_25_30_24_3_26-27-2.jpg",
+      "gt": "皖A160D2",
+      "pred": "苏"
+    },
+    {
+      "image_path": "/home/wzzz/LPRNet/CCPD2019/ccpd_fn/0787-14_14-194&464_535&657-535&571_194&657_194&550_535&464-0_0_22_24_31_24_7-167-82.jpg",
+      "gt": "皖AY070H",
+      "pred": "津RM070H"
+    }
+  ]
+}

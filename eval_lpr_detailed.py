@@ -97,6 +97,7 @@ def evaluate(args):
     pos_correct = Counter()
     province_total = 0
     province_correct = 0
+    province_rows = {}
     bad_cases = []
     seen_count = 0
     start_time = time.time()
@@ -132,8 +133,17 @@ def evaluate(args):
 
             if gt_text:
                 province_total += 1
+                bucket = province_rows.setdefault(gt_text[0], {
+                    "sample_count": 0,
+                    "exact_plate_correct": 0,
+                    "first_char_correct": 0,
+                })
+                bucket["sample_count"] += 1
                 if pred_text and pred_text[0] == gt_text[0]:
                     province_correct += 1
+                    bucket["first_char_correct"] += 1
+                if pred_text == gt_text:
+                    bucket["exact_plate_correct"] += 1
 
             max_len = max(len(gt_ids), len(pred_ids))
             for pos in range(max_len):
@@ -167,6 +177,14 @@ def evaluate(args):
             "pos1_province": safe_div(pos_correct["pos1_province"], pos_total["pos1_province"]),
             "pos2_alpha": safe_div(pos_correct["pos2_alpha"], pos_total["pos2_alpha"]),
             "pos3plus_alnum": safe_div(pos_correct["pos3plus_alnum"], pos_total["pos3plus_alnum"]),
+        },
+        "province_breakdown": {
+            province: {
+                "sample_count": row["sample_count"],
+                "exact_plate_acc": safe_div(row["exact_plate_correct"], row["sample_count"]),
+                "first_char_acc": safe_div(row["first_char_correct"], row["sample_count"]),
+            }
+            for province, row in sorted(province_rows.items())
         },
         "throughput_sec_per_sample": elapsed / len(dataset) if len(dataset) else 0.0,
         "bad_cases": bad_cases,
