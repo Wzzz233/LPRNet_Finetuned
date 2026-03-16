@@ -13,6 +13,7 @@ from rknn.api import RKNN
 # Equivalent RKNN config: (x - 127.5) / 128.0
 MEAN_VALUES = [[127.5, 127.5, 127.5]]
 STD_VALUES = [[128.0, 128.0, 128.0]]
+FLOAT_DTYPE = "float16"
 
 
 def parse_args() -> argparse.Namespace:
@@ -97,6 +98,7 @@ def main() -> int:
         std_values=STD_VALUES,
         target_platform=args.target_platform,
         quant_img_RGB2BGR=need_swap,
+        float_dtype=FLOAT_DTYPE,
         optimization_level=0,
     )
     if ret != 0:
