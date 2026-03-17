@@ -11,6 +11,17 @@ weights_red_stage3/
 
 /tmp/
 *.log
+check*.onnx
+
+artifacts/*
+!artifacts/yolov8n_obb/
+artifacts/yolov8n_obb/*
+!artifacts/yolov8n_obb/REGTASK_ROOT_CAUSE.md
+!artifacts/yolov8n_obb/yolov8n-obb_op_summary.json
+!artifacts/yolov8n_obb/yolov8n_obb_rk3568_report.json
+!artifacts/obb_crop_compare_real/
+artifacts/obb_crop_compare_real/*
+!artifacts/obb_crop_compare_real/summary.json
 
 experiments/*
 !experiments/first_board_baseline_v1/

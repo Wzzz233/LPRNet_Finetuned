@@ -1,0 +1,65 @@
+{
+  "environment": {
+    "python": "3.8.20",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.17",
+    "ultralytics": "8.4.14",
+    "onnx": "1.17.0",
+    "rknn-toolkit2": "2.3.2"
+  },
+  "inputs": {
+    "weights": "yolov8n-obb.pt",
+    "onnx": "/home/wzzz/LPRNet/artifacts/yolov8n_obb/yolov8n-obb.onnx",
+    "imgsz": 640,
+    "opset": 12,
+    "target_platform": "rk3568",
+    "skip_export": true,
+    "skip_build": false,
+    "simplify": false,
+    "export_rknn": "/home/wzzz/LPRNet/artifacts/yolov8n_obb/yolov8n-obb.rknn"
+  },
+  "steps": {
+    "export": {
+      "status": "ok"
+    },
+    "onnx_audit": {
+      "status": "ok",
+      "node_count": 277,
+      "unique_op_count": 16,
+      "op_counts": {
+        "Add": 9,
+        "Concat": 20,
+        "Constant": 6,
+        "Conv": 73,
+        "Cos": 1,
+        "Div": 1,
+        "MaxPool": 3,
+        "Mul": 69,
+        "Reshape": 11,
+        "Resize": 2,
+        "Sigmoid": 65,
+        "Sin": 1,
+        "Softmax": 1,
+        "Split": 10,
+        "Sub": 3,
+        "Transpose": 2
+      },
+      "focus_ops": {
+        "NMSRotated": 0,
+        "GatherElements": 0,
+        "NonMaxSuppression": 0,
+        "TopK": 0,
+        "Range": 0,
+        "NonZero": 0,
+        "Where": 0,
+        "GridSample": 0
+      }
+    },
+    "rknn_probe": {
+      "status": "ok",
+      "config_ret": 0,
+      "load_onnx_ret": 0,
+      "build_ret": 0,
+      "export_rknn_ret": 0
+    }
+  }
+}

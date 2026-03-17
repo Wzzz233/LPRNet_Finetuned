@@ -1,0 +1,54 @@
+{
+  "image": "/home/wzzz/LPRNet/CCPD2019/ccpd_fn/0849-20_39-202&370_540&580-540&580_235&465_202&370_507&485-0_0_28_26_28_28_31-95-382.jpg",
+  "ocr_input_size": [
+    94,
+    24
+  ],
+  "label": null,
+  "bbox": {
+    "x1": 202,
+    "y1": 370,
+    "x2": 540,
+    "y2": 580
+  },
+  "quad": [
+    [
+      202.0,
+      370.0
+    ],
+    [
+      507.0,
+      485.0
+    ],
+    [
+      540.0,
+      580.0
+    ],
+    [
+      235.0,
+      465.0
+    ]
+  ],
+  "results": {
+    "bbox": {
+      "crop_mode": "match",
+      "crop_box": {
+        "x1": 202,
+        "y1": 370,
+        "x2": 540,
+        "y2": 580
+      },
+      "occupancy": 0.4148936170212766,
+      "raw_path": "/home/wzzz/LPRNet/artifacts/obb_crop_compare_real/bbox_raw.jpg",
+      "prepared_path": "/home/wzzz/LPRNet/artifacts/obb_crop_compare_real/bbox_prepared.jpg",
+      "prediction": "琼W4M"
+    },
+    "quad": {
+      "quad_pad_ratio": 0.0,
+      "occupancy": 0.8191489361702128,
+      "raw_path": "/home/wzzz/LPRNet/artifacts/obb_crop_compare_real/quad_raw.jpg",
+      "prepared_path": "/home/wzzz/LPRNet/artifacts/obb_crop_compare_real/quad_prepared.jpg",
+      "prediction": "皖A42447"
+    }
+  }
+}

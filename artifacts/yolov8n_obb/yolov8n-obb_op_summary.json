@@ -1,0 +1,32 @@
+{
+  "node_count": 277,
+  "unique_op_count": 16,
+  "op_counts": {
+    "Add": 9,
+    "Concat": 20,
+    "Constant": 6,
+    "Conv": 73,
+    "Cos": 1,
+    "Div": 1,
+    "MaxPool": 3,
+    "Mul": 69,
+    "Reshape": 11,
+    "Resize": 2,
+    "Sigmoid": 65,
+    "Sin": 1,
+    "Softmax": 1,
+    "Split": 10,
+    "Sub": 3,
+    "Transpose": 2
+  },
+  "focus_ops": {
+    "NMSRotated": 0,
+    "GatherElements": 0,
+    "NonMaxSuppression": 0,
+    "TopK": 0,
+    "Range": 0,
+    "NonZero": 0,
+    "Where": 0,
+    "GridSample": 0
+  }
+}

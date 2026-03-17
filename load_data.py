@@ -116,6 +116,80 @@ def clamp_box(box, img_w, img_h):
     return Box(x1, y1, x2, y2)
 
 
+def order_quad_points(pts):
+    quad = np.asarray(pts, dtype=np.float32).reshape(4, 2)
+    ordered = np.zeros((4, 2), dtype=np.float32)
+    sums = quad.sum(axis=1)
+    diffs = np.diff(quad, axis=1).reshape(-1)
+    ordered[0] = quad[np.argmin(sums)]   # top-left
+    ordered[2] = quad[np.argmax(sums)]   # bottom-right
+    ordered[1] = quad[np.argmin(diffs)]  # top-right
+    ordered[3] = quad[np.argmax(diffs)]  # bottom-left
+    return ordered
+
+
+def quad_to_box(pts, img_w=None, img_h=None):
+    quad = order_quad_points(pts)
+    x1 = int(np.floor(np.min(quad[:, 0])))
+    y1 = int(np.floor(np.min(quad[:, 1])))
+    x2 = int(np.ceil(np.max(quad[:, 0])))
+    y2 = int(np.ceil(np.max(quad[:, 1])))
+    box = Box(x1, y1, x2, y2)
+    if img_w is not None and img_h is not None:
+        box = clamp_box(box, img_w, img_h)
+    return box
+
+
+def expand_quad(pts, pad_ratio):
+    quad = order_quad_points(pts)
+    if pad_ratio <= 0.0:
+        return quad
+    center = np.mean(quad, axis=0, keepdims=True)
+    scale = 1.0 + float(pad_ratio)
+    return (center + (quad - center) * scale).astype(np.float32)
+
+
+def clip_quad_to_image(pts, img_w, img_h):
+    quad = np.asarray(pts, dtype=np.float32).reshape(4, 2).copy()
+    quad[:, 0] = np.clip(quad[:, 0], 0, max(0, img_w - 1))
+    quad[:, 1] = np.clip(quad[:, 1], 0, max(0, img_h - 1))
+    return order_quad_points(quad)
+
+
+def quad_edge_lengths(pts):
+    quad = order_quad_points(pts)
+    width_top = float(np.linalg.norm(quad[1] - quad[0]))
+    width_bottom = float(np.linalg.norm(quad[2] - quad[3]))
+    height_left = float(np.linalg.norm(quad[3] - quad[0]))
+    height_right = float(np.linalg.norm(quad[2] - quad[1]))
+    return width_top, width_bottom, height_left, height_right
+
+
+def warp_quad_to_rect(image, pts, dst_w=None, dst_h=None, pad_ratio=0.0):
+    img_h, img_w = image.shape[:2]
+    quad = expand_quad(pts, pad_ratio)
+    quad = clip_quad_to_image(quad, img_w, img_h)
+    width_top, width_bottom, height_left, height_right = quad_edge_lengths(quad)
+    if dst_w is None:
+        dst_w = int(max(width_top, width_bottom) + 0.5)
+    if dst_h is None:
+        dst_h = int(max(height_left, height_right) + 0.5)
+    dst_w = max(1, int(dst_w))
+    dst_h = max(1, int(dst_h))
+    dst = np.array(
+        [
+            [0.0, 0.0],
+            [dst_w - 1.0, 0.0],
+            [dst_w - 1.0, dst_h - 1.0],
+            [0.0, dst_h - 1.0],
+        ],
+        dtype=np.float32,
+    )
+    matrix = cv2.getPerspectiveTransform(quad, dst)
+    warped = cv2.warpPerspective(image, matrix, (dst_w, dst_h), flags=cv2.INTER_LINEAR)
+    return warped, quad, matrix
+
+
 def compute_center_crop_box(src, img_w, img_h, crop_w, crop_h):
     cx = (src.x1 + src.x2) // 2
     cy = (src.y1 + src.y2) // 2
@@ -301,6 +375,30 @@ def prepare_board_ocr_input_bgr888(crop_bgr, in_w, in_h, resize_mode, resize_ker
     if channel_order == 'rgb':
         out = cv2.cvtColor(out, cv2.COLOR_BGR2RGB)
     return out, occ
+
+
+def prepare_board_ocr_input_from_quad_bgr888(
+    image,
+    quad,
+    in_w,
+    in_h,
+    resize_mode,
+    resize_kernel,
+    preproc_mode,
+    channel_order,
+    quad_pad_ratio=0.0,
+):
+    warped, ordered_quad, matrix = warp_quad_to_rect(image, quad, pad_ratio=quad_pad_ratio)
+    prepared, occ = prepare_board_ocr_input_bgr888(
+        warped,
+        in_w,
+        in_h,
+        resize_mode,
+        resize_kernel,
+        preproc_mode,
+        channel_order,
+    )
+    return prepared, occ, warped, ordered_quad, matrix
 
 class LPRDataLoader(Dataset):
     def __init__(self, img_dir, imgSize, lpr_max_len, PreprocFun=None, txt_file='./ocrin_ccpd/train_labels.txt'):
