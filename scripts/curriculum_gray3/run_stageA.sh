@@ -1,0 +1,30 @@
+#!/bin/bash
+cd /home/wzzz/LPRNet
+export PYTHONPATH=/home/wzzz/LPRNet/src
+
+python3 src/training/train_LPRNet.py \
+  --data_mode manifest \
+  --train_manifest manifests/curriculum_gray3/train_stageA.csv \
+  --test_manifest manifests/curriculum_gray3/val.csv \
+  --pretrained_model experiments/curriculum_gray3_base/init_multihead_from_official.pth \
+  --head_mode multihead \
+  --trainable_families normal7,green8 \
+  --ocr_crop_mode obb_warp \
+  --ocr_resize_mode letterbox \
+  --ocr_resize_kernel nn \
+  --ocr_preproc gray3 \
+  --gray3_prob 1.0 \
+  --main_group_by family \
+  --train_batch_size 128 \
+  --test_batch_size 120 \
+  --max_epoch 15 \
+  --learning_rate 0.01 \
+  --lr_schedule 8 \
+  --freeze_backbone False \
+  --selection_proxy_mode stratified \
+  --selection_decode_mode family_aware_beam \
+  --save_folder experiments/curriculum_gray3_stageA \
+  --num_workers 4 \
+  --seed 42 \
+  --cuda True \
+  > experiments/curriculum_gray3_stageA/train.log 2>&1

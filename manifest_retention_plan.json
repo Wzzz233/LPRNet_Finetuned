@@ -1,0 +1,49 @@
+{
+  "categories": {
+    "keep_expert_core": {
+      "count": 13,
+      "items": [
+        "manifests_rebased/yellow_train.csv",
+        "manifests_rebased/yellow_real_val.csv",
+        "manifests_rebased/yellow_train_weighted.csv",
+        "manifests_rebased/yellow_single_train.csv",
+        "manifests_rebased/yellow_single_val.csv",
+        "manifests_rebased/yellow_single_train_weighted.csv",
+        "manifests_rebased/yellow_single_hard_val.csv",
+        "manifests_rebased/yellow_test.csv",
+        "manifests_rebased/yellow_real_test.csv",
+        "manifests_rebased/special_train.csv",
+        "manifests_rebased/special_test.csv",
+        "manifests_rebased/province_degrade_train_v1/train_province_degrade_v1.csv",
+        "manifests_rebased/unified_manifest_green_edgefit_v3_allprov.csv"
+      ]
+    },
+    "keep_active_reference": {
+      "count": 2,
+      "items": [
+        "manifests_rebased/curriculum_gray3/*.csv",
+        "manifests_rebased/firstchar_*.csv"
+      ]
+    },
+    "keep_legacy_reference": {
+      "count": 1,
+      "items": [
+        "manifests/ (old absolute path versions)"
+      ]
+    },
+    "cleanup_candidate": {
+      "count": 1,
+      "items": [
+        "manifests/Archive/ (5G of old versions)"
+      ]
+    },
+    "manual_review": {
+      "count": 3,
+      "items": [
+        "manifests/cblprd_cv_geom_manifest.csv",
+        "manifests/crpd_all_raw_board_v1_supported.csv",
+        "manifests/yellow_real_val.csv (original)"
+      ]
+    }
+  }
+}

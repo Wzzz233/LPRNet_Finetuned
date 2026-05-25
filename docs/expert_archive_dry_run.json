@@ -1,0 +1,257 @@
+{
+  "mode": "dry-run",
+  "actions": [
+    {
+      "type": "mkdir",
+      "path": "model_zoo/yellow_from_blue_expert/checkpoints"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/yellow_from_blue_expert/board_artifacts"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/yellow_from_blue_expert/configs"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/yellow_from_blue_expert/manifests"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/yellow_from_blue_expert/logs"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/yellow_from_blue_expert/keys"
+    },
+    {
+      "type": "copy",
+      "src": "keys/yellow_keys.txt",
+      "dst": "model_zoo/yellow_from_blue_expert/keys/yellow_keys.txt",
+      "size": 204
+    },
+    {
+      "type": "copy",
+      "src": "manifests_rebased/yellow_train.csv",
+      "dst": "model_zoo/yellow_from_blue_expert/manifests/yellow_train.csv",
+      "size": 7230670
+    },
+    {
+      "type": "copy",
+      "src": "manifests_rebased/yellow_real_val.csv",
+      "dst": "model_zoo/yellow_from_blue_expert/manifests/yellow_real_val.csv",
+      "size": 451931
+    },
+    {
+      "type": "copy_checkpoint",
+      "src": "experiments/yellow_single_v1_phase1/best_LPRNet_model.pth",
+      "dst": "model_zoo/yellow_from_blue_expert/checkpoints/yellow_from_blue_expert_best_LPRNet_model.pth",
+      "size": 1846929
+    },
+    {
+      "type": "copy_checkpoint",
+      "src": "experiments/yellow_single_v1_phase1/Final_LPRNet_model.pth",
+      "dst": "model_zoo/yellow_from_blue_expert/checkpoints/yellow_from_blue_expert_Final_LPRNet_model.pth",
+      "size": 1849813
+    },
+    {
+      "type": "copy_checkpoint",
+      "src": "experiments/yellow_single_v1_phase2/best_LPRNet_model.pth",
+      "dst": "model_zoo/yellow_from_blue_expert/checkpoints/yellow_from_blue_expert_best_LPRNet_model.pth",
+      "size": 1846929
+    },
+    {
+      "type": "copy_checkpoint",
+      "src": "experiments/yellow_single_v1_phase2/Final_LPRNet_model.pth",
+      "dst": "model_zoo/yellow_from_blue_expert/checkpoints/yellow_from_blue_expert_Final_LPRNet_model.pth",
+      "size": 1849813
+    },
+    {
+      "type": "copy_board_artifact",
+      "src": "artifacts/yellow_LPRNet_v5_phase2_fp16.rknn",
+      "dst": "model_zoo/yellow_from_blue_expert/board_artifacts/yellow_LPRNet_v5_phase2_fp16.rknn",
+      "size": 1801136
+    },
+    {
+      "type": "copy_board_artifact",
+      "src": "artifacts/yellow_LPRNet_v5_phase2.onnx",
+      "dst": "model_zoo/yellow_from_blue_expert/board_artifacts/yellow_LPRNet_v5_phase2.onnx",
+      "size": 1821962
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/special_plate_expert/checkpoints"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/special_plate_expert/board_artifacts"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/special_plate_expert/configs"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/special_plate_expert/manifests"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/special_plate_expert/logs"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/special_plate_expert/keys"
+    },
+    {
+      "type": "copy",
+      "src": "keys/special_keys.txt",
+      "dst": "model_zoo/special_plate_expert/keys/special_keys.txt",
+      "size": 216
+    },
+    {
+      "type": "copy",
+      "src": "manifests_rebased/special_train.csv",
+      "dst": "model_zoo/special_plate_expert/manifests/special_train.csv",
+      "size": 2951781
+    },
+    {
+      "type": "copy",
+      "src": "manifests_rebased/special_test.csv",
+      "dst": "model_zoo/special_plate_expert/manifests/special_test.csv",
+      "size": 150421
+    },
+    {
+      "type": "copy_checkpoint",
+      "src": "experiments/special_yellow_v5/best_LPRNet_model.pth",
+      "dst": "model_zoo/special_plate_expert/checkpoints/special_plate_expert_best_LPRNet_model.pth",
+      "size": 1846929
+    },
+    {
+      "type": "copy_checkpoint",
+      "src": "experiments/special_yellow_v5/Final_LPRNet_model.pth",
+      "dst": "model_zoo/special_plate_expert/checkpoints/special_plate_expert_Final_LPRNet_model.pth",
+      "size": 1849813
+    },
+    {
+      "type": "copy_board_artifact",
+      "src": "artifacts/special_LPRNet_fp16.rknn",
+      "dst": "model_zoo/special_plate_expert/board_artifacts/special_LPRNet_fp16.rknn",
+      "size": 1835696
+    },
+    {
+      "type": "copy_board_artifact",
+      "src": "artifacts/special_LPRNet.onnx",
+      "dst": "model_zoo/special_plate_expert/board_artifacts/special_LPRNet.onnx",
+      "size": 1864559
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/blue_plate_expert/checkpoints"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/blue_plate_expert/board_artifacts"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/blue_plate_expert/configs"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/blue_plate_expert/manifests"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/blue_plate_expert/logs"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/blue_plate_expert/keys"
+    },
+    {
+      "type": "copy_checkpoint",
+      "src": "experiments/tilt_ocr_obbwarp_v7_from_v6_lenpos3_20260319/weights_stageA/Final_LPRNet_model.pth",
+      "dst": "model_zoo/blue_plate_expert/checkpoints/blue_plate_expert_weights_stageA_Final_LPRNet_model.pth",
+      "size": 1818098
+    },
+    {
+      "type": "copy_checkpoint",
+      "src": "experiments/tilt_ocr_obbwarp_v7_from_v6_lenpos3_20260319/weights_stageB/Final_LPRNet_model.pth",
+      "dst": "model_zoo/blue_plate_expert/checkpoints/blue_plate_expert_weights_stageB_Final_LPRNet_model.pth",
+      "size": 1818098
+    },
+    {
+      "type": "copy_checkpoint",
+      "src": "experiments/tilt_ocr_obbwarp_v7_from_v6_lenpos3_20260319/weights_stageC/Final_LPRNet_model.pth",
+      "dst": "model_zoo/blue_plate_expert/checkpoints/blue_plate_expert_weights_stageC_Final_LPRNet_model.pth",
+      "size": 1818098
+    },
+    {
+      "type": "copy_board_artifact",
+      "src": "experiments/tilt_ocr_obbwarp_v7_from_v6_lenpos3_20260319/weights_stageC/LPRNet_stage3_rk3568_fp16_more_trained.rknn",
+      "dst": "model_zoo/blue_plate_expert/board_artifacts/LPRNet_stage3_rk3568_fp16_more_trained.rknn",
+      "size": 1240368
+    },
+    {
+      "type": "copy_board_artifact",
+      "src": "experiments/tilt_ocr_obbwarp_v7_from_v6_lenpos3_20260319/weights_stageC/LPRNet_stage3_rk3568_fp16.onnx",
+      "dst": "model_zoo/blue_plate_expert/board_artifacts/LPRNet_stage3_rk3568_fp16.onnx",
+      "size": 1790634
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/green_plate_expert/checkpoints"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/green_plate_expert/board_artifacts"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/green_plate_expert/configs"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/green_plate_expert/manifests"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/green_plate_expert/logs"
+    },
+    {
+      "type": "mkdir",
+      "path": "model_zoo/green_plate_expert/keys"
+    },
+    {
+      "type": "copy",
+      "src": "manifests_rebased/province_degrade_train_v1/train_province_degrade_v1.csv",
+      "dst": "model_zoo/green_plate_expert/manifests/train_province_degrade_v1.csv",
+      "size": 3281661
+    },
+    {
+      "type": "copy_checkpoint",
+      "src": "experiments/green_e12_province_degrade_unfreeze/best_LPRNet_model.pth",
+      "dst": "model_zoo/green_plate_expert/checkpoints/green_plate_expert_best_LPRNet_model.pth",
+      "size": 6784090
+    },
+    {
+      "type": "copy_checkpoint",
+      "src": "experiments/green_e12_province_degrade_unfreeze/Final_LPRNet_model.pth",
+      "dst": "model_zoo/green_plate_expert/checkpoints/green_plate_expert_Final_LPRNet_model.pth",
+      "size": 6787618
+    },
+    {
+      "type": "copy_board_artifact",
+      "src": "experiments/green_e12_province_degrade_unfreeze/prov_deg_fp16_no_rknnpre.rknn",
+      "dst": "model_zoo/green_plate_expert/board_artifacts/prov_deg_fp16_no_rknnpre.rknn",
+      "size": 3836412
+    },
+    {
+      "type": "copy_board_artifact",
+      "src": "experiments/green_e12_province_degrade_unfreeze/prov_deg_fp16.onnx",
+      "dst": "model_zoo/green_plate_expert/board_artifacts/prov_deg_fp16.onnx",
+      "size": 6620052
+    }
+  ]
+}

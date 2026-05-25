@@ -20,9 +20,11 @@ for _p in (str(_SRC_DIR), str(_SRC_DIR / 'training'), str(_SRC_DIR / 'evaluation
 
 from load_data import UnifiedManifestDataset, CHARS
 from eval_lpr_detailed import decode_logits
-from LPRNet_multihead import build_lprnet_multihead_from_state_dict
+from LPRNet_multihead import build_lprnet_multihead_from_state_dict, load_multihead_state_dict_compat
 from test_LPRNet import collate_fn
 from train_LPRNet import forward_family_logits
+from firstchar_fusion import extract_pos0_logits as extract_pos0_logits_helper, extract_province_logits as extract_province_logits_helper, fuse_first_char as fuse_first_char_helper
+from train_tiny_province_net import TinyProvinceNet
 
 MANIFEST_FIELDS = [
     'img_path', 'img_rel_path', 'dataset_name', 'split', 'text', 'plate_len', 'family', 'sub_type', 'source',
@@ -44,25 +46,7 @@ def is_cjk(tok):
 
 
 def fuse_first_char(base_text, pos0_char, pos0_conf, mode, threshold):
-    if not base_text or not pos0_char:
-        return base_text, False, 'empty'
-    if mode == 'replace_all':
-        if base_text[0] == pos0_char:
-            return base_text, False, 'same'
-        return pos0_char + base_text[1:], True, 'replace_all'
-    if mode == 'replace_if_not_cjk':
-        if is_cjk(base_text[0]):
-            return base_text, False, 'base_is_cjk'
-        if base_text[0] == pos0_char:
-            return base_text, False, 'same'
-        return pos0_char + base_text[1:], True, 'replace_if_not_cjk'
-    if mode == 'replace_if_confident':
-        if pos0_conf < threshold:
-            return base_text, False, 'below_threshold'
-        if base_text[0] == pos0_char:
-            return base_text, False, 'same'
-        return pos0_char + base_text[1:], True, 'replace_if_confident'
-    return base_text, False, 'fusion_disabled'
+    return fuse_first_char_helper(base_text, pos0_char, pos0_conf, mode, threshold)
 
 
 def text_to_ids(text):
@@ -76,15 +60,11 @@ def text_to_ids(text):
 
 
 def extract_pos0_logits(raw_dict, families):
-    if 'pos0' in raw_dict and raw_dict['pos0'] is not None:
-        return raw_dict['pos0']
-    selected = []
-    for i, family in enumerate(families):
-        key = f'pos0_{family}'
-        if key not in raw_dict or raw_dict[key] is None:
-            return None
-        selected.append(raw_dict[key][i:i + 1])
-    return torch.cat(selected, dim=0) if selected else None
+    return extract_pos0_logits_helper(raw_dict, families)
+
+
+def extract_province_logits(raw_dict, families):
+    return extract_province_logits_helper(raw_dict, families)
 
 
 def build_temp_manifest(input_csv: Path, temp_manifest: Path):
@@ -148,15 +128,75 @@ def load_model(model_path: Path, device):
         class_num=len(CHARS),
         dropout_rate=0,
     )
-    net.load_state_dict(state, strict=False)
+    load_multihead_state_dict_compat(net, state, strict=False)
     net.to(device)
     net.eval()
     return net
 
 
+def load_tiny_province_model(model_path: Path, device):
+    state = torch.load(str(model_path), map_location=device)
+    in_channels = int(state['features.0.weight'].shape[1])
+    net = TinyProvinceNet(in_channels=in_channels)
+    net.load_state_dict(state, strict=True)
+    net.to(device)
+    net.eval()
+    return net, in_channels
+
+
+def crop_left_patch_bgr(img_bgr, patch_ratio=0.42, min_width=24):
+    if img_bgr is None or img_bgr.size == 0:
+        return None
+    _h, w = img_bgr.shape[:2]
+    patch_w = max(min_width, int(round(w * patch_ratio)))
+    patch_w = min(max(1, w), patch_w)
+    patch = img_bgr[:, :patch_w]
+    if patch.size == 0:
+        return None
+    return cv2.resize(patch, (94, 24), interpolation=cv2.INTER_NEAREST)
+
+
+def crop_full_for_a4c(img_bgr, target_h=64, target_w=171, gray3=False):
+    if img_bgr is None or img_bgr.size == 0:
+        return None
+    out = cv2.resize(img_bgr, (target_w, target_h), interpolation=cv2.INTER_LINEAR)
+    if gray3:
+        gray = cv2.cvtColor(out, cv2.COLOR_BGR2GRAY)
+        out = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+    return out
+
+
+def load_aux_patch_batch(meta_batch, device, mode, patch_ratio):
+    patches = []
+    valid = []
+    target_shape = (24, 94, 3)
+    if mode == 'full_crop_gray3':
+        target_shape = (64, 171, 3)
+    for meta in meta_batch:
+        aux_src = meta.get('local_aux_fullcrop_path') or meta.get('aux_fullcrop_path')
+        src = aux_src or meta.get('local_crop_path') or meta.get('crop_path')
+        if mode == 'ocrin_full':
+            src = meta.get('local_ocrin_path') or meta.get('ocr_input_path') or src
+        img = cv2.imread(str(src), cv2.IMREAD_COLOR) if src else None
+        if mode == 'full_crop_gray3':
+            patch = crop_full_for_a4c(img, target_h=64, target_w=171, gray3=True)
+        else:
+            patch = crop_left_patch_bgr(img, patch_ratio=patch_ratio)
+        if patch is None:
+            patches.append(np.zeros(target_shape, dtype=np.uint8))
+            valid.append(False)
+        else:
+            patches.append(patch)
+            valid.append(True)
+    arr = np.stack(patches, axis=0).astype(np.float32) / 255.0
+    tensor = torch.from_numpy(arr).permute(0, 3, 1, 2).to(device)
+    return tensor, valid
+
+
 def main():
     ap = argparse.ArgumentParser(description='Replay board dump OCRIN images with family-aware decode and summarize by GT text.')
     ap.add_argument('--model', required=True)
+    ap.add_argument('--province-model', default='', help='optional secondary model used only for province logits during province fusion')
     ap.add_argument('--input-csv', required=True)
     ap.add_argument('--out-json', required=True)
     ap.add_argument('--out-csv', required=True)
@@ -167,7 +207,14 @@ def main():
     ap.add_argument('--beam-topk', type=int, default=12)
     ap.add_argument('--pos0-fusion-mode', default='none', choices=['none', 'replace_all', 'replace_if_confident', 'replace_if_not_cjk'])
     ap.add_argument('--pos0-conf-threshold', type=float, default=0.55)
+    ap.add_argument('--province-fusion-mode', default='none', choices=['none', 'replace_all', 'replace_if_confident', 'replace_if_not_cjk'])
+    ap.add_argument('--province-conf-threshold', type=float, default=0.55)
+    ap.add_argument('--independent-province-model', default='', help='standalone TinyProvinceNet checkpoint used for province fusion')
+    ap.add_argument('--independent-province-input', default='crop_left_patch', choices=['crop_left_patch', 'ocrin_full', 'full_crop_gray3'])
+    ap.add_argument('--independent-province-patch-ratio', type=float, default=0.42)
     args = ap.parse_args()
+    if args.pos0_fusion_mode != 'none' and args.province_fusion_mode != 'none':
+        raise RuntimeError('Only one of --pos0-fusion-mode / --province-fusion-mode may be enabled at a time')
 
     model_path = Path(args.model)
     input_csv = Path(args.input_csv)
@@ -195,6 +242,20 @@ def main():
     meta_rows = [meta_rows[i] for i in idx]
     loader = DataLoader(ds, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers, collate_fn=collate_fn)
     net = load_model(model_path, device)
+    province_model_path = ''
+    province_net = None
+    tiny_province_net = None
+    tiny_province_in_channels = 3
+    if args.province_fusion_mode != 'none':
+        if args.independent_province_model:
+            province_model_path = args.independent_province_model
+            tiny_province_net, tiny_province_in_channels = load_tiny_province_model(Path(province_model_path), device)
+        else:
+            province_model_path = args.province_model or args.model
+            if Path(province_model_path).resolve() == model_path.resolve():
+                province_net = net
+            else:
+                province_net = load_model(Path(province_model_path), device)
 
     total = 0
     exact = 0
@@ -207,6 +268,7 @@ def main():
     fusion_reasons = Counter()
     changed_count = 0
     meta_cursor = 0
+    fusion_type = 'disabled'
     with torch.no_grad():
         for images, labels, lengths, families in loader:
             start = 0
@@ -220,11 +282,40 @@ def main():
             logits = forward_family_logits(net, images, sample_families=sample_families).detach().cpu().numpy()
             decoded = decode_logits(logits, args.decode_mode, args.beam_size, args.beam_topk, sample_families=sample_families)
             pos0_prob = None
+            province_prob = None
+            fusion_type = 'disabled'
             if args.pos0_fusion_mode != 'none':
                 pos0_logits = extract_pos0_logits(raw_outputs, sample_families)
                 if pos0_logits is None:
                     raise RuntimeError(f'--pos0-fusion-mode={args.pos0_fusion_mode} but model has no usable pos0 logits for families={sorted(set(sample_families))}')
                 pos0_prob = F.softmax(pos0_logits, dim=1).detach().cpu().numpy()
+                fusion_type = 'pos0'
+            elif args.province_fusion_mode != 'none':
+                if tiny_province_net is not None:
+                    meta_batch = meta_rows[meta_cursor:meta_cursor + len(sample_families)]
+                    aux_images, valid_patch = load_aux_patch_batch(
+                        meta_batch,
+                        device,
+                        args.independent_province_input,
+                        args.independent_province_patch_ratio,
+                    )
+                    if tiny_province_in_channels == 1:
+                        aux_images = aux_images[:, 0:1, :, :] * 0.1140 + aux_images[:, 1:2, :, :] * 0.5870 + aux_images[:, 2:3, :, :] * 0.2990
+                    province_logits = tiny_province_net(aux_images)
+                    province_prob = F.softmax(province_logits, dim=1).detach().cpu().numpy()
+                    for patch_ok, batch_idx in zip(valid_patch, range(len(sample_families))):
+                        if not patch_ok:
+                            province_prob[batch_idx] = 0.0
+                else:
+                    province_raw_outputs = raw_outputs if province_net is net else province_net(images)
+                    province_logits = extract_province_logits(province_raw_outputs, sample_families)
+                    if province_logits is None:
+                        raise RuntimeError(
+                            f'--province-fusion-mode={args.province_fusion_mode} but model has no usable province logits '
+                            f'for families={sorted(set(sample_families))} (province model: {province_model_path})'
+                        )
+                    province_prob = F.softmax(province_logits, dim=1).detach().cpu().numpy()
+                fusion_type = 'province'
             for batch_idx, (pred_ids, gt_ids) in enumerate(zip(decoded, targets)):
                 base_pred = ''.join(CHARS[int(c)] for c in pred_ids)
                 gt = ''.join(CHARS[int(c)] for c in gt_ids.tolist())
@@ -240,6 +331,18 @@ def main():
                     pos0_conf = float(pos0_prob[batch_idx][pos0_idx])
                     pos0_char = CHARS[pos0_idx] if pos0_idx < len(CHARS) else ''
                     pred, changed, fusion_reason = fuse_first_char(base_pred, pos0_char, pos0_conf, args.pos0_fusion_mode, args.pos0_conf_threshold)
+                    if changed and text_to_ids(pred) is None:
+                        pred = base_pred
+                        changed = False
+                        fusion_reason = 'invalid_fused_text'
+                    fusion_changed = int(changed)
+                    changed_count += fusion_changed
+                    fusion_reasons[fusion_reason] += 1
+                elif province_prob is not None:
+                    pos0_idx = int(np.argmax(province_prob[batch_idx]))
+                    pos0_conf = float(province_prob[batch_idx][pos0_idx])
+                    pos0_char = CHARS[pos0_idx] if pos0_idx < len(CHARS) else ''
+                    pred, changed, fusion_reason = fuse_first_char(base_pred, pos0_char, pos0_conf, args.province_fusion_mode, args.province_conf_threshold)
                     if changed and text_to_ids(pred) is None:
                         pred = base_pred
                         changed = False
@@ -276,6 +379,9 @@ def main():
                 detail['base_first_char_match'] = base_is_first
                 detail['pos0_char'] = pos0_char
                 detail['pos0_conf'] = round(pos0_conf, 6)
+                detail['aux_char'] = pos0_char
+                detail['aux_conf'] = round(pos0_conf, 6)
+                detail['fusion_type'] = fusion_type
                 detail['fusion_reason'] = fusion_reason
                 detail['fusion_changed'] = fusion_changed
                 detail_rows.append(detail)
@@ -289,10 +395,14 @@ def main():
 
     report = {
         'model': str(model_path),
+        'province_model': province_model_path or str(model_path),
         'input_csv': str(input_csv),
         'decode_mode': args.decode_mode,
         'pos0_fusion_mode': args.pos0_fusion_mode,
         'pos0_conf_threshold': args.pos0_conf_threshold,
+        'province_fusion_mode': args.province_fusion_mode,
+        'province_conf_threshold': args.province_conf_threshold,
+        'fusion_type': fusion_type,
         'sample_count': total,
         'exact_plate_acc': safe_div(exact, total),
         'first_char_acc': safe_div(first_char, total),

@@ -1,99 +1,115 @@
-.conda/
+# Python
 __pycache__/
 *.pyc
 *.pyo
-.telecodex/
 
-CCPD2019/
-CCPD2019.tar
-prepared_labels/
-weights_red_stage3/
+# Conda
+.conda/
 
-/tmp/
+# Hermes agent
+.hermes/
+
+# Model weights and board artifacts (large binaries)
+*.pth
+*.onnx
+*.rknn
+*.pt
+
+# Logs and runs
 *.log
+logs/
+runs/
+
+# Temp
+/tmp/
+tmp/
+tmp_*/
+
+# ============================================================
+# Data directories (large, auto-generated, or external)
+# ============================================================
+datasets/
+CCPD2019
+CCPD2019.tar
+CCPD2020
+CBLPRD-330k_v1
+cblprd_obb_autolabel_v1
+CRPD_all
+CRPD_raw_ccpd_board_v1
+CRPD_CCPD_STRICT_YOLO_v2
+prepared_labels/
+generated/
+
+# Manifest files (auto-generated from data scripts)
+manifests/
+manifests_rebased/
+
+# Experiment outputs (weights, logs — large)
+experiments/
+
+# Board artifacts (ONNX, RKNN exports)
+artifacts/
+
+# Training configs (auto-generated per-experiment)
+configs/
+
+# ============================================================
+# Symlinks to Windows workspace
+# ============================================================
+font
+background
+images
+
+# ============================================================
+# Auto-generated / build artifacts
+# ============================================================
+archive/
+models/
+labels/
+data/pure_v1/
+eval_reports/
+reports/
 check*.onnx
+ocrin_*.ppm
+board_anchor_labels.txt
+运行日志.txt
+*.tar
 
-artifacts/*
-!artifacts/yolov8n_obb/
-artifacts/yolov8n_obb/*
-!artifacts/yolov8n_obb/REGTASK_ROOT_CAUSE.md
-!artifacts/yolov8n_obb/yolov8n-obb_op_summary.json
-!artifacts/yolov8n_obb/yolov8n_obb_rk3568_report.json
-!artifacts/obb_crop_compare_real/
-artifacts/obb_crop_compare_real/*
-!artifacts/obb_crop_compare_real/summary.json
+# ============================================================
+# QA output directories
+# ============================================================
+qa_*/
+green_edgefit_*
+green_exact_quad_synthetic_v1
 
-experiments/*
-!experiments/first_board_baseline_v1/
-!experiments/first_board_baseline_v1/**
-!experiments/crop_aligned_v1/
-!experiments/crop_aligned_v1/**
-!experiments/first_char_guard_v1/
-experiments/first_char_guard_v1/*
-!experiments/first_char_guard_v1/EXPERIMENT_REPORT.md
-!experiments/first_char_guard_v1/split_stats.json
-!experiments/first_char_guard_v1/split_stats.stdout.json
-!experiments/first_char_guard_v1/val_metrics.json
-!experiments/first_char_guard_v1/val_metrics.stdout.json
-!experiments/first_char_guard_v1/test_metrics.json
-!experiments/first_char_guard_v1/test_metrics.stdout.json
-!experiments/first_char_guard_v1/board_anchor_metrics.json
-!experiments/first_char_guard_v1/board_anchor_metrics.stdout.json
-!experiments/first_char_guard_v1/train.log
-!experiments/first_char_guard_v1/weights/
-experiments/first_char_guard_v1/weights/*
-!experiments/first_char_guard_v1/weights/Final_LPRNet_model.pth
-!experiments/first_char_guard_v1/weights/LPRNet_stage3_rk3568_fp16.onnx
-!experiments/first_char_guard_v1/weights/LPRNet_stage3_rk3568_fp16.rknn
-!experiments/pseudo_anchor_guard_v1/
-experiments/pseudo_anchor_guard_v1/*
-!experiments/pseudo_anchor_guard_v1/EXPERIMENT_REPORT.md
-!experiments/pseudo_anchor_guard_v1/split_stats.json
-!experiments/pseudo_anchor_guard_v1/split_stats.stdout.json
-!experiments/pseudo_anchor_guard_v1/pseudo_anchor_stats.json
-!experiments/pseudo_anchor_guard_v1/pseudo_anchor_stats.stdout.json
-!experiments/pseudo_anchor_guard_v1/val_metrics.json
-!experiments/pseudo_anchor_guard_v1/val_metrics.stdout.json
-!experiments/pseudo_anchor_guard_v1/test_metrics.json
-!experiments/pseudo_anchor_guard_v1/test_metrics.stdout.json
-!experiments/pseudo_anchor_guard_v1/board_anchor_metrics.json
-!experiments/pseudo_anchor_guard_v1/board_anchor_metrics.stdout.json
-!experiments/pseudo_anchor_guard_v1/pseudo_anchor_val_metrics.json
-!experiments/pseudo_anchor_guard_v1/pseudo_anchor_val_metrics.stdout.json
-!experiments/pseudo_anchor_guard_v1/train.log
-!experiments/pseudo_anchor_guard_v1/labels/
-experiments/pseudo_anchor_guard_v1/labels/*
-!experiments/pseudo_anchor_guard_v1/labels/pseudo_anchor_train_labels.txt
-!experiments/pseudo_anchor_guard_v1/labels/pseudo_anchor_val_labels.txt
-!experiments/pseudo_anchor_guard_v1/weights/
-experiments/pseudo_anchor_guard_v1/weights/*
-!experiments/pseudo_anchor_guard_v1/weights/Final_LPRNet_model.pth
-!experiments/pseudo_anchor_guard_v2/
-experiments/pseudo_anchor_guard_v2/*
-!experiments/pseudo_anchor_guard_v2/EXPERIMENT_REPORT.md
-!experiments/pseudo_anchor_guard_v2/split_stats.json
-!experiments/pseudo_anchor_guard_v2/split_stats.stdout.json
-!experiments/pseudo_anchor_guard_v2/pseudo_anchor_stats.json
-!experiments/pseudo_anchor_guard_v2/pseudo_anchor_stats.stdout.json
-!experiments/pseudo_anchor_guard_v2/val_metrics.json
-!experiments/pseudo_anchor_guard_v2/val_metrics.stdout.json
-!experiments/pseudo_anchor_guard_v2/test_metrics.json
-!experiments/pseudo_anchor_guard_v2/test_metrics.stdout.json
-!experiments/pseudo_anchor_guard_v2/board_anchor_metrics.json
-!experiments/pseudo_anchor_guard_v2/board_anchor_metrics.stdout.json
-!experiments/pseudo_anchor_guard_v2/pseudo_anchor_val_metrics.json
-!experiments/pseudo_anchor_guard_v2/pseudo_anchor_val_metrics.stdout.json
-!experiments/pseudo_anchor_guard_v2/train.log
-!experiments/pseudo_anchor_guard_v2/labels/
-experiments/pseudo_anchor_guard_v2/labels/*
-!experiments/pseudo_anchor_guard_v2/labels/pseudo_anchor_train_labels.txt
-!experiments/pseudo_anchor_guard_v2/labels/pseudo_anchor_val_labels.txt
-!experiments/pseudo_anchor_guard_v2/weights/
-experiments/pseudo_anchor_guard_v2/weights/*
-!experiments/pseudo_anchor_guard_v2/weights/Final_LPRNet_model.pth
-
+# ============================================================
+# Root symlinks / legacy
+# ============================================================
+augment_image.py
+generate_chars_image.py
+generate_plate_template.py
+.telecodex/
+weights_red_stage3/
 weights_board_aligned/
 weights_local/
-ocrin_*.ppm
+weights_tiny_province_h20b/
+true_quad_refiner_robust_plan.md
+model_zoo/
 
-运行日志.txt
+# ============================================================
+# Third-party
+# ============================================================
+third_party/
+
+# ============================================================
+# Large auto-generated docs files
+# ============================================================
+docs/workspace_file_index.txt
+docs/workspace_file_index_no_datasets.txt
+docs/workspace_dir_index.txt
+docs/workspace_size_report.txt
+docs/workspace_size_top.txt
+docs/manifest_path_inventory.json
+docs/experiments_inventory.json
+docs/root_after_tidy_snapshot.txt
+docs/root_before_tidy_snapshot.txt

@@ -1,0 +1,154 @@
+{
+  "datasets": [
+    {
+      "dataset_path": "datasets/CBLPRD-330k_v1",
+      "size": "2G",
+      "category": "keep_expert_core_dataset"
+    },
+    {
+      "dataset_path": "datasets/CCPD2019",
+      "size": "25G",
+      "category": "keep_expert_core_dataset"
+    },
+    {
+      "dataset_path": "datasets/CCPD2020",
+      "size": "905M",
+      "category": "keep_expert_core_dataset"
+    },
+    {
+      "dataset_path": "datasets/CRPD_CCPD_STRICT_YOLO_v2",
+      "size": "409M",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/CRPD_all",
+      "size": "19G",
+      "category": "keep_expert_core_dataset"
+    },
+    {
+      "dataset_path": "datasets/CRPD_raw_ccpd_board_v1",
+      "size": "176M",
+      "category": "keep_expert_core_dataset"
+    },
+    {
+      "dataset_path": "datasets/cblprd_obb_autolabel_v1",
+      "size": "100M",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/ccpd2020_replace_extreme_v1",
+      "size": "426M",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/ccpd2020_replace_extreme_v2_additional",
+      "size": "382M",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/ccpd2020_replace_extreme_v3",
+      "size": "173M",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/ccpd2020_replace_extreme_v4",
+      "size": "178M",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/ccpd2020_replace_pose_v3",
+      "size": "458M",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/ccpd2020_replace_v1_obbquad",
+      "size": "427M",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/git_plate",
+      "size": "461M",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/green_edgefit_allprov_v1",
+      "size": "93M",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/green_edgefit_allprov_v2_zhe_guard",
+      "size": "93M",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/green_edgefit_allprov_v3_zhe_guard_yuehu_restore",
+      "size": "93M",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/green_edgefit_allprov_v4_realistic",
+      "size": "85M",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/green_edgefit_allprov_v4_realistic_b",
+      "size": "84M",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/green_edgefit_tier3_full_v1",
+      "size": "125M",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/green_edgefit_tier3_full_v2",
+      "size": "115M",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/green_edgefit_tier3_full_v3_su_conservative",
+      "size": "115M",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/green_edgefit_v3_allprov",
+      "size": "82M",
+      "category": "keep_expert_core_dataset"
+    },
+    {
+      "dataset_path": "datasets/green_exact_quad_synthetic_v1",
+      "size": "2.2G",
+      "category": "keep_expert_core_dataset"
+    },
+    {
+      "dataset_path": "datasets/nonccpd_obb_autolabel_v1",
+      "size": "156M",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/plate_true_quad_pose",
+      "size": "3.1G",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/prepared_labels",
+      "size": "2.9G",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/province_degrade_train_v1",
+      "size": "1.7G",
+      "category": "keep_expert_core_dataset"
+    },
+    {
+      "dataset_path": "datasets/province_stress_pose_val_v1",
+      "size": "191M",
+      "category": "keep_legacy_dataset"
+    },
+    {
+      "dataset_path": "datasets/targeted_green_missing_18",
+      "size": "157M",
+      "category": "keep_legacy_dataset"
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import json
 from collections import Counter
 
 import torch
+import torch.nn.functional as F
 from torch.utils.data import DataLoader, Subset
 
 import sys
@@ -17,23 +18,42 @@ for _p in (str(_SRC_DIR), str(_SRC_DIR / 'training'), str(_SRC_DIR / 'utils')):
 
 from load_data import UnifiedManifestDataset, CHARS
 from eval_lpr_detailed import decode_logits
-from LPRNet_multihead import build_lprnet_multihead_from_state_dict
+from LPRNet_multihead import build_lprnet_multihead_from_state_dict, load_multihead_state_dict_compat
 from test_LPRNet import collate_fn
-from train_LPRNet import forward_family_logits
+from train_LPRNet import forward_family_logits, _select_family_logits_from_dict
+from firstchar_fusion import extract_province_logits, fuse_first_char
 
 
 def safe_div(a, b):
     return float(a) / float(b) if b else 0.0
 
 
+def load_model(model_path, device):
+    state = torch.load(model_path, map_location=device)
+    net, _cfg = build_lprnet_multihead_from_state_dict(
+        state,
+        lpr_max_len=8,
+        phase=False,
+        class_num=len(CHARS),
+        dropout_rate=0,
+    )
+    load_multihead_state_dict_compat(net, state, strict=False)
+    net.to(device)
+    net.eval()
+    return net
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--model', required=True)
+    ap.add_argument('--province-model', default='', help='optional secondary model used only for province logits during province fusion')
     ap.add_argument('--manifest', required=True)
     ap.add_argument('--out_json', required=True)
     ap.add_argument('--batch_size', type=int, default=300)
     ap.add_argument('--num_workers', type=int, default=4)
     ap.add_argument('--ocr_preproc', default='none', choices=['none', 'raw', 'gray', 'gray3', 'bin'], help='OCR preprocess mode for evaluation')
+    ap.add_argument('--province-fusion-mode', default='none', choices=['none', 'replace_all', 'replace_if_confident', 'replace_if_not_cjk'])
+    ap.add_argument('--province-conf-threshold', type=float, default=0.55)
     args = ap.parse_args()
 
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -59,26 +79,31 @@ def main():
     ds = Subset(full, idx)
     loader = DataLoader(ds, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers, collate_fn=collate_fn)
 
-    state = torch.load(args.model, map_location=device)
-    net, _cfg = build_lprnet_multihead_from_state_dict(
-        state,
-        lpr_max_len=8,
-        phase=False,
-        class_num=len(CHARS),
-        dropout_rate=0,
-    )
-    net.load_state_dict(state, strict=False)
-    net.to(device)
-    net.eval()
+    net = load_model(args.model, device)
+    province_model_path = ''
+    province_net = None
+    if args.province_fusion_mode != 'none':
+        province_model_path = args.province_model or args.model
+        if Path(province_model_path).resolve() == Path(args.model).resolve():
+            province_net = net
+        else:
+            province_net = load_model(province_model_path, device)
 
     exact = 0
     total = 0
     first_correct = 0
+    base_exact = 0
+    base_first_correct = 0
     province_rows = {}
+    base_province_rows = {}
     pos2_correct = 0
     pos2_total = 0
     pos3_correct = 0
     pos3_total = 0
+    base_pos2_correct = 0
+    base_pos3_correct = 0
+    fusion_reasons = Counter()
+    fusion_changed_count = 0
     with torch.no_grad():
         for images, labels, lengths, families in loader:
             start = 0
@@ -88,31 +113,65 @@ def main():
                 start += length
             images = images.to(device)
             sample_families = list(families)
-            logits = forward_family_logits(net, images, sample_families=sample_families).detach().cpu().numpy()
+            raw_outputs = net(images)
+            logits = _select_family_logits_from_dict(raw_outputs, sample_families=sample_families).detach().cpu().numpy()
             decoded = decode_logits(logits, 'family_aware_beam', 20, 12, sample_families=sample_families)
-            for pred_ids, gt_ids in zip(decoded, targets):
-                pred = ''.join(CHARS[int(c)] for c in pred_ids)
+            province_prob = None
+            if args.province_fusion_mode != 'none':
+                province_raw_outputs = raw_outputs if province_net is net else province_net(images)
+                province_logits = extract_province_logits(province_raw_outputs, sample_families)
+                if province_logits is None:
+                    raise RuntimeError(
+                        f'--province-fusion-mode={args.province_fusion_mode} but model has no usable province logits '
+                        f'(province model: {province_model_path})'
+                    )
+                province_prob = F.softmax(province_logits, dim=1).detach().cpu().numpy()
+            for i, (pred_ids, gt_ids) in enumerate(zip(decoded, targets)):
+                base_pred = ''.join(CHARS[int(c)] for c in pred_ids)
+                pred = base_pred
                 gt = ''.join(CHARS[int(c)] for c in gt_ids.tolist())
+                if province_prob is not None:
+                    province_idx = int(province_prob[i].argmax())
+                    province_conf = float(province_prob[i][province_idx])
+                    province_char = CHARS[province_idx] if province_idx < len(CHARS) else ''
+                    pred, changed, reason = fuse_first_char(base_pred, province_char, province_conf, args.province_fusion_mode, args.province_conf_threshold)
+                    fusion_reasons[reason] += 1
+                    fusion_changed_count += int(changed)
                 total += 1
                 exact += int(pred == gt)
+                base_exact += int(base_pred == gt)
                 if gt:
                     row = province_rows.setdefault(gt[0], {'sample_count': 0, 'exact_plate_correct': 0, 'first_char_correct': 0})
                     row['sample_count'] += 1
                     row['exact_plate_correct'] += int(pred == gt)
                     row['first_char_correct'] += int(bool(pred) and pred[0] == gt[0])
                     first_correct += int(bool(pred) and pred[0] == gt[0])
+
+                    base_row = base_province_rows.setdefault(gt[0], {'sample_count': 0, 'exact_plate_correct': 0, 'first_char_correct': 0})
+                    base_row['sample_count'] += 1
+                    base_row['exact_plate_correct'] += int(base_pred == gt)
+                    base_row['first_char_correct'] += int(bool(base_pred) and base_pred[0] == gt[0])
+                    base_first_correct += int(bool(base_pred) and base_pred[0] == gt[0])
                 if len(gt) > 1:
                     pos2_total += 1
                     pos2_correct += int(len(pred) > 1 and pred[1] == gt[1])
+                    base_pos2_correct += int(len(base_pred) > 1 and base_pred[1] == gt[1])
                 for pos in range(2, len(gt)):
                     pos3_total += 1
                     pos3_correct += int(len(pred) > pos and pred[pos] == gt[pos])
+                    base_pos3_correct += int(len(base_pred) > pos and base_pred[pos] == gt[pos])
 
     province_macro_exact = 0.0
     province_macro_first = 0.0
     if province_rows:
         province_macro_exact = sum(safe_div(v['exact_plate_correct'], v['sample_count']) for v in province_rows.values()) / len(province_rows)
         province_macro_first = sum(safe_div(v['first_char_correct'], v['sample_count']) for v in province_rows.values()) / len(province_rows)
+
+    base_province_macro_exact = 0.0
+    base_province_macro_first = 0.0
+    if base_province_rows:
+        base_province_macro_exact = sum(safe_div(v['exact_plate_correct'], v['sample_count']) for v in base_province_rows.values()) / len(base_province_rows)
+        base_province_macro_first = sum(safe_div(v['first_char_correct'], v['sample_count']) for v in base_province_rows.values()) / len(base_province_rows)
 
     major_province = None
     major_ratio = 0.0
@@ -132,8 +191,11 @@ def main():
 
     report = {
         'model': args.model,
+        'province_model': province_model_path or args.model,
         'family': 'green8',
         'sample_count': total,
+        'province_fusion_mode': args.province_fusion_mode,
+        'province_conf_threshold': args.province_conf_threshold,
         'exact_plate_acc': safe_div(exact, total),
         'first_char_acc': safe_div(first_correct, total),
         'province_macro_exact_acc': province_macro_exact,
@@ -144,11 +206,21 @@ def main():
         'non_major_province_exact_acc': non_major_exact,
         'pos2_alpha_acc': safe_div(pos2_correct, pos2_total),
         'pos3plus_alnum_acc': safe_div(pos3_correct, pos3_total),
+        'base_exact_plate_acc': safe_div(base_exact, total),
+        'base_first_char_acc': safe_div(base_first_correct, total),
+        'base_province_macro_exact_acc': base_province_macro_exact,
+        'base_province_macro_first_char_acc': base_province_macro_first,
+        'base_pos2_alpha_acc': safe_div(base_pos2_correct, pos2_total),
+        'base_pos3plus_alnum_acc': safe_div(base_pos3_correct, pos3_total),
+        'fusion_changed_count': fusion_changed_count,
+        'fusion_reasons': dict(fusion_reasons),
         'province_breakdown': {
             k: {
                 'sample_count': v['sample_count'],
                 'exact_plate_acc': safe_div(v['exact_plate_correct'], v['sample_count']),
                 'first_char_acc': safe_div(v['first_char_correct'], v['sample_count']),
+                'base_exact_plate_acc': safe_div(base_province_rows[k]['exact_plate_correct'], base_province_rows[k]['sample_count']),
+                'base_first_char_acc': safe_div(base_province_rows[k]['first_char_correct'], base_province_rows[k]['sample_count']),
             }
             for k, v in sorted(province_rows.items())
         }

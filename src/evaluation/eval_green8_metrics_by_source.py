@@ -16,7 +16,7 @@ for _p in (str(_SRC_DIR), str(_SRC_DIR / 'training'), str(_SRC_DIR / 'utils')):
 
 from load_data import UnifiedManifestDataset, CHARS
 from eval_lpr_detailed import decode_logits
-from LPRNet_multihead import build_lprnet_multihead, build_lprnet_multihead_from_state_dict
+from LPRNet_multihead import build_lprnet_multihead, build_lprnet_multihead_from_state_dict, load_multihead_state_dict_compat
 from test_LPRNet import collate_fn
 from train_LPRNet import forward_family_logits
 
@@ -34,7 +34,7 @@ def build_model(model_path, device):
         class_num=len(CHARS),
         dropout_rate=0,
     )
-    net.load_state_dict(state, strict=False)
+    load_multihead_state_dict_compat(net, state, strict=False)
     net.to(device)
     net.eval()
     return net

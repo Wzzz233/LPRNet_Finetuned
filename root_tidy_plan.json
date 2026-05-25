@@ -1,0 +1,308 @@
+[
+  {
+    "old_path": "/home/wzzz/LPRNet/experiment_catalog.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/experiment_catalog.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/expert_archive_plan.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/expert_archive_plan.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/expert_asset_candidates.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/expert_asset_candidates.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/green_plate_expert_completion_plan.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/green_plate_expert_completion_plan.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/blue_plate_expert_completion_plan.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/blue_plate_expert_completion_plan.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/manifest_path_inventory_rebased.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/manifest_path_inventory_rebased.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/manifest_rebase_dry_run.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/manifest_rebase_dry_run.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/manifest_rebase_execute_report.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/manifest_rebase_execute_report.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/manifest_rebase_plan.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/manifest_rebase_plan.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/migration_plan.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/migration_plan.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/migration_plan_review.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/migration_plan_review.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/model_zoo_completeness_review.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/model_zoo_completeness_review.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/next_rebased_representative_experiments.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/next_rebased_representative_experiments.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/rebased_config_migration_suggestions.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/rebased_config_migration_suggestions.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/rebased_dataset_root_consistency.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/rebased_dataset_root_consistency.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/rebased_manifest_training_roots.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/rebased_manifest_training_roots.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/rebased_training_smoke_test.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/rebased_training_smoke_test.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/yellow_single_batch_smoke_result.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/yellow_single_batch_smoke_result.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/yellow_single_rebased_batch_plan.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/yellow_single_rebased_batch_plan.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/yellow_single_v1_phase1_rebased_epoch1_result.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/yellow_single_v1_phase1_rebased_epoch1_result.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/yellow_single_v1_phase1_rebased_smoke_result.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/generated_json/yellow_single_v1_phase1_rebased_smoke_result.json",
+    "reason": "中间 JSON 归入 tmp/generated_json/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/_check_qa04.py",
+    "new_path": "/home/wzzz/LPRNet/tools/_check_qa04.py",
+    "reason": "临时脚本归入 tools/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/_check_qa04_detailed.py",
+    "new_path": "/home/wzzz/LPRNet/tools/_check_qa04_detailed.py",
+    "reason": "临时脚本归入 tools/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/_check_quad_order.py",
+    "new_path": "/home/wzzz/LPRNet/tools/_check_quad_order.py",
+    "reason": "临时脚本归入 tools/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/_filter_replace_val.py",
+    "new_path": "/home/wzzz/LPRNet/tools/_filter_replace_val.py",
+    "reason": "临时脚本归入 tools/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/_inspect_qa04.py",
+    "new_path": "/home/wzzz/LPRNet/tools/_inspect_qa04.py",
+    "reason": "临时脚本归入 tools/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/_inspect_qa04_visual.py",
+    "new_path": "/home/wzzz/LPRNet/tools/_inspect_qa04_visual.py",
+    "reason": "临时脚本归入 tools/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/_inspect_warp_quality.py",
+    "new_path": "/home/wzzz/LPRNet/tools/_inspect_warp_quality.py",
+    "reason": "临时脚本归入 tools/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/_qa04_comparison.py",
+    "new_path": "/home/wzzz/LPRNet/tools/_qa04_comparison.py",
+    "reason": "临时脚本归入 tools/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/tmp_export_refiner_onnx.py",
+    "new_path": "/home/wzzz/LPRNet/tools/tmp_export_refiner_onnx.py",
+    "reason": "临时脚本归入 tools/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/tmp_export_refiner_rknn_friendly.py",
+    "new_path": "/home/wzzz/LPRNet/tools/tmp_export_refiner_rknn_friendly.py",
+    "reason": "临时脚本归入 tools/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/tmp_export_refiner_static_onnx.py",
+    "new_path": "/home/wzzz/LPRNet/tools/tmp_export_refiner_static_onnx.py",
+    "reason": "临时脚本归入 tools/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/true_quad_refiner_robust_plan.md:Zone.Identifier",
+    "new_path": "/home/wzzz/LPRNet/tmp/cleanup_candidates/true_quad_refiner_robust_plan.md:Zone.Identifier",
+    "reason": "系统残留/缓存 -> tmp/cleanup_candidates/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  },
+  {
+    "old_path": "/home/wzzz/LPRNet/hermes_conversation_20260424_193850.json",
+    "new_path": "/home/wzzz/LPRNet/tmp/cleanup_candidates/hermes_conversation_20260424_193850.json",
+    "reason": "系统残留/缓存 -> tmp/cleanup_candidates/",
+    "risk": "low",
+    "can_move_now": true,
+    "requires_manual_review": false,
+    "would_overwrite": false
+  }
+]

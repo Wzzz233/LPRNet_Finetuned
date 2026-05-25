@@ -1,0 +1,268 @@
+#!/usr/bin/env python3
+"""Final eval with proper green_val breakdown: all/皖/non皖 exact + prov1st + char.
+Verifies weighted consistency."""
+
+import json, torch, numpy as np
+from pathlib import Path
+from collections import defaultdict
+from torch.utils.data import DataLoader
+
+ROOT = Path('/home/wzzz/LPRNet')
+import sys
+sys.path.insert(0, str(ROOT / 'src'))
+sys.path.insert(0, str(ROOT / 'src' / 'training'))
+from load_data import CHARS, UnifiedManifestDataset
+from train_LPRNet import Greedy_Decode_Eval, collate_fn, forward_family_logits
+from LPRNet_multihead import build_lprnet_multihead
+
+device = torch.device('cuda:0')
+BLANK = len(CHARS) - 1
+
+OCRP = dict(
+    ocr_crop_mode='obb_warp', ocr_resize_mode='letterbox',
+    ocr_resize_kernel='nn', ocr_preproc='none',
+    ocr_channel_order='bgr', ocr_quad_pad_ratio=0.0,
+)
+
+MODELS = {
+    'old_green': ROOT / 'experiments/green_e12_province_degrade_unfreeze/best_LPRNet_model.pth',
+    'v2_cvreplace': ROOT / 'experiments/green_ccpd2019_tilt_db_challenge_cvreplace_v2_20260508/best_LPRNet_model.pth',
+    'v3_best': ROOT / 'experiments/green_ccpd2019_tilt_db_challenge_cvreplace_v3_20260508/best_LPRNet_model.pth',
+    'phase2_best': ROOT / 'experiments/green_ccpd2019_tilt_db_challenge_cvreplace_v3_phase2_20260508/best_LPRNet_model.pth',
+    'expE_best': ROOT / 'experiments/green_ccpd2019_tilt_db_challenge_cvreplace_v3_expE_20260508/best_LPRNet_model.pth',
+    'v4_from_oldgreen': ROOT / 'experiments/green_ccpd2019_cvr_v4_from_oldgreen_20260508/best_LPRNet_model.pth',
+    'v4b_continue': ROOT / 'experiments/green_ccpd2019_cvr_v4b_continue_20260509/best_LPRNet_model.pth',
+    'v4b_clean': ROOT / 'experiments/green_ccpd2019_tilt_db_challenge_cvreplace_v4b_clean_20260509/best_LPRNet_model.pth',
+    'v4c_A_wan15': ROOT / 'experiments/green_ccpd2019_cvr_v4c_probe_A_wan15_20260509/best_LPRNet_model.pth',
+    'v4c_B_wan25': ROOT / 'experiments/green_ccpd2019_cvr_v4c_probe_B_wan25_20260509/best_LPRNet_model.pth',
+}
+
+MANIFESTS = {
+    'cvr_val': ROOT / 'manifests_rebased/green_ccpd2019_tilt_db_challenge_cvreplace_v2_20260508/val_cvreplace_v2.csv',
+    'base_cvr_val': ROOT / 'manifests_rebased/green_ccpd2019_base_cvreplace_posquad_v1_20260509/val_base_cvreplace_posquad.csv',
+    'green_val': ROOT / 'manifests_rebased/curriculum_gray3/val_ccpd2020_green.csv',
+}
+
+PROVINCES_SET = set('京沪津渝冀晋蒙辽吉黑苏浙皖闽赣鲁豫鄂湘粤桂琼川贵云藏陕甘青宁新')
+
+class FakeArgs:
+    cuda = torch.cuda.is_available()
+    test_batch_size = 120
+    num_workers = 4
+
+
+def detailed_eval(net, manifest_path):
+    """Returns dict with exact/char/prov1st broken down by all/皖/non皖."""
+    ds = UnifiedManifestDataset(str(manifest_path), [94, 24], 8, split_filter='test',
+                                dataset_root=str(ROOT), **OCRP)
+    if len(ds) == 0:
+        return None
+
+    # 1. Overall Greedy_Decode_Eval (uses proper forward_family_logits)
+    overall = Greedy_Decode_Eval(net, ds, FakeArgs())
+
+    # 2. Per-sample detailed breakdown
+    ld = DataLoader(ds, batch_size=120, shuffle=False, num_workers=4, collate_fn=collate_fn)
+
+    all_exact = 0
+    all_total = 0
+    all_char_correct = 0
+    all_char_total = 0
+    wan_exact = 0
+    wan_total = 0
+    wan_char_correct = 0
+    wan_char_total = 0
+    nonwan_exact = 0
+    nonwan_total = 0
+    nonwan_char_correct = 0
+    nonwan_char_total = 0
+
+    wan_prov_correct = 0
+    wan_prov_total = 0
+    nonwan_prov_correct = 0
+    nonwan_prov_total = 0
+
+    with torch.no_grad():
+        for images, labels, lengths, families in ld:
+            images = images.to(device)
+            prebs = forward_family_logits(net, images, sample_families=families).cpu().detach().numpy()
+
+            off = 0
+            for bi in range(prebs.shape[0]):
+                # Decode prediction
+                preb = prebs[bi, :, :]  # [C, T]
+                preb_label = [int(np.argmax(preb[:, tj], axis=0)) for tj in range(preb.shape[1])]
+
+                no_repeat_blank = []
+                prec = preb_label[0]
+                if prec != BLANK:
+                    no_repeat_blank.append(prec)
+                for c in preb_label:
+                    if (prec == c) or (c == BLANK):
+                        if c == BLANK:
+                            prec = c
+                        continue
+                    no_repeat_blank.append(c)
+                    prec = c
+                pred_text = ''.join(CHARS[i] for i in no_repeat_blank if 0 <= i < len(CHARS))
+
+                # Ground truth
+                start = off
+                end = off + lengths[bi]
+                gt_ids = [int(labels[start + i]) for i in range(lengths[bi])]
+                gt_text = ''.join(CHARS[i] for i in gt_ids if 0 <= i < len(CHARS))
+                off = end
+
+                all_total += 1
+                is_exact = (pred_text == gt_text)
+                if is_exact:
+                    all_exact += 1
+
+                for p, g in zip(pred_text, gt_text):
+                    all_char_correct += (p == g)
+                all_char_total += len(gt_text)
+
+                # Province categorization
+                if gt_text and gt_text[0] in PROVINCES_SET:
+                    is_wan = (gt_text[0] == '皖')
+
+                    if is_wan:
+                        wan_total += 1
+                        if is_exact:
+                            wan_exact += 1
+                        for p, g in zip(pred_text, gt_text):
+                            wan_char_correct += (p == g)
+                        wan_char_total += len(gt_text)
+                        wan_prov_total += 1
+                        if pred_text and pred_text[0] == '皖':
+                            wan_prov_correct += 1
+                    else:
+                        nonwan_total += 1
+                        if is_exact:
+                            nonwan_exact += 1
+                        for p, g in zip(pred_text, gt_text):
+                            nonwan_char_correct += (p == g)
+                        nonwan_char_total += len(gt_text)
+                        nonwan_prov_total += 1
+                        if pred_text and pred_text[0] == gt_text[0]:
+                            nonwan_prov_correct += 1
+
+    result = {
+        'n': all_total,
+        'exact': float(overall),
+        'exact_raw': all_exact / max(all_total, 1),
+        'char': all_char_correct / max(all_char_total, 1),
+        'wan': {
+            'n': wan_total,
+            'exact': wan_exact / max(wan_total, 1),
+            'char': wan_char_correct / max(wan_char_total, 1),
+            'prov1st': wan_prov_correct / max(wan_prov_total, 1),
+        },
+        'nonwan': {
+            'n': nonwan_total,
+            'exact': nonwan_exact / max(nonwan_total, 1),
+            'char': nonwan_char_correct / max(nonwan_char_total, 1),
+            'prov1st': nonwan_prov_correct / max(nonwan_prov_total, 1),
+        },
+        'all_prov1st': (wan_prov_correct + nonwan_prov_correct) / max(wan_prov_total + nonwan_prov_total, 1),
+    }
+
+    # Verify weighted consistency
+    computed_all_exact = (result['wan']['exact'] * wan_total + result['nonwan']['exact'] * nonwan_total) / max(wan_total + nonwan_total, 1)
+    result['_exact_consistency_check'] = {
+        'from_weighted_wan_nonwan': float(computed_all_exact),
+        'from_Greedy_Decode_Eval': float(overall),
+        'from_raw_count': all_exact / max(all_total, 1),
+        'wan_weight': wan_total / max(wan_total + nonwan_total, 1),
+        'nonwan_weight': nonwan_total / max(wan_total + nonwan_total, 1),
+        'match': abs(computed_all_exact - overall) < 0.001,
+    }
+
+    return result
+
+
+# Run evaluation
+results = {}
+for mname, mpath in MODELS.items():
+    if not mpath.exists():
+        print(f"SKIP {mname}: not found", flush=True)
+        continue
+    print(f"{mname}:", end=' ', flush=True)
+
+    net = build_lprnet_multihead(lpr_max_len=8, phase=False, class_num=len(CHARS),
+                                  dropout_rate=0.5,
+                                  enhanced_green_head='expE' if 'expE' in mname else 'expD',
+                                  pos0_head_cols=0)
+    state = torch.load(str(mpath), map_location='cpu')
+    net.load_state_dict(state, strict=False)
+    net.to(device)
+    net.eval()
+
+    results[mname] = {}
+    for ename, epath in MANIFESTS.items():
+        r = detailed_eval(net, epath)
+        if r:
+            results[mname][ename] = r
+
+    del net
+    torch.cuda.empty_cache()
+
+    r = results[mname]
+    cv = r.get('cvr_val', {})
+    gv = r.get('green_val', {})
+    wan = gv.get('wan', {})
+    nw = gv.get('nonwan', {})
+    print(f"cvr={cv.get('exact',0)*100:.1f}%  "
+          f"gv_all={gv.get('exact',0)*100:.1f}%  "
+          f"wan_ex={wan.get('exact',0)*100:.1f}%  nw_ex={nw.get('exact',0)*100:.1f}%  "
+          f"wan_p1={wan.get('prov1st',0)*100:.1f}%  nw_p1={nw.get('prov1st',0)*100:.1f}%",
+          flush=True)
+
+
+# Print final table
+print(f"\n{'='*100}")
+print(f"FINAL COMPARISON: old_green / v2 / v3 / phase2")
+print(f"{'='*100}")
+
+print(f"\n{'Model':15s} {'cvr_val':>8s} {'b_cvr_val':>10s} | "
+      f"{'gv_all':>8s} {'gv_wan':>8s} {'gv_nwan':>8s} | "
+      f"{'w_p1st':>7s} {'nw_p1st':>8s} {'a_p1st':>8s} | "
+      f"{'w_char':>7s} {'nw_char':>8s}")
+print('-' * 100)
+
+for mname in ['old_green', 'v2_cvreplace', 'v3_best', 'phase2_best', 'expE_best', 'v4_from_oldgreen', 'v4b_continue', 'v4b_clean', 'v4c_A_wan15', 'v4c_B_wan25']:
+    if mname not in results:
+        continue
+    r = results[mname]
+    cv = r.get('cvr_val', {})
+    b = r.get('base_cvr_val', {})
+    gv = r.get('green_val', {})
+    wan = gv.get('wan', {})
+    nw = gv.get('nonwan', {})
+
+    print(f"{mname:15s} {cv.get('exact',0)*100:7.1f}% {b.get('exact',0)*100:9.1f}% | "
+          f"{gv.get('exact',0)*100:7.1f}% {wan.get('exact',0)*100:7.1f}% {nw.get('exact',0)*100:7.1f}% | "
+          f"{wan.get('prov1st',0)*100:6.1f}% {nw.get('prov1st',0)*100:7.1f}% {gv.get('all_prov1st',0)*100:7.1f}% | "
+          f"{wan.get('char',0)*100:6.1f}% {nw.get('char',0)*100:7.1f}%")
+
+# Verify consistency
+print(f"\n{'='*60}")
+print(f"CONSISTENCY CHECK")
+print(f"{'='*60}")
+for mname in ['old_green', 'v2_cvreplace', 'v3_best', 'phase2_best', 'expE_best', 'v4_from_oldgreen', 'v4b_continue', 'v4b_clean', 'v4c_A_wan15', 'v4c_B_wan25']:
+    if mname not in results:
+        continue
+    gv = results[mname].get('green_val', {})
+    ck = gv.get('_exact_consistency_check', {})
+    if ck:
+        match = '✅' if ck.get('match') else '❌'
+        print(f"{mname:15s}: GreedyEval={ck['from_Greedy_Decode_Eval']*100:.1f}%  "
+              f"Weighted={ck['from_weighted_wan_nonwan']*100:.1f}%  "
+              f"RawCount={ck['from_raw_count']*100:.1f}%  "
+              f"wan_wt={ck['wan_weight']*100:.0f}%  nw_wt={ck['nonwan_weight']*100:.0f}%  {match}")
+
+# Save
+out_path = ROOT / 'experiments' / 'green_ccpd2019_tilt_db_challenge_cvreplace_v3_phase2_20260508' / 'final_eval_base_val_v1.json'
+out_path.parent.mkdir(parents=True, exist_ok=True)
+json.dump(results, open(out_path, 'w'), ensure_ascii=False, indent=2)
+print(f"\nSaved: {out_path}")

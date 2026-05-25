@@ -1,0 +1,172 @@
+[
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/experiment_catalog.json",
+    "target": "/home/wzzz/LPRNet/experiment_catalog.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/expert_archive_plan.json",
+    "target": "/home/wzzz/LPRNet/expert_archive_plan.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/expert_asset_candidates.json",
+    "target": "/home/wzzz/LPRNet/expert_asset_candidates.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/green_plate_expert_completion_plan.json",
+    "target": "/home/wzzz/LPRNet/green_plate_expert_completion_plan.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/blue_plate_expert_completion_plan.json",
+    "target": "/home/wzzz/LPRNet/blue_plate_expert_completion_plan.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/manifest_path_inventory_rebased.json",
+    "target": "/home/wzzz/LPRNet/manifest_path_inventory_rebased.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/manifest_rebase_dry_run.json",
+    "target": "/home/wzzz/LPRNet/manifest_rebase_dry_run.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/manifest_rebase_execute_report.json",
+    "target": "/home/wzzz/LPRNet/manifest_rebase_execute_report.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/manifest_rebase_plan.json",
+    "target": "/home/wzzz/LPRNet/manifest_rebase_plan.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/migration_plan.json",
+    "target": "/home/wzzz/LPRNet/migration_plan.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/migration_plan_review.json",
+    "target": "/home/wzzz/LPRNet/migration_plan_review.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/model_zoo_completeness_review.json",
+    "target": "/home/wzzz/LPRNet/model_zoo_completeness_review.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/next_rebased_representative_experiments.json",
+    "target": "/home/wzzz/LPRNet/next_rebased_representative_experiments.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/rebased_config_migration_suggestions.json",
+    "target": "/home/wzzz/LPRNet/rebased_config_migration_suggestions.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/rebased_dataset_root_consistency.json",
+    "target": "/home/wzzz/LPRNet/rebased_dataset_root_consistency.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/rebased_manifest_training_roots.json",
+    "target": "/home/wzzz/LPRNet/rebased_manifest_training_roots.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/rebased_training_smoke_test.json",
+    "target": "/home/wzzz/LPRNet/rebased_training_smoke_test.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/yellow_single_batch_smoke_result.json",
+    "target": "/home/wzzz/LPRNet/yellow_single_batch_smoke_result.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/yellow_single_rebased_batch_plan.json",
+    "target": "/home/wzzz/LPRNet/yellow_single_rebased_batch_plan.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/yellow_single_v1_phase1_rebased_epoch1_result.json",
+    "target": "/home/wzzz/LPRNet/yellow_single_v1_phase1_rebased_epoch1_result.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/generated_json/yellow_single_v1_phase1_rebased_smoke_result.json",
+    "target": "/home/wzzz/LPRNet/yellow_single_v1_phase1_rebased_smoke_result.json"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tools/_check_qa04.py",
+    "target": "/home/wzzz/LPRNet/_check_qa04.py"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tools/_check_qa04_detailed.py",
+    "target": "/home/wzzz/LPRNet/_check_qa04_detailed.py"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tools/_check_quad_order.py",
+    "target": "/home/wzzz/LPRNet/_check_quad_order.py"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tools/_filter_replace_val.py",
+    "target": "/home/wzzz/LPRNet/_filter_replace_val.py"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tools/_inspect_qa04.py",
+    "target": "/home/wzzz/LPRNet/_inspect_qa04.py"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tools/_inspect_qa04_visual.py",
+    "target": "/home/wzzz/LPRNet/_inspect_qa04_visual.py"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tools/_inspect_warp_quality.py",
+    "target": "/home/wzzz/LPRNet/_inspect_warp_quality.py"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tools/_qa04_comparison.py",
+    "target": "/home/wzzz/LPRNet/_qa04_comparison.py"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tools/tmp_export_refiner_onnx.py",
+    "target": "/home/wzzz/LPRNet/tmp_export_refiner_onnx.py"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tools/tmp_export_refiner_rknn_friendly.py",
+    "target": "/home/wzzz/LPRNet/tmp_export_refiner_rknn_friendly.py"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tools/tmp_export_refiner_static_onnx.py",
+    "target": "/home/wzzz/LPRNet/tmp_export_refiner_static_onnx.py"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/cleanup_candidates/true_quad_refiner_robust_plan.md:Zone.Identifier",
+    "target": "/home/wzzz/LPRNet/true_quad_refiner_robust_plan.md:Zone.Identifier"
+  },
+  {
+    "action": "mv",
+    "source": "/home/wzzz/LPRNet/tmp/cleanup_candidates/hermes_conversation_20260424_193850.json",
+    "target": "/home/wzzz/LPRNet/hermes_conversation_20260424_193850.json"
+  }
+]

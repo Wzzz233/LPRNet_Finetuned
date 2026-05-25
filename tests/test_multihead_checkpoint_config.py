@@ -1,6 +1,14 @@
+import sys
 import unittest
+from pathlib import Path
 
 import torch
+
+ROOT = Path('/home/wzzz/LPRNet')
+for p in [ROOT / 'src', ROOT / 'src' / 'utils', ROOT / 'src' / 'training', ROOT / 'src' / 'evaluation']:
+    sp = str(p)
+    if sp not in sys.path:
+        sys.path.insert(0, sp)
 
 from LPRNet_multihead import (
     DEFAULT_POS0_NUM_CLASSES,

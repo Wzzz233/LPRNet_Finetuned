@@ -24,7 +24,7 @@ for _p in (str(_SRC_DIR), str(_SRC_DIR / 'utils')):
 from load_data import CHARS, LPRDataLoader, CCPDBoardDataLoader, UnifiedManifestDataset, PROVINCE_COUNT
 from lpr_pipeline_policy import BOARD_PARAM_EXPECTED
 from LPRNet import build_lprnet
-from LPRNet_multihead import build_lprnet_multihead, build_lprnet_multihead_from_state_dict
+from LPRNet_multihead import build_lprnet_multihead, build_lprnet_multihead_from_state_dict, load_multihead_state_dict_compat
 from test_LPRNet import collate_fn, greedy_decode_logits
 
 
@@ -151,14 +151,11 @@ def green_prefix_valid(text):
     if length > 8:
         return False
     if length >= 3:
-        if text[2] in {"D", "F"}:
-            if any(c not in GREEN_ALNUM for c in text[3:]):
-                return False
-        else:
-            if any(c not in GREEN_ALNUM for c in text[2:]):
-                return False
-            if length == 8 and text[7] not in {"D", "F"}:
-                return False
+        # 新能源绿牌第三位不再强制限定为 D/F。
+        # 在高保有量城市，纯电 D 耗尽后可启用 A/B/C/E，非纯电 F 耗尽后可启用 G/H/J/K。
+        # 因此 family-aware beam 只约束第 3 位及后续为合法大写字母/数字，不再要求末位必须 D/F。
+        if any(c not in GREEN_ALNUM for c in text[2:]):
+            return False
     return True
 
 
@@ -167,9 +164,7 @@ def green_full_valid(text):
         return False
     if not green_prefix_valid(text):
         return False
-    if text[2] in {"D", "F"}:
-        return all(c in GREEN_ALNUM for c in text[3:])
-    return all(c in GREEN_ALNUM for c in text[2:7]) and text[7] in {"D", "F"}
+    return all(c in GREEN_ALNUM for c in text[2:])
 
 
 def normal7_prefix_valid(text):
@@ -472,7 +467,7 @@ def evaluate(args):
             net = build_lprnet_multihead(
                 lpr_max_len=args.lpr_max_len,
                 phase=False,
-                class_num=len(CHARS),
+                class_num=inferred_cfg['class_num'],
                 dropout_rate=args.dropout_rate,
                 enhanced_green_head=args.enhanced_green_head,
                 pos0_head_cols=inferred_cfg['pos0_head_cols'],
@@ -481,7 +476,7 @@ def evaluate(args):
             )
             if inferred_cfg['pos0_target_families']:
                 net.enable_family_specific_pos0(inferred_cfg['pos0_target_families'], pos0_num_classes=inferred_cfg['pos0_num_classes'])
-        net.load_state_dict(state, strict=False)
+        load_multihead_state_dict_compat(net, state, strict=False)
     else:
         net = build_lprnet(lpr_max_len=args.lpr_max_len, phase=False, class_num=len(CHARS), dropout_rate=args.dropout_rate)
         net.load_state_dict(state)

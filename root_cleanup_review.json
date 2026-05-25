@@ -1,0 +1,839 @@
+[
+  {
+    "path": ".gitignore",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "AI使用披露.md",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "正式文档",
+    "recommendation": "keep"
+  },
+  {
+    "path": "CBLPRD-330k_v1",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "CCPD2019",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "CCPD2020",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "CRPD_all",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "CRPD_raw_ccpd_board_v1",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "Gemini报告.md",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "正式文档",
+    "recommendation": "keep"
+  },
+  {
+    "path": "LPRNet_YOLO_车牌识别系统技术报告.md",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "正式文档",
+    "recommendation": "keep"
+  },
+  {
+    "path": "README.md",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "正式文档",
+    "recommendation": "keep"
+  },
+  {
+    "path": "__pycache__",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "_check_qa04.py",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "临时脚本",
+    "recommendation": "move_to_tools"
+  },
+  {
+    "path": "_check_qa04_detailed.py",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "临时脚本",
+    "recommendation": "move_to_tools"
+  },
+  {
+    "path": "_check_quad_order.py",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "临时脚本",
+    "recommendation": "move_to_tools"
+  },
+  {
+    "path": "_filter_replace_val.py",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "临时脚本",
+    "recommendation": "move_to_tools"
+  },
+  {
+    "path": "_inspect_qa04.py",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "临时脚本",
+    "recommendation": "move_to_tools"
+  },
+  {
+    "path": "_inspect_qa04_visual.py",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "临时脚本",
+    "recommendation": "move_to_tools"
+  },
+  {
+    "path": "_inspect_warp_quality.py",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "临时脚本",
+    "recommendation": "move_to_tools"
+  },
+  {
+    "path": "_qa04_comparison.py",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "临时脚本",
+    "recommendation": "move_to_tools"
+  },
+  {
+    "path": "archive",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "artifacts",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "augment_image.py",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "symlink 脚本",
+    "recommendation": "keep"
+  },
+  {
+    "path": "background",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "blue_plate_expert_completion_plan.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "cblprd_obb_autolabel_v1",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "check0_base_optimize.onnx",
+    "file_type": "file",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "板端 ONNX",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "config",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "configs",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "data",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "datasets",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "docs",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "experiment_catalog.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "experiments",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "expert_archive_plan.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "expert_asset_candidates.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "font",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "generate_chars_image.py",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "symlink 脚本",
+    "recommendation": "keep"
+  },
+  {
+    "path": "generate_plate_template.py",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "symlink 脚本",
+    "recommendation": "keep"
+  },
+  {
+    "path": "generated",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "green_edgefit_tier3_full_v2",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "green_edgefit_v4_boardlike_a3000",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "green_exact_quad_synthetic_v1",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "green_plate_expert_completion_plan.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "hermes_conversation_20260424_193850.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "images",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "keys",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "labels",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "logs",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "manifest_path_inventory_rebased.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "manifest_rebase_dry_run.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "manifest_rebase_execute_report.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "manifest_rebase_plan.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "manifests",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "manifests_rebased",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "migration_plan.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "migration_plan_review.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "model_zoo",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "model_zoo_completeness_review.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "models",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "next_rebased_representative_experiments.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "prepared_labels",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "qa_firstchar_hires_rawcrop",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "qa_firstchar_hires_rawcrop_abc",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "qa_firstchar_patch_ab",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "qa_firstchar_patch_ab_v2",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "qa_u1c_green_generation_difficulty",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "rebased_config_migration_suggestions.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "rebased_dataset_root_consistency.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "rebased_manifest_training_roots.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "rebased_training_smoke_test.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "reports",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "runs",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "scripts",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "src",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "tests",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "third_party",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "tmp",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "tmp_export_refiner_onnx.py",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "临时脚本",
+    "recommendation": "move_to_tools"
+  },
+  {
+    "path": "tmp_export_refiner_rknn_friendly.py",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "临时脚本",
+    "recommendation": "move_to_tools"
+  },
+  {
+    "path": "tmp_export_refiner_static_onnx.py",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "临时脚本",
+    "recommendation": "move_to_tools"
+  },
+  {
+    "path": "tmp_refiner_char_dependency_exp",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "tmp_refiner_style_extreme_r2",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "tmp_scripts",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "tmp_v4_probe",
+    "file_type": "dir",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "",
+    "recommendation": "keep"
+  },
+  {
+    "path": "tools",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "true_quad_refiner_robust_plan.md",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": false,
+    "risk": "low",
+    "reason": "正式文档",
+    "recommendation": "keep"
+  },
+  {
+    "path": "true_quad_refiner_robust_plan.md:Zone.Identifier",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "Windows 残留",
+    "recommendation": "move_to_cleanup"
+  },
+  {
+    "path": "weights_tiny_province_h20b",
+    "file_type": "dir",
+    "is_core_asset": true,
+    "can_move_now": false,
+    "risk": "high",
+    "reason": "核心目录",
+    "recommendation": "blocked"
+  },
+  {
+    "path": "yellow_single_batch_smoke_result.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "yellow_single_rebased_batch_plan.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "yellow_single_v1_phase1_rebased_epoch1_result.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "yellow_single_v1_phase1_rebased_smoke_result.json",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "中间 JSON",
+    "recommendation": "move_to_generated_json"
+  },
+  {
+    "path": "边缘侧视觉架构重构：基于 RK3568 的 LPRNet 绿牌识别几何畸变与长尾分布联合优化研究报告.md",
+    "file_type": "file",
+    "is_core_asset": false,
+    "can_move_now": true,
+    "risk": "low",
+    "reason": "报告",
+    "recommendation": "move_to_docs"
+  }
+]

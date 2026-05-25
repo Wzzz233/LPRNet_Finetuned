@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+"""
+Launch StageA redesign training.
+Board-consistent gray3 multihead StageA foundation run using redesigned manifest/proxy.
+"""
+
+import os
+from pathlib import Path
+
+ROOT = Path('/home/wzzz/LPRNet')
+EXP = ROOT / 'experiments' / 'curriculum_gray3_stageA_redesign_v1'
+EXP.mkdir(parents=True, exist_ok=True)
+
+cmd = f'''#!/usr/bin/env bash
+set -euo pipefail
+cd /home/wzzz/LPRNet
+export PYTHONPATH=/home/wzzz/LPRNet/src
+python3 src/training/train_LPRNet.py \
+  --data_mode manifest \
+  --train_manifest manifests/curriculum_gray3_stagea_redesign/train_stageA.csv \
+  --test_manifest manifests/curriculum_gray3_stagea_redesign/val.csv \
+  --pretrained_model experiments/curriculum_gray3_base/init_multihead_from_official.pth \
+  --head_mode multihead \
+  --trainable_families normal7,green8 \
+  --ocr_crop_mode obb_warp \
+  --ocr_resize_mode letterbox \
+  --ocr_resize_kernel nn \
+  --ocr_preproc gray3 \
+  --gray3_prob 1.0 \
+  --main_group_by family \
+  --train_batch_size 128 \
+  --test_batch_size 120 \
+  --max_epoch 20 \
+  --learning_rate 0.005 \
+  --lr_schedule 10 15 \
+  --freeze_backbone False \
+  --selection_proxy_eval_samples 3000 \
+  --selection_proxy_mode stratified \
+  --selection_decode_mode family_aware_beam \
+  --save_folder experiments/curriculum_gray3_stageA_redesign_v1 \
+  --num_workers 4 \
+  --seed 42 \
+  --cuda True \
+  > experiments/curriculum_gray3_stageA_redesign_v1/train.log 2>&1
+'''
+
+path = ROOT / 'scripts' / 'curriculum_gray3' / 'run_stageA_redesign_v1.sh'
+path.write_text(cmd, encoding='utf-8')
+os.chmod(path, 0o755)
+print(path)

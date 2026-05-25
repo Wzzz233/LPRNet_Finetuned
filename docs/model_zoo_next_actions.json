@@ -1,0 +1,22 @@
+{
+  "copy_checkpoints": {
+    "recommendation": "NOT YET",
+    "reason": "Checkpoints remain in original experiment dirs. Copy when ready with: --copy-checkpoints",
+    "total_size_mb": 18
+  },
+  "copy_board_artifacts": {
+    "recommendation": "NOT YET",
+    "reason": "ONNX + RKNN remain in original locations. Copy when ready with: --copy-board-artifacts",
+    "total_size_mb": 25
+  },
+  "archive_ready_experts": [
+    "yellow_from_blue_expert (after checkpoint copy)"
+  ],
+  "needs_manual_confirmation": [
+    "blue_plate_expert: rebased manifest needs identification",
+    "green_plate_expert: verify prov_deg model training matches deployed"
+  ],
+  "manifest_cleanup_ready": false,
+  "dataset_cleanup_ready": false,
+  "next_command": "python tools/build_expert_archives.py --execute --copy-checkpoints --copy-board-artifacts"
+}
