@@ -1,0 +1,290 @@
+POLICE FixedNorm Acceptance Report
+Generated: 2026-05-26 22:15:07.729001
+Checkpoint: experiments/police_formal_fixednorm_20260526/best_LPRNet_model.pth
+
+Accuracy: 186/310 = 60.00%
+Errors: 124
+Length errors: 35/124 among errors
+Illegal chars: 0
+
+Error type breakdown:
+  First-char (province) errors: 110
+  Tail (警) errors: 0
+  Other errors: 14
+
+Top province confusions:
+  GT=粤 -> pred=青: 3
+  GT=吉 -> pred=闽: 2
+  GT=湘 -> pred=浙: 2
+  GT=鄂 -> pred=琼: 2
+  GT=辽 -> pred=甘: 2
+  GT=新 -> pred=赣: 2
+  GT=苏 -> pred=新: 2
+  GT=冀 -> pred=蒙: 2
+  GT=皖 -> pred=陕: 2
+  GT=浙 -> pred=渝: 2
+  GT=桂 -> pred=甘: 2
+  GT=豫 -> pred=陕: 2
+  GT=藏 -> pred=陕: 1
+  GT=宁 -> pred=津: 1
+  GT=琼 -> pred=津: 1
+
+Per-position accuracy:
+  Pos0: 200/310 = 64.5%
+
+Top-100 GT vs Pred:
+ idx           GT         pred  ok len_err
+  Pos1: 303/310 = 97.7%
+
+Top-100 GT vs Pred:
+ idx           GT         pred  ok len_err
+  Pos2: 290/310 = 93.5%
+
+Top-100 GT vs Pred:
+ idx           GT         pred  ok len_err
+  Pos3: 284/310 = 91.6%
+
+Top-100 GT vs Pred:
+ idx           GT         pred  ok len_err
+  Pos4: 281/310 = 90.6%
+
+Top-100 GT vs Pred:
+ idx           GT         pred  ok len_err
+  Pos5: 275/310 = 88.7%
+
+Top-100 GT vs Pred:
+ idx           GT         pred  ok len_err
+  Pos6: 275/310 = 88.7%
+
+Top-100 GT vs Pred:
+ idx           GT         pred  ok len_err
+  Pos7: 0/0 = 0.0%
+
+Top-100 GT vs Pred:
+ idx           GT         pred  ok len_err
+   0      藏VV3FM警       陕V3FM警   N       Y
+   1      宁T48WQ警       津T48Q警   N       Y
+   2      陕GWTWN警      陕GWTWN警   Y        
+   3      琼LM6TL警      津LM6TL警   N        
+   4      皖SAV06警      皖SAV06警   Y        
+   5      沪PLR08警      沪PLR08警   Y        
+   6      津PMYB2警      津PMYB2警   Y        
+   7      粤R863T警      沪R863T警   N        
+   8      豫XZ6BX警      琼XZ6BX警   N        
+   9      吉EFDZL警      吉EFDZL警   Y        
+  10      蒙S2VJP警      蒙S2VJP警   Y        
+  11      贵H23DY警      贵H23DY警   Y        
+  12      黑Z3B9J警      川Z3B9J警   N        
+  13      津VXMEW警      贵VXMEW警   N        
+  14      渝NNS1R警       京NS1R警   N       Y
+  15      豫ME876警     津MFS765警   N       Y
+  16      辽V5PEM警      辽V5PEM警   Y        
+  17      吉DZGGZ警      吉DZGGZ警   Y        
+  18      蒙GTTHX警      蒙GTTHX警   Y        
+  19      吉ASMDW警         闽S0警   N       Y
+  20      豫TGKBG警      蒙TGKBG警   N        
+  21      蒙CJ47D警      蒙CJ47D警   Y        
+  22      闽WAJ7N警        吉WA7警   N       Y
+  23      苏L9XT1警      苏L9XT1警   Y        
+  24      新Z53Y1警      新Z53Y1警   Y        
+  25      闽D3UTG警      皖D3UTG警   N        
+  26      皖AKLL6警      皖AKLL6警   Y        
+  27      鄂K6JY7警      鄂K6JY7警   Y        
+  28      宁MU3XR警      宁MU3XR警   Y        
+  29      粤KJ7Y2警      蒙KJ7Y2警   N        
+  30      辽EXED5警      辽EXED5警   Y        
+  31      浙QKM07警      浙QKM07警   Y        
+  32      鄂P5QYQ警      鄂P5QYQ警   Y        
+  33      湘TDVZE警      湘TDVZE警   Y        
+  34      湘DQ34B警      浙DQ34B警   N        
+  35      鲁JRRRL警      鲁JRRRL警   Y        
+  36      豫TVLSW警      豫TVLSW警   Y        
+  37      蒙SEEZB警      蒙SEEZB警   Y        
+  38      鄂LBUNN警       琼LBUN警   N       Y
+  39      鲁EWW7K警       鲁EW7K警   N       Y
+  40      沪J64AT警      沪J64AT警   Y        
+  41      桂FFG86警       YFG86警   N       Y
+  42      甘NZ301警      甘NZ301警   Y        
+  43      青SMRX3警      青SMRX3警   Y        
+  44      晋TA37D警      晋TA37D警   Y        
+  45      赣U1D1U警      苏U1D1U警   N        
+  46      赣S7610警      赣S7610警   Y        
+  47      赣A8M3N警      赣A8M3N警   Y        
+  48      新XTSZC警      新XTSZC警   Y        
+  49      贵HLD09警      新HLD09警   N        
+  50      陕J848T警      陕J848T警   Y        
+  51      甘QJ606警      甘QJ606警   Y        
+  52      云GNPQA警      云GNPQA警   Y        
+  53      皖VVN1R警       皖VN1R警   N       Y
+  54      辽M592W警      甘M592W警   N        
+  55      晋BBKYW警     桂BBKYMW警   N       Y
+  56      黑JMU07警      晋JMU07警   N        
+  57      湘XBA1N警      湘XBA1N警   Y        
+  58      黑ZK11P警      黑ZK11P警   Y        
+  59      新D7SZS警      赣D7SZS警   N        
+  60      青QP4FA警      陕QP4FA警   N        
+  61      新QGUEJ警      新QGUEJ警   Y        
+  62      黑EN2E9警      黑EN2E9警   Y        
+  63      蒙SPZ8P警      贵SPZ8P警   N        
+  64      浙TB3AE警      湘TB3AE警   N        
+  65      吉TV585警      吉TV585警   Y        
+  66      鲁LB2H5警      警LB2H5警   N        
+  67      粤BZGUN警      粤BZGUN警   Y        
+  68      鲁YKEZ6警      鲁YKEZ6警   Y        
+  69      粤U8UGF警      甘U8UGF警   N        
+  70      青GTAYB警      鲁GTAYB警   N        
+  71      藏QUCJM警      藏QUCJM警   Y        
+  72      琼P5HSL警      琼P5HSL警   Y        
+  73      藏KCY24警      藏KCY24警   Y        
+  74      鲁RMZUG警      陕RMZUG警   N        
+  75      冀VW6X2警      冀VW6X2警   Y        
+  76      闽C8E29警      闽C8E29警   Y        
+  77      沪H6F1Y警      辽H6F1Y警   N        
+  78      苏QQXDD警        新QXD警   N       Y
+  79      宁TU807警      宁TU807警   Y        
+  80      渝VUP1A警      渝VUP1A警   Y        
+  81      陕M0F3U警      琼M0F3U警   N        
+  82      浙GYBJT警      蒙GYBJT警   N        
+  83      贵QD209警      琼QD209警   N        
+  84      鄂AHCXC警      鄂AHCXC警   Y        
+  85      津LPZC7警      津LPZC7警   Y        
+  86      藏Q6BUP警      藏Q6BUP警   Y        
+  87      鄂GTPMX警      鄂GTPMX警   Y        
+  88      沪UVW80警      沪UVW80警   Y        
+  89      甘R7SVQ警      甘R7SVQ警   Y        
+  90      黑D5R9E警      黑D5R9E警   Y        
+  91      沪M1R0H警      沪M1R0H警   Y        
+  92      津AG8LQ警      渝AG8LQ警   N        
+  93      冀L0GG7警      冀L0GG7警   Y        
+  94      青U5EC8警      青U5EC8警   Y        
+  95      黑XRMW3警      浙XRMW3警   N        
+  96      粤MG58L警      青MG58L警   N        
+  97      粤HDW43警      鄂HDW43警   N        
+  98      粤RW1H9警      青RW1H9警   N        
+  99      豫WY05X警      豫WY05X警   Y        
+
+All errors (124):
+   0 GT=   藏VV3FM警 pred=    陕V3FM警 len_err=Y
+   1 GT=   宁T48WQ警 pred=    津T48Q警 len_err=Y
+   3 GT=   琼LM6TL警 pred=   津LM6TL警 len_err=N
+   7 GT=   粤R863T警 pred=   沪R863T警 len_err=N
+   8 GT=   豫XZ6BX警 pred=   琼XZ6BX警 len_err=N
+  12 GT=   黑Z3B9J警 pred=   川Z3B9J警 len_err=N
+  13 GT=   津VXMEW警 pred=   贵VXMEW警 len_err=N
+  14 GT=   渝NNS1R警 pred=    京NS1R警 len_err=Y
+  15 GT=   豫ME876警 pred=  津MFS765警 len_err=Y
+  19 GT=   吉ASMDW警 pred=      闽S0警 len_err=Y
+  20 GT=   豫TGKBG警 pred=   蒙TGKBG警 len_err=N
+  22 GT=   闽WAJ7N警 pred=     吉WA7警 len_err=Y
+  25 GT=   闽D3UTG警 pred=   皖D3UTG警 len_err=N
+  29 GT=   粤KJ7Y2警 pred=   蒙KJ7Y2警 len_err=N
+  34 GT=   湘DQ34B警 pred=   浙DQ34B警 len_err=N
+  38 GT=   鄂LBUNN警 pred=    琼LBUN警 len_err=Y
+  39 GT=   鲁EWW7K警 pred=    鲁EW7K警 len_err=Y
+  41 GT=   桂FFG86警 pred=    YFG86警 len_err=Y
+  45 GT=   赣U1D1U警 pred=   苏U1D1U警 len_err=N
+  49 GT=   贵HLD09警 pred=   新HLD09警 len_err=N
+  53 GT=   皖VVN1R警 pred=    皖VN1R警 len_err=Y
+  54 GT=   辽M592W警 pred=   甘M592W警 len_err=N
+  55 GT=   晋BBKYW警 pred=  桂BBKYMW警 len_err=Y
+  56 GT=   黑JMU07警 pred=   晋JMU07警 len_err=N
+  59 GT=   新D7SZS警 pred=   赣D7SZS警 len_err=N
+  60 GT=   青QP4FA警 pred=   陕QP4FA警 len_err=N
+  63 GT=   蒙SPZ8P警 pred=   贵SPZ8P警 len_err=N
+  64 GT=   浙TB3AE警 pred=   湘TB3AE警 len_err=N
+  66 GT=   鲁LB2H5警 pred=   警LB2H5警 len_err=N
+  69 GT=   粤U8UGF警 pred=   甘U8UGF警 len_err=N
+  70 GT=   青GTAYB警 pred=   鲁GTAYB警 len_err=N
+  74 GT=   鲁RMZUG警 pred=   陕RMZUG警 len_err=N
+  77 GT=   沪H6F1Y警 pred=   辽H6F1Y警 len_err=N
+  78 GT=   苏QQXDD警 pred=     新QXD警 len_err=Y
+  81 GT=   陕M0F3U警 pred=   琼M0F3U警 len_err=N
+  82 GT=   浙GYBJT警 pred=   蒙GYBJT警 len_err=N
+  83 GT=   贵QD209警 pred=   琼QD209警 len_err=N
+  92 GT=   津AG8LQ警 pred=   渝AG8LQ警 len_err=N
+  95 GT=   黑XRMW3警 pred=   浙XRMW3警 len_err=N
+  96 GT=   粤MG58L警 pred=   青MG58L警 len_err=N
+  97 GT=   粤HDW43警 pred=   鄂HDW43警 len_err=N
+  98 GT=   粤RW1H9警 pred=   青RW1H9警 len_err=N
+ 102 GT=   苏L3WHN警 pred=  吉L3WHNV警 len_err=Y
+ 105 GT=   鄂ACE46警 pred=   琼ACE46警 len_err=N
+ 106 GT=   蒙DBM0W警 pred=    豫DBM0警 len_err=Y
+ 110 GT=   鄂EEGUY警 pred=    鄂EGUY警 len_err=Y
+ 111 GT=   冀EQK4J警 pred=   蒙EQK4J警 len_err=N
+ 114 GT=   皖PXMCQ警 pred=   陕PXMCQ警 len_err=N
+ 116 GT=   浙N4270警 pred=   渝N4270警 len_err=N
+ 117 GT=   渝JL41S警 pred=  川渝JL41S警 len_err=Y
+ 118 GT=   琼PKQXS警 pred=   渝PKQXS警 len_err=N
+ 120 GT=   晋ELLNT警 pred=   晋ELUVT警 len_err=N
+ 122 GT=   沪CPEG0警 pred=   湘CPEG0警 len_err=N
+ 123 GT=   闽V56TM警 pred=    贵V56M警 len_err=Y
+ 127 GT=   湘D9KFZ警 pred=   豫D9KFZ警 len_err=N
+ 130 GT=   渝L2AMC警 pred=   津L2AMC警 len_err=N
+ 131 GT=   苏FBZ7V警 pred=   渝FBZ7V警 len_err=N
+ 133 GT=   贵GC2XB警 pred=   渝GC2XB警 len_err=N
+ 134 GT=   浙NS54X警 pred=  浙HNS54X警 len_err=Y
+ 138 GT=   沪ZWMQV警 pred=   浙ZWMQV警 len_err=N
+ 139 GT=   甘AQNZ8警 pred=   甘AQNZC警 len_err=N
+ 142 GT=   桂QVNFH警 pred=   甘QVNFH警 len_err=N
+ 146 GT=   闽EV3NP警 pred=  藏EVK3NP警 len_err=Y
+ 153 GT=   琼SQ4YC警 pred=   赣SQ4YC警 len_err=N
+ 160 GT=   苏PBXCD警 pred=   甘PBXCD警 len_err=N
+ 165 GT=   赣SEUG1警 pred=   藏SEUG1警 len_err=N
+ 167 GT=   辽RSYAK警 pred=  辽RSYXAK警 len_err=Y
+ 169 GT=   云V1J10警 pred=   青V1J10警 len_err=N
+ 171 GT=   湘FHHA9警 pred=    渝FHA9警 len_err=Y
+ 173 GT=   湘JW5KV警 pred=   津JW5KV警 len_err=N
+ 174 GT=   赣S0DT8警 pred=   蒙S0DT8警 len_err=N
+ 176 GT=   甘Q0CN1警 pred=   桂Q0CN1警 len_err=N
+ 177 GT=   琼ZL627警 pred=   藏ZL627警 len_err=N
+ 178 GT=   新RB5PN警 pred=   陕RB5PN警 len_err=N
+ 179 GT=   闽EDH7K警 pred=  闽EDNH7K警 len_err=Y
+ 186 GT=   豫J3VU0警 pred=   陕J3VU0警 len_err=N
+ 187 GT=   晋CBE5U警 pred=   琼CBE5U警 len_err=N
+ 189 GT=   湘R0EV6警 pred=   浙R0EV6警 len_err=N
+ 192 GT=   琼JSQ9P警 pred=   陕JSQ9P警 len_err=N
+ 199 GT=   宁WRZD4警 pred=   吉WRZD4警 len_err=N
+ 200 GT=   冀ED0P3警 pred=    蒙E0P3警 len_err=Y
+ 201 GT=   新XPDC5警 pred=   赣XPDC5警 len_err=N
+ 203 GT=   鲁RBPXU警 pred=   9RBPXU警 len_err=N
+ 205 GT=   渝CK2RZ警 pred=   浙CK2RZ警 len_err=N
+ 209 GT=   津JGNED警 pred=   赣JGNED警 len_err=N
+ 210 GT=   桂Y4B89警 pred=   甘Y4B89警 len_err=N
+ 212 GT=   皖FG0YL警 pred=   赣FG0YL警 len_err=N
+ 214 GT=   津Z73ZM警 pred=   宁Z73ZM警 len_err=N
+ 217 GT=   陕NWUUP警 pred=   贵NWUUP警 len_err=N
+ 218 GT=   贵AKDNN警 pred=     贵ADN警 len_err=Y
+ 220 GT=   黑Y7UZ5警 pred=   藏Y7UZ5警 len_err=N
+ 223 GT=   苏Z1ZTD警 pred=    鲁ZZTD警 len_err=Y
+ 227 GT=   吉QVXG0警 pred=   闽QNXG0警 len_err=N
+ 228 GT=   苏RXBKA警 pred=   新RXBKA警 len_err=N
+ 230 GT=   浙ZNGX2警 pred=   渝ZNGX2警 len_err=N
+ 232 GT=   鄂K8XMR警 pred=   苏K8XMR警 len_err=N
+ 233 GT=   蒙DFP88警 pred=   津DFP88警 len_err=N
+ 235 GT=   渝FRUX3警 pred=    FRUX3警 len_err=Y
+ 236 GT=   辽S2EFG警 pred=   甘S2EFG警 len_err=N
+ 237 GT=   皖SDQJJ警 pred=   陕SDQJJ警 len_err=N
+ 240 GT=   冀QJ0FZ警 pred=   粤QJ0FZ警 len_err=N
+ 245 GT=   青NA06B警 pred=  吉HNA06B警 len_err=Y
+ 251 GT=   粤PUVMG警 pred=   青PUVMG警 len_err=N
+ 254 GT=   甘BSNAQ警 pred=   黑BSNA0警 len_err=N
+ 256 GT=   陕WV2PD警 pred=   赣WV2PD警 len_err=N
+ 257 GT=   浙Q9J9Q警 pred=   闽Q9J9Q警 len_err=N
+ 258 GT=   辽WWY1S警 pred=    辽WY1S警 len_err=Y
+ 259 GT=   京DYQXK警 pred=    DYQXK警 len_err=Y
+ 261 GT=   藏F7C6U警 pred=   湘F7C6U警 len_err=N
+ 266 GT=   冀A3R7V警 pred=  冀A3R7VK警 len_err=Y
+ 267 GT=   黑H40NN警 pred=    黑H40N警 len_err=Y
+ 270 GT=   云KZ8WB警 pred=   云MZ8WB警 len_err=N
+ 271 GT=   赣TJ04W警 pred=   闽TJ04W警 len_err=N
+ 274 GT=   豫AMY4Y警 pred=   陕AMY4Y警 len_err=N
+ 278 GT=   青BZX2W警 pred=    闽BZ2W警 len_err=Y
+ 280 GT=   辽YYM2M警 pred=    黑YM2M警 len_err=Y
+ 283 GT=   藏G9BM7警 pred=   晋G9BM7警 len_err=N
+ 284 GT=   渝J187K警 pred=   粤J187K警 len_err=N
+ 285 GT=   皖J2QF4警 pred=   鄂J2QF4警 len_err=N
+ 289 GT=   新DHVFS警 pred=   甘DHVFS警 len_err=N
+ 296 GT=   豫Z2Q2K警 pred=   新Z2Q2K警 len_err=N
+ 297 GT=   赣GWYHL警 pred=    黑GYHL警 len_err=Y
+ 300 GT=   浙CTSQX警 pred=    黑CTSN警 len_err=Y
+ 302 GT=   新Q5DN8警 pred=   新Q5DNB警 len_err=N

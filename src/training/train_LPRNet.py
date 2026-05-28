@@ -140,6 +140,7 @@ def get_parser():
     parser.add_argument('--manifest', default='', help='single manifest csv for both train/test splits when --data_mode manifest')
     parser.add_argument('--train_manifest', default='', help='train manifest csv when --data_mode manifest')
     parser.add_argument('--test_manifest', default='', help='test manifest csv when --data_mode manifest')
+    parser.add_argument('--test_split_filter', default='test', help='split_filter value for test dataset (default: test; set to val for cvreplace manifests)')
     parser.add_argument('--dataset_root', default='.', help='dataset root directory; relative manifest img_path entries are resolved relative to this. set to /home/wzzz/LPRNet for rebased manifests')
     parser.add_argument('--strict_path_check', action='store_true', help='if set, raise error immediately when a manifest image path does not exist (default: keep existing permissive skip logic)')
     parser.add_argument('--keys_file', default='', help='path to OCR keys file (one char per line); overrides load_data.CHARS when provided')
@@ -1489,7 +1490,7 @@ def train():
             manifest_path=args.test_manifest,
             img_size=args.img_size,
             lpr_max_len=args.lpr_max_len,
-            split_filter='test',
+            split_filter=args.test_split_filter,
             **common_dataset_kwargs,
         )
         if hasattr(test_dataset, 'records'):
@@ -1503,6 +1504,7 @@ def train():
             if len(valid_indices) != len(test_dataset):
                 print(f'[Info] skip missing-image test rows: keep {len(valid_indices)}/{len(test_dataset)}')
                 test_dataset = Subset(test_dataset, valid_indices)
+        print(f'[Data] test_split_filter={args.test_split_filter} test_samples={len(test_dataset)}')
     else:
         train_main_dataset = LPRDataLoader(train_img_dirs.split(','), args.img_size, args.lpr_max_len, txt_file=args.train_txt_file)
         test_dataset = LPRDataLoader(test_img_dirs.split(','), args.img_size, args.lpr_max_len, txt_file=args.test_txt_file)
@@ -1717,8 +1719,17 @@ def train():
             input_lengths, target_lengths = sparse_tuple_for_ctc(logits.shape[2], lengths)
             aux_steps = max(1, min(args.first_char_time_steps, logits.shape[2]))
             first_targets = torch.tensor(extract_first_char_targets(labels, lengths), dtype=torch.long, device=labels.device)
-            first_logits = logits[:, :PROVINCE_COUNT, :aux_steps].mean(dim=2)
-            first_aux_loss = F.cross_entropy(first_logits, first_targets, weight=first_char_ce_weights)
+            # Guard: when class_num < PROVINCE_COUNT, first_char_aux is not applicable
+            # (e.g. embassy-only with class_num=12 cannot slice 31 province classes)
+            if logits.shape[1] < PROVINCE_COUNT:
+                if args.first_char_aux_weight > 0:
+                    print(f'[FirstCharGuard] class_num={logits.shape[1]} < PROVINCE_COUNT={PROVINCE_COUNT}, '
+                          f'disabling first_char_aux_loss for this run (was {args.first_char_aux_weight:.2f})')
+                    args.first_char_aux_weight = 0.0
+                first_aux_loss = torch.tensor(0.0)
+            else:
+                first_logits = logits[:, :PROVINCE_COUNT, :aux_steps].mean(dim=2)
+                first_aux_loss = F.cross_entropy(first_logits, first_targets, weight=first_char_ce_weights)
             if isinstance(all_outputs, dict) and pos0_target_families and args.pos0_head_weight > 0.0:
                 pos0_losses = []
                 for family in sorted(pos0_target_families):

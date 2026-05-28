@@ -1,6 +1,6 @@
 # LPRNet 工作区状态
 
-> 最后更新: 2026-05-17（普通单排黄色车牌 Phase 1 已收敛离线候选；绿牌继续冻结维护）
+> 最后更新: 2026-05-28（特殊牌 police/embassy 已拆分；LPRNet FixedNorm 已修复；Embassy ONNX/RKNN 已完成，Police 主 OCR 暂停转 sidecar）
 
 ---
 
@@ -8,17 +8,21 @@
 
 | 项目 | 状态 |
 |------|------|
-| 数据集目录 | ⚠️ 当前 worktree 含未跟踪内容；本文只确认 CCPD2020、生成数据、原始 CCPD2019 等关键目录仍在位 |
-| 训练代码 (src/) | ⚠️ 当前 worktree 存在独立开发改动；本文不将其归因为本次状态整理的一部分 |
+| 数据集目录 | ✅ CCPD2020、生成数据、原始 CCPD2019、special cvreplace 数据仍在位 |
+| 训练代码 (src/) | ✅ 已修复 LPRNet batch-dependent normalization；训练/导出统一使用 per-sample normalization |
 | manifests/ (旧绝对路径) | ✅ legacy 目录保留，仍可向后兼容 |
-| manifests_rebased/ | ✅ 已新增 `green_v5_final_20260509/`、`ccpd2020_green_real_20260509/`、`green_backbone_mix_realprimary_20260510/`、`a_ablation_20260510/`、`a_ratio_sweep_20260510/`、`b_lite_probe_20260510/`、`routeA_firstchar_r50_20260512/`、`routeA_prime_quadwarp_20260512/`、`yellow_phase1_20260515/` |
-| experiments/ | ✅ 已新增 `green_ccpd2019_v5_final_20260509/`、`mix_source_audit_20260510/`、`green_backbone_mix_*_20260510/`、`a_ablation_*_20260510/`、`a_ratio_*_20260510/`、`b_prime_*_20260510/`、`b_lite_*_20260510/`、`routeA_firstchar_r50_20260512/`、`routeA_prime_quadwarp_20260512/`、`routeA_nextstage_20260512/`、`routeA_epochcurve_20260512/`、`fc224_board_eval_20260512/`、`yellow_phase1_20260515/` |
+| manifests_rebased/ | ✅ 已新增 `green_v5_final_20260509/`、`ccpd2020_green_real_20260509/`、`green_backbone_mix_realprimary_20260510/`、`a_ablation_20260510/`、`a_ratio_sweep_20260510/`、`b_lite_probe_20260510/`、`routeA_firstchar_r50_20260512/`、`routeA_prime_quadwarp_20260512/`、`yellow_phase1_20260515/`、`special_split_20260526/` |
+| experiments/ | ✅ 已新增 `green_ccpd2019_v5_final_20260509/`、`mix_source_audit_20260510/`、`green_backbone_mix_*_20260510/`、`a_ablation_*_20260510/`、`a_ratio_*_20260510/`、`b_prime_*_20260510/`、`b_lite_*_20260510/`、`routeA_firstchar_r50_20260512/`、`routeA_prime_quadwarp_20260512/`、`routeA_nextstage_20260512/`、`routeA_epochcurve_20260512/`、`fc224_board_eval_20260512/`、`yellow_phase1_20260515/`、`embassy_formal_fixednorm_20260526/`、`police_*fixednorm*_20260526/` |
 | 根目录外围文件 | ✅ 已整洁化 |
 | Model Zoo 专家包 | ⚠️ 目录结构完整，但当前仍是 lightweight index；四个 `checkpoints/` 目录都为空 |
 | Manifest Rebase | ✅ 已完成（336 份） |
 | 训练脚本 dataset_root 支持 | ✅ 已添加 |
 | 训练链路验证 | ✅ yellow 系列通过 |
-| **普通单排黄色车牌 Phase 1** | ✅ 已收敛离线候选 — 推荐 `yellow_single_v2_weighted_phase2/best`，待 RKNN 对齐和板端颜色分流验证 |
+| **LPRNet FixedNorm** | ✅ 已完成 — 单头、多头、导出脚本统一 per-sample normalization；`scripts/test_batch_invariance.py` 通过 |
+| **普通单排黄色车牌 Phase 1** | ✅ 已收敛并已上板验证；ARM 已有按颜色路由到 yellow OCR 的分流逻辑 |
+| **特殊牌 cvreplace 全量生成** | ✅ 已完成 — 14,150 张；已拆为 `yellow_single` 路由审计、`police`、`embassy` 三路 |
+| **Embassy 专家** | ✅ FixedNorm 重训 90.33%；ONNX op11/op18 300/300 decode consistent；RKNN fp16 已转换，待板端/simulator decode check |
+| **Police 主 OCR** | ⏸️ 暂停 — FixedNorm 主 OCR 最高 64.84%，first-char aux 会系统性伤 tail“警”；下一步转 province sidecar |
 | **蓝牌 CCPD2019 posquad v1** | ✅ 完成 — 旧蓝牌 53.0% → **59.5%** (+6.5pp) |
 | **蓝牌 posquad v2 hardmine** | ✅ 完成 — v1 59.5% → **60.6%** (+1.1pp) |
 | **蓝牌退化检查** | ✅ 无退化 — simple/val/hard 均提升 |
@@ -41,6 +45,148 @@
 | **绿牌当前部署主线** | ✅ 冻结维护 — `R50` 主 OCR 为当前推荐主模型；`prov_deg` 仅作为旧稳定回退；首字 sidecar 可选 |
 | Manifest/数据集清理 | 📋 候选清单已生成，未执行 |
 | 回滚方案 | ✅ 可用 |
+
+---
+
+## 2026-05-28 增量更新（特殊牌拆分、FixedNorm、Embassy RKNN）
+
+这一节优先于下方 2026-05-17 的特殊牌生成链路描述。旧章节仍保留作为生成链路来源，但当前执行口径以本节为准。
+
+### 1. LPRNet batch-dependent normalization 已修复
+
+已确认旧 LPRNet forward 中存在 batch-size 依赖归一化：
+
+```python
+f_mean = torch.mean(f_pow)
+```
+
+该写法会跨 `B*C*H*W` 求全局均值，导致同一张图在 `batch=1` 和 `batch>1` 离线评估时输出不同。结论：
+
+- 修复前所有 `batch>1` 离线 PyTorch eval 数字不可直接作为验收依据。
+- ARM / RKNN 单张推理不因此自动作废，因为 `batch=1` 时旧写法等价于 per-sample mean。
+- 后续训练、导出、ONNX、RKNN 必须统一使用 per-sample normalization，禁止“训练 batch-dependent、导出 per-sample”的混合方案。
+
+已修复文件：
+
+```text
+src/LPRNet.py
+src/LPRNet_multihead.py
+src/export/export_onnx_rknn_compatible.py
+src/export/export_onnx_rknn_multihead.py
+src/utils/verify_export_consistency.py
+```
+
+回归测试：
+
+```text
+scripts/test_batch_invariance.py
+```
+
+当前结果：single-head、multihead、multihead+aux 均通过 batch invariance 检查。
+
+### 2. 特殊牌数据和任务拆分
+
+特殊牌不再走 police+embassy 混合 OCR，也不再把普通黄牌混入 special OCR。
+
+当前正式拆分：
+
+| 任务 | 用途 | Train | Val | Keys |
+|------|------|---:|---:|------|
+| `yellow_single` | 仅用于颜色路由 sanity check；普通黄牌仍走 yellow OCR | 6,200 | 620 | `keys/yellow_keys.txt` |
+| `police` | 警牌 OCR / 后续 province sidecar | 3,720 | 310 | `keys/police_keys.txt` |
+| `embassy` | 使馆牌 OCR | 3,000 | 300 | `keys/embassy_keys.txt` |
+
+拆分 manifest：
+
+```text
+manifests_rebased/special_split_20260526/
+```
+
+权威说明文档：
+
+```text
+docs/SPECIAL_POLICE_EMBASSY_SPLIT_20260526.md
+```
+
+### 3. Embassy 当前状态
+
+Embassy 专家已完成 FixedNorm 重训、ONNX 导出、RKNN fp16 转换。
+
+关键指标：
+
+| 项目 | 当前值 |
+|------|------|
+| Best checkpoint | `experiments/embassy_formal_fixednorm_20260526/best_LPRNet_model.pth` |
+| FixedNorm val | 271/300 = **90.33%** |
+| Batch consistency | 300/300 predictions agree |
+| ONNX/PyTorch decode consistency | 300/300 predictions match (op11 + op18) |
+| RKNN toolkit | `/root/miniconda3/envs/rknn_env`, rknn-toolkit2 2.3.2 |
+| RKNN target | `rk3568`, fp16, `do_quantization=False` |
+
+Artifacts:
+
+```text
+artifacts/embassy_LPRNet_fixednorm_20260526.onnx
+artifacts/embassy_LPRNet_fixednorm_20260526_op11.onnx
+artifacts/embassy_LPRNet_fixednorm_20260526_fp16.rknn
+artifacts/embassy_LPRNet_fixednorm_20260526_fp16_op18.rknn
+artifacts/embassy_LPRNet_fixednorm_20260526_export_report.txt
+artifacts/embassy_LPRNet_fixednorm_20260526_rknn_handoff.md
+```
+
+RKNN sha256:
+
+| Artifact | SHA256 |
+|------|------|
+| `embassy_LPRNet_fixednorm_20260526_fp16.rknn` | `4159d2ede625426cdc09df98be16584366681b7d400b23d92240854be2d9cce9` |
+| `embassy_LPRNet_fixednorm_20260526_fp16_op18.rknn` | `91dfb7a6020249f36023c1364a14d4489681bde0fd82dcc0cebda1129909f3ee` |
+
+限制：
+
+- Simulator / 板端 decode check 尚未完成；当前没有 ADB 连接的 RK3568 板端。
+- Embassy 模型不能替换通用 `--ocr-special-model`。
+- 后续必须先实现 UNKNOWN 二级路由，再将 embassy 作为独立专家接入。
+- 板端部署前至少做 50-sample simulator 或板端 decode check。
+
+### 4. Police 当前状态
+
+Police 主 OCR 当前暂停。FixedNorm 后主 OCR 的主要瓶颈是省份首字。
+
+关键结果：
+
+| 路线 | Full | Province | Tail 警 | 结论 |
+|------|:--:|:--:|:--:|------|
+| B baseline (`aux=0`) | 60.00% | 64.52% | 100.00% | tail 稳定，但首字不足 |
+| C2 (`aux=0.20`) | 63.55% | 68.71% | 93.87% | full/province 提升，但 tail 退化 |
+| `aux=0.10` | 64.84% | 69.68% | 93.23% | full/province 局部最优，但 tail 不达标 |
+
+结论：
+
+- 所有 first-char aux 权重都会系统性伤害末尾“警”。
+- Police 主 OCR 不继续加步数，不导出 RKNN。
+- 下一步改为独立 province sidecar，只修第 0 位，不碰第 1 位到末尾“警”。
+
+Sidecar 计划：
+
+```text
+docs/POLICE_PROVINCE_SIDECAR_PLAN_20260527.md
+```
+
+### 5. ARM / 板端口径
+
+ARM 已有颜色分流：
+
+- `GREEN` -> green OCR
+- `YELLOW` -> yellow OCR
+- `UNKNOWN` -> special OCR
+- 默认 -> blue OCR
+
+但当前 ARM 仍只有单一 `--ocr-special-model` 槽位。Police / Embassy 双专家部署前需要 UNKNOWN 二级路由：
+
+- police 白底 -> police OCR 或 police province sidecar + police OCR
+- embassy 黑底 -> embassy OCR
+
+本轮未改 ARM。
 
 ---
 

@@ -1,0 +1,16 @@
+segment,correct,total,accuracy_pct
+province_char0,200,310,64.52
+letter_char1,303,310,97.74
+middle_4_chars,272,310,87.74
+tail_jing,310,310,100.0
+length_match,275,310,88.71
+exact_match,186,310,60.0
+
+position,correct,total,accuracy_pct
+pos0,200,310,64.52
+pos1,303,310,97.74
+pos2,290,310,93.55
+pos3,284,310,91.61
+pos4,281,310,90.65
+pos5,275,310,88.71
+pos6,275,310,88.71

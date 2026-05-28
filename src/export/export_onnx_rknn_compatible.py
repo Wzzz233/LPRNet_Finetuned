@@ -84,8 +84,8 @@ class LPRNetExport(nn.Module):
             if i in [2]:
                 f = nn.AvgPool2d(kernel_size=(4, 10), stride=(4, 2))(f)
             f_pow = torch.pow(f, 2)
-            f_mean = torch.mean(f_pow)
-            f = torch.div(f, f_mean)
+            f_mean = torch.mean(f_pow.view(f_pow.size(0), -1), dim=1, keepdim=True).view(f_pow.size(0), 1, 1, 1)
+            f = torch.div(f, f_mean.clamp_min(1e-12))
             global_context.append(f)
 
         x = torch.cat(global_context, 1)

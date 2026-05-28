@@ -1,0 +1,149 @@
+======================================================================
+EMBASSY FINAL ACCEPTANCE REPORT
+Generated: 2026-05-26 22:39:42.138073
+======================================================================
+
+Checkpoint: experiments/embassy_formal_fixednorm_20260526/best_LPRNet_model.pth
+  SHA256: b30d109710578add20844ad9d747a0b627abdb6d42f8cc846516b5a7609acabe
+Keys file: keys/embassy_keys.txt
+  SHA256: e781ae8cc97567d61bb69cb33392397b035154c397e985615a0b55ea44da5c6a
+Val manifest: manifests_rebased/special_split_20260526/val_embassy_only.csv
+Val samples: 300
+
+--- Core Metrics ---
+Exact accuracy: 271/300 = 90.33%
+Errors: 29
+Length errors: 28/29 among errors
+Illegal chars: 0
+
+--- Per-Position Accuracy ---
+  Pos0: 300/300 = 100.00%
+  Pos1: 297/300 = 99.00%
+  Pos2: 289/300 = 96.33%
+  Pos3: 286/300 = 95.33%
+  Pos4: 283/300 = 94.33%
+  Pos5: 279/300 = 93.00%
+  Pos6: 272/300 = 90.67%
+  Pos7: 0/300 = 0.00%
+
+--- Batch Consistency ---
+batch=1:   271/300 = 90.33%
+batch=300: 271/300 = 90.33%
+predictions agree: 300/300
+STATUS: PASS
+
+--- Verdict ---
+Embassy fixednorm 90.33% >= 90% threshold: ELIGIBLE for export
+Caveat: val only 300 samples. Recommend board-side / incremental sample review before final RKNN deployment.
+Old 95% (buggy eval) is DISAVOWED and must not be cited.
+
+--- Export Plan (DO NOT EXECUTE) ---
+1. Use src/export/export_onnx_rknn_compatible.py with FIXED normalization code
+2. Input: experiments/embassy_formal_fixednorm_20260526/best_LPRNet_model.pth
+3. Keys: keys/embassy_keys.txt (class_num=12)
+4. ONNX opset 11/12, dynamic batch or fixed batch=1
+5. RKNN: rk3568, do_quantization=True, dataset for quantization calibration
+6. Post-export acceptance: board-side single-image eval on real embassy plates
+
+--- Top-100 GT vs Pred ---
+ idx       GT       pred  ok len_err
+   0  使693015    使693015   Y        
+   1  使004148    使004148   Y        
+   2  使575733    使575733   Y        
+   3  使472039    使472039   Y        
+   4  使382704    使382704   Y        
+   5  使368489    使368489   Y        
+   6  使598827    使598827   Y        
+   7  使836424    使836424   Y        
+   8  使865694    使865694   Y        
+   9  使566728     使56728   N        
+  10  使897224    使897224   Y        
+  11  使055104    使055104   Y        
+  12  使786778    使786778   Y        
+  13  使433990    使433990   Y        
+  14  使091446    使091446   Y        
+  15  使223840    使223840   Y        
+  16  使519357    使519357   Y        
+  17  使668581     使68581   N        
+  18  使708717    使708717   Y        
+  19  使815658    使815658   Y        
+  20  使317533    使317533   Y        
+  21  使174319      使7419   N        
+  22  使702843    使702843   Y        
+  23  使560791    使560791   Y        
+  24  使027550    使027550   Y        
+  25  使344936    使344936   Y        
+  26  使050172    使050172   Y        
+  27  使851158    使851158   Y        
+  28  使734004     使73406   N        
+  29  使492379    使492379   Y        
+  30  使555877    使555877   Y        
+  31  使498290    使498290   Y        
+  32  使539369    使539369   Y        
+  33  使188196    使188196   Y        
+  34  使621601    使621601   Y        
+  35  使233794    使233794   Y        
+  36  使681747    使681747   Y        
+  37  使053083    使053083   Y        
+  38  使953541    使953541   Y        
+  39  使888156    使888156   Y        
+  40  使500309    使500309   Y        
+  41  使787051    使787051   Y        
+  42  使412544    使412544   Y        
+  43  使781054    使781054   Y        
+  44  使132231    使132231   Y        
+  45  使574094    使574094   Y        
+  46  使162337     使16237   N        
+  47  使371792    使371792   Y        
+  48  使855076    使855076   Y        
+  49  使340489    使340489   Y        
+  50  使509933    使509933   Y        
+  51  使636089    使636089   Y        
+  52  使964746    使964746   Y        
+  53  使012087    使012087   Y        
+  54  使537933    使537933   Y        
+  55  使772614    使772614   Y        
+  56  使317787    使317787   Y        
+  57  使314709    使314709   Y        
+  58  使139265    使139265   Y        
+  59  使674147    使674147   Y        
+  60  使322407    使322407   Y        
+  61  使995193    使995193   Y        
+  62  使402899    使402899   Y        
+  63  使645074    使645074   Y        
+  64  使115589    使115589   Y        
+  65  使773654    使773654   Y        
+  66  使337344    使337344   Y        
+  67  使875425    使875425   Y        
+  68  使375722    使375722   Y        
+  69  使284401    使284401   Y        
+  70  使709015    使709015   Y        
+  71  使170237    使170237   Y        
+  72  使869249    使869249   Y        
+  73  使378237    使378237   Y        
+  74  使961683    使961683   Y        
+  75  使967613    使967613   Y        
+  76  使101998    使101998   Y        
+  77  使598497    使598497   Y        
+  78  使052006    使052006   Y        
+  79  使949326    使949326   Y        
+  80  使754681    使754681   Y        
+  81  使968926    使968926   Y        
+  82  使325699    使325699   Y        
+  83  使204467    使204467   Y        
+  84  使334857     使34857   N        
+  85  使206908    使206908   Y        
+  86  使870975    使870975   Y        
+  87  使474732    使674732   N        
+  88  使231864    使231864   Y        
+  89  使100253    使100253   Y        
+  90  使991154    使991154   Y        
+  91  使233614    使233614   Y        
+  92  使242817    使242817   Y        
+  93  使478638    使478638   Y        
+  94  使728426    使728426   Y        
+  95  使650245    使650245   Y        
+  96  使641634    使641634   Y        
+  97  使486548    使486548   Y        
+  98  使717831    使717831   Y        
+  99  使165604    使165604   Y        

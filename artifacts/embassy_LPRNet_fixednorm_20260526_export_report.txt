@@ -1,0 +1,79 @@
+======================================================================
+EMBASSY EXPORT REPORT — 2026-05-27 (updated 2026-05-27)
+======================================================================
+
+Source Checkpoint
+  Path:       experiments/embassy_formal_fixednorm_20260526/best_LPRNet_model.pth
+  SHA256:     b30d109710578add20844ad9d747a0b627abdb6d42f8cc846516b5a7609acabe
+
+Keys File
+  Path:       keys/embassy_keys.txt
+  SHA256:     e781ae8cc97567d61bb69cb33392397b035154c397e985615a0b55ea44da5c6a
+  Content:    0-9 + 使 (11 chars + blank = class_num=12)
+
+Val Manifest
+  Path:       manifests_rebased/special_split_20260526/val_embassy_only.csv
+  Samples:    300
+
+PyTorch FixedNorm Eval Accuracy
+  Exact:      271/300 = 90.33%
+  Batch consistency (1 vs 300): PASS (300/300 preds agree)
+  Illegal chars: 0
+
+--- ONNX Export ---
+
+ONNX op18 (new torch.export path)
+  Path:       artifacts/embassy_LPRNet_fixednorm_20260526.onnx
+  SHA256:     d18a53a47bfabdc1fc3d86435cedc84c2a4b3c7fe0074b2a5e4124d2ba7683b5
+  Size:       84K
+  Opset:      18
+  IR version: 10
+  Producer:   pytorch 2.11.0+cu130
+
+ONNX op11 (legacy TorchScript export, for lower opset RKNN compatibility)
+  Path:       artifacts/embassy_LPRNet_fixednorm_20260526_op11.onnx
+  SHA256:     59941f49930d7005cbb13a0c696ac2566d874ba6f1508f6964f8a70dfc2cd52c
+  Size:       907K
+  Opset:      11
+
+--- ONNX / PyTorch Decode Consistency ---
+
+Tested on full 300-sample val set.
+  op18: 300/300 predictions match PyTorch  max_numerical_diff=2.29e-04
+  op11: 300/300 predictions match PyTorch  max_numerical_diff=2.29e-04
+Status: PASS
+
+--- RKNN Conversion ---
+
+Status:       COMPLETED (2026-05-27)
+Toolkit:      rknn-toolkit2 2.3.2 (/root/miniconda3/envs/rknn_env)
+Target:       RK3568, fp16 (do_quantization=False)
+
+Primary (from op11 ONNX):
+  Path:       artifacts/embassy_LPRNet_fixednorm_20260526_fp16.rknn
+  SHA256:     4159d2ede625426cdc09df98be16584366681b7d400b23d92240854be2d9cce9
+  Size:       745 KB
+  Warnings:   5x "Unkown op target: 0" during build (non-blocking, build returned 0)
+
+Fallback (from op18 ONNX):
+  Path:       artifacts/embassy_LPRNet_fixednorm_20260526_fp16_op18.rknn
+  SHA256:     91dfb7a6020249f36023c1364a14d4489681bde0fd82dcc0cebda1129909f3ee
+  Size:       742 KB
+  Warnings:   same 5x "Unkown op target: 0"
+
+Simulator:    NOT RUN — requires ADB-connected RK3568 board.
+  init_runtime(target='rk3568') fails with "no devices/emulators found".
+
+--- Readiness ---
+
+ONNX export:           ✅ Done
+ONNX/PyTorch decode:   ✅ 300/300 match
+RKNN conversion:       ✅ Done (both op11 and op18 ONNX sources)
+Simulator check:       ⏸️ Blocked (no ADB-connected RK3568 board)
+Board deployment:      ⏸️ Pending simulator/board decode verification
+
+Caveats:
+  - Val only 300 samples; board-side incremental sample review still needed
+  - "Unkown op target: 0" warnings present but build returned 0 for both variants
+  - Embassy model cannot replace generic special model; requires UNKNOWN routing
+======================================================================
