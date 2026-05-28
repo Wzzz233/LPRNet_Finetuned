@@ -162,7 +162,7 @@ Code:            FIXED per-sample normalization
 
 **错误分析 (124 errors):**
 - First-char (province) errors: 110 (88.7%) ← 主导
-- Tail (警) errors: 0
+- Tail (警) misses: 25/310 in current full-val eval; mostly length truncation
 - Length errors: 35/124
 - 省份混淆分散 (无单一主导): 粤→青 3/10, 吉→闽 2/10, etc.
 - 成因推测: frozen backbone (layer 0-19) 在 buggy 代码下训练, 其输出的特征分布
@@ -178,7 +178,7 @@ Code:            FIXED per-sample normalization
 | Province (char0) | **64.52%** ← 瓶颈 |
 | Letter (char1) | 97.74% |
 | Middle 4 chars | 87.74% |
-| Tail 警 | 100.00% |
+| Tail 警 | 91.94% (285/310, corrected full-val eval) |
 | Length match | 88.71% |
 
 省份混淆高度分散：97 对混淆，无单一主导（最大：粤→青 3/10）。省份首字识别率仅 64.52% 是唯一瓶颈。
@@ -190,7 +190,7 @@ CSV: `experiments/police_formal_fixednorm_20260526/error_breakdown_by_position.c
 
 | Strategy | Full | Province | Tail | LenErr |
 |------|:---:|:---:|:---:|:---:|
-| B (baseline 3k) | 60.00% | 64.52% | 100% | 35 |
+| B (baseline 3k) | 60.00% | 64.52% | 91.94% (285/310) | 35 |
 | C1 (unfreeze 18-21, 1k) | 43.23% | 50.00% | 100% | 60 |
 | C2 (first-char aux 0.2, 1k) | 42.26% | 55.16% | 100% | 53 |
 
@@ -215,10 +215,10 @@ Max steps:   3000 (explicit --max_epoch 80)
 Code:        FIXED per-sample normalization
 ```
 
-**结论：C2 3k 超过 B baseline，但后续 sweep 发现 tail 警系统性退化，aux 路线已停止。见下节。**
+**结论：C2 3k 超过 B baseline，但后续 sweep 发现主 OCR 仍无法同时满足 province 和 tail 阈值，aux 路线已停止。见下节。**
 
 但是：
-- Tail 警从 100% 退化到 93.87% (-6.13pp) — first-char aux 可能轻微干扰尾部解码。
+- Tail 警仍低于 98% 部署阈值，主 OCR 不能单独进入导出。
 - Province 68.71% 仍远低于可用水平 (<80%)，但相比 B 的 64.52% 显著改善。
 - 省份混淆仍然高度分散（最大 2 票），无单一主导错误。
 
@@ -226,24 +226,50 @@ Code:        FIXED per-sample normalization
 
 | aux weight | Full | Province | Letter | Mid4 | Tail 警 | LenMatch | 目录 |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|------|
-| 0.00 (B) | 60.00% | 64.52% | 97.74% | 87.74% | **100.00%** | 88.71% | `police_formal_fixednorm_20260526` |
+| 0.00 (B) | 60.00% | 64.52% | 97.74% | 87.74% | **91.94% (285/310)** | 88.71% | `police_formal_fixednorm_20260526` |
 | 0.05 | 61.94% | 68.06% | 97.74% | 91.67% | 92.90% | 89.03% | `police_fixednorm_probe_firstaux005_3k` |
 | 0.10 | 64.84% | 69.68% | 98.39% | 92.87% | 93.23% | 89.68% | `police_fixednorm_probe_firstaux010_3k` |
 | 0.20 | 63.55% | 68.71% | 97.42% | 91.75% | 93.87% | 89.03% | `police_fixednorm_probe_firstaux02_3k` |
 
-**结论：ALL aux weights fail tail 警 ≥ 98% criterion。停止 aux 路线。**
+**结论：ALL aux weights fail tail 警 ≥ 98% criterion，province 仍低于可用水平。停止 aux 路线。**
 
 规律：
-- 任何 first_char_aux_weight > 0 都会系统性破坏 tail 警（100% → ~93%）。
-- Province 随 aux weight 略有提升（+4-5pp），但代价太大。
-- aux=0.10 是 full/province 局部最优，但 tail 仍未达标。
-- 不能通过调高权重解决；weight 越大 tail 不一定更差（0.20 tail=93.87% > 0.05 tail=92.90%），但所有值都不可接受。
+- Province 随 aux weight 略有提升（+4-5pp），但仍不足以支撑 police 主 OCR 单独部署。
+- Tail 警在所有主 OCR 候选中都低于 98% 部署阈值。
+- aux=0.10 是 full/province 局部最优，但仍不可导出。
+- 继续调 first-char aux 不解决根问题，下一步应使用独立 province sidecar。
 
 **Police 下一步推荐：**
-1. Province sidecar 网络（独立小 ResNet 做首字分类）
-2. 解码后首字修正（post-decode first-char correction）
-3. 增加 police 省份强化数据（重新生成 province-balanced 数据）
+1. Province sidecar 网络（独立 ResNet18 做首字分类）— Phase 1 已通过 clean synthetic / hard synthetic 审计
+2. 板端 UNKNOWN 二级路由后接入 sidecar
+3. 真实板端 police 图像验证 sidecar 鲁棒性
 4. 不再继续 first-char aux 路线
+
+## Police Province Sidecar Phase 1 审计 (2026-05-28)
+
+Sidecar 已完成第一阶段验证：224×72 全牌图 + ResNet18 只识别第 0 位省份。当前结论是 sidecar 路线成立，但还没有完成真实板端验证。
+
+| 检查 | 结果 |
+|------|------|
+| 数据 | Train 3,720 / Val 310，31 省均衡；train/val base image、文本、warped basename 无重叠 |
+| 标准 val | gray3 pretrained / color pretrained / gray3 random 均达到 100% province acc |
+| Hard holdout | 186 张不同生成批次，gray3 pretrained 186/186 = 100% |
+| 匿名路径 | 图片改名为 `000000.png` 后仍 310/310 = 100% |
+| Mask left 25% | 10/310 = 3.23%，遮住省份后接近随机 |
+| Mask right 75% | 310/310 = 100%，只保留左侧省份区域仍可识别 |
+| Fusion | 主 OCR 60.00% → sidecar 替换首字后 86.77%，changed wrong = 0 |
+| Tail | 285/310 → 285/310，sidecar 不改变 tail |
+
+结论：没有发现数据泄露；模型确实读取图像左侧省份字符。100% 的原因是 clean synthetic 任务本身简单，不代表板端完成。下一步必须用真实板端 police 图像验证噪声、模糊、定位误差下的鲁棒性。
+
+产物：
+
+```text
+scripts/train_police_province_sidecar.py
+datasets/police_province_sidecar_20260528/fullplate_224x72/
+manifests_rebased/police_province_sidecar_20260528/
+experiments/police_province_sidecar_20260528/
+```
 
 ## ⚠️ Batch-Dependent Normalization Bug (2026-05-26)
 
@@ -300,8 +326,9 @@ Embassy 验证: batch=1 vs batch=256, 300/300 predictions agree.
 | Embassy RKNN 转换 | ✅ 完成 ([handoff](../artifacts/embassy_LPRNet_fixednorm_20260526_rknn_handoff.md)) |
 | Police FixedNorm 重训 (B, baseline) | ❌ 未达标 (60.00%, <80%) |
 | Police C2 first-char aux 3k | ✅ 完成 (63.55%, 超过 B) |
-| Police aux weight sweep (0.05/0.10/0.20) | ❌ 停止 — tail 警系统性退化 |
-| Police 主 OCR | ⏸️ 暂停 ([sidecar plan](POLICE_PROVINCE_SIDECAR_PLAN_20260527.md)) |
+| Police aux weight sweep (0.05/0.10/0.20) | ❌ 停止 — province 和 tail 均未达部署阈值 |
+| Police 主 OCR | ⏸️ 暂停，主 OCR 不继续训练 |
+| Police province sidecar | ✅ Phase 1 审计通过 ([sidecar plan](POLICE_PROVINCE_SIDECAR_PLAN_20260527.md))；待真实板端 police 图验证 |
 | Police 旧 probe | 📋 仅参考 (79.03% fixed-eval, buggy training) |
 | LPRNet 归一化修复 | ✅ 5文件已修复 + 回归测试 PASS (9/9) |
 | Police+embassy 混合训练 | ❌ 永远禁止 |
@@ -320,4 +347,4 @@ Greedy_Decode_Eval 输出等）在修复前的代码上不可作为验收依据�
 1. **禁止 batch-dependent normalization 作为训练策略**：训练、导出、ONNX、RKNN 必须全程使用 per-sample normalization。
 2. **禁止"训练 batch-dependent、导出 per-sample"方案**：这会导致训练分布与推理分布不一致，产生不可预期的性能退化。
 3. **已有模型复评规则**：任何 batch>1 离线 PyTorch 评估在修复前代码上的数字不可作为验收依据。
-4. **Police 当前状态**：主 OCR 训练暂停，aux 路线已停止（tail 警退化不可接受）。下一步为 province sidecar（[设计文档](POLICE_PROVINCE_SIDECAR_PLAN_20260527.md)）。
+4. **Police 当前状态**：主 OCR 训练暂停，aux 路线已停止。province sidecar Phase 1 审计通过，但真实板端 police 图验证前不得宣称部署完成（[设计文档](POLICE_PROVINCE_SIDECAR_PLAN_20260527.md)）。

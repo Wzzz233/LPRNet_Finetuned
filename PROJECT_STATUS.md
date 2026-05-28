@@ -1,6 +1,6 @@
 # LPRNet 工作区状态
 
-> 最后更新: 2026-05-28（特殊牌 police/embassy 已拆分；LPRNet FixedNorm 已修复；Embassy ONNX/RKNN 已完成，Police 主 OCR 暂停转 sidecar）
+> 最后更新: 2026-05-28（特殊牌 police/embassy 已拆分；LPRNet FixedNorm 已修复；Embassy ONNX/RKNN 已完成；Police province sidecar Phase 1 审计通过）
 
 ---
 
@@ -11,8 +11,8 @@
 | 数据集目录 | ✅ CCPD2020、生成数据、原始 CCPD2019、special cvreplace 数据仍在位 |
 | 训练代码 (src/) | ✅ 已修复 LPRNet batch-dependent normalization；训练/导出统一使用 per-sample normalization |
 | manifests/ (旧绝对路径) | ✅ legacy 目录保留，仍可向后兼容 |
-| manifests_rebased/ | ✅ 已新增 `green_v5_final_20260509/`、`ccpd2020_green_real_20260509/`、`green_backbone_mix_realprimary_20260510/`、`a_ablation_20260510/`、`a_ratio_sweep_20260510/`、`b_lite_probe_20260510/`、`routeA_firstchar_r50_20260512/`、`routeA_prime_quadwarp_20260512/`、`yellow_phase1_20260515/`、`special_split_20260526/` |
-| experiments/ | ✅ 已新增 `green_ccpd2019_v5_final_20260509/`、`mix_source_audit_20260510/`、`green_backbone_mix_*_20260510/`、`a_ablation_*_20260510/`、`a_ratio_*_20260510/`、`b_prime_*_20260510/`、`b_lite_*_20260510/`、`routeA_firstchar_r50_20260512/`、`routeA_prime_quadwarp_20260512/`、`routeA_nextstage_20260512/`、`routeA_epochcurve_20260512/`、`fc224_board_eval_20260512/`、`yellow_phase1_20260515/`、`embassy_formal_fixednorm_20260526/`、`police_*fixednorm*_20260526/` |
+| manifests_rebased/ | ✅ 已新增 `green_v5_final_20260509/`、`ccpd2020_green_real_20260509/`、`green_backbone_mix_realprimary_20260510/`、`a_ablation_20260510/`、`a_ratio_sweep_20260510/`、`b_lite_probe_20260510/`、`routeA_firstchar_r50_20260512/`、`routeA_prime_quadwarp_20260512/`、`yellow_phase1_20260515/`、`special_split_20260526/`、`police_province_sidecar_20260528/` |
+| experiments/ | ✅ 已新增 `green_ccpd2019_v5_final_20260509/`、`mix_source_audit_20260510/`、`green_backbone_mix_*_20260510/`、`a_ablation_*_20260510/`、`a_ratio_*_20260510/`、`b_prime_*_20260510/`、`b_lite_*_20260510/`、`routeA_firstchar_r50_20260512/`、`routeA_prime_quadwarp_20260512/`、`routeA_nextstage_20260512/`、`routeA_epochcurve_20260512/`、`fc224_board_eval_20260512/`、`yellow_phase1_20260515/`、`embassy_formal_fixednorm_20260526/`、`police_*fixednorm*_20260526/`、`police_province_sidecar_20260528/` |
 | 根目录外围文件 | ✅ 已整洁化 |
 | Model Zoo 专家包 | ⚠️ 目录结构完整，但当前仍是 lightweight index；四个 `checkpoints/` 目录都为空 |
 | Manifest Rebase | ✅ 已完成（336 份） |
@@ -22,7 +22,8 @@
 | **普通单排黄色车牌 Phase 1** | ✅ 已收敛并已上板验证；ARM 已有按颜色路由到 yellow OCR 的分流逻辑 |
 | **特殊牌 cvreplace 全量生成** | ✅ 已完成 — 14,150 张；已拆为 `yellow_single` 路由审计、`police`、`embassy` 三路 |
 | **Embassy 专家** | ✅ FixedNorm 重训 90.33%；ONNX op11/op18 300/300 decode consistent；RKNN fp16 已转换，待板端/simulator decode check |
-| **Police 主 OCR** | ⏸️ 暂停 — FixedNorm 主 OCR 最高 64.84%，first-char aux 会系统性伤 tail“警”；下一步转 province sidecar |
+| **Police 主 OCR** | ⏸️ 暂停 — FixedNorm 主 OCR 最高 64.84%，无法同时满足省份和 tail 阈值；不继续主 OCR 训练 |
+| **Police Province Sidecar** | ✅ Phase 1 审计通过 — 224×72 全牌 ResNet18 省份分类在 clean val 100%，hard holdout 100%，融合后 60.00% → 86.77%；仍需真实板端/退化图验证 |
 | **蓝牌 CCPD2019 posquad v1** | ✅ 完成 — 旧蓝牌 53.0% → **59.5%** (+6.5pp) |
 | **蓝牌 posquad v2 hardmine** | ✅ 完成 — v1 59.5% → **60.6%** (+1.1pp) |
 | **蓝牌退化检查** | ✅ 无退化 — simple/val/hard 均提升 |
@@ -48,7 +49,7 @@
 
 ---
 
-## 2026-05-28 增量更新（特殊牌拆分、FixedNorm、Embassy RKNN）
+## 2026-05-28 增量更新（特殊牌拆分、FixedNorm、Embassy RKNN、Police Sidecar）
 
 这一节优先于下方 2026-05-17 的特殊牌生成链路描述。旧章节仍保留作为生成链路来源，但当前执行口径以本节为准。
 
@@ -156,13 +157,13 @@ Police 主 OCR 当前暂停。FixedNorm 后主 OCR 的主要瓶颈是省份首�
 
 | 路线 | Full | Province | Tail 警 | 结论 |
 |------|:--:|:--:|:--:|------|
-| B baseline (`aux=0`) | 60.00% | 64.52% | 100.00% | tail 稳定，但首字不足 |
+| B baseline (`aux=0`) | 60.00% | 64.52% | 91.94% (285/310) | 当前 full-val eval 修正了旧文档的 tail=100% 误记 |
 | C2 (`aux=0.20`) | 63.55% | 68.71% | 93.87% | full/province 提升，但 tail 退化 |
 | `aux=0.10` | 64.84% | 69.68% | 93.23% | full/province 局部最优，但 tail 不达标 |
 
 结论：
 
-- 所有 first-char aux 权重都会系统性伤害末尾“警”。
+- 所有 first-char aux 权重都无法让主 OCR 同时达到 province 和 tail 部署阈值。
 - Police 主 OCR 不继续加步数，不导出 RKNN。
 - 下一步改为独立 province sidecar，只修第 0 位，不碰第 1 位到末尾“警”。
 
@@ -172,7 +173,40 @@ Sidecar 计划：
 docs/POLICE_PROVINCE_SIDECAR_PLAN_20260527.md
 ```
 
-### 5. ARM / 板端口径
+### 5. Police Province Sidecar Phase 1 审计
+
+Sidecar 路线已完成第一阶段数据、训练和泄露审计。当前结论：在干净合成 police 全牌图上，省份首字分类是简单任务；模型确实读取图像左侧省份字符，不是从路径或标签泄露中取巧。
+
+产物：
+
+```text
+scripts/train_police_province_sidecar.py
+datasets/police_province_sidecar_20260528/fullplate_224x72/
+manifests_rebased/police_province_sidecar_20260528/
+experiments/police_province_sidecar_20260528/
+```
+
+核心结果：
+
+| 检查 | 结果 |
+|------|------|
+| Train / Val | 3,720 / 310，31 省均衡；base image、文本、warped basename 均无重叠 |
+| 标准 val | gray3 pretrained / color pretrained / gray3 random 均达到 100% 省份准确率 |
+| Hard holdout | 186 张不同生成批次、base ID 不重叠；gray3 pretrained 186/186 = 100% |
+| 匿名路径测试 | 图片重命名为 `000000.png` 后仍 310/310 = 100% |
+| Mask left 25% | 10/310 = 3.23%，遮住省份后接近随机 |
+| Mask right 75% | 310/310 = 100%，只保留左侧省份区域仍可识别 |
+| Random-label sanity | 400 张随机标签可被 ResNet18 记住；这说明模型容量足够大，不构成数据泄露证据 |
+| 融合评估 | 主 OCR 60.00% → sidecar 替换首字后 86.77%；changed wrong = 0 |
+
+限制：
+
+- 当前验证仍以 clean synthetic / hard synthetic holdout 为主。
+- 真实板端图像的噪声、模糊、压缩、定位误差才是最终部署 gate。
+- 侧路只允许改第 0 位省份，不允许改 body 或末尾“警”。
+- ARM 接入前仍需要 UNKNOWN 二级路由区分 police / embassy。
+
+### 6. ARM / 板端口径
 
 ARM 已有颜色分流：
 

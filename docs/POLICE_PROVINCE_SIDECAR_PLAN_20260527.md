@@ -1,4 +1,4 @@
-# Police Province Sidecar 设计计划 — 2026-05-27
+# Police Province Sidecar 设计与 Phase 1 审计 — 2026-05-27/28
 
 ## 背景
 
@@ -8,19 +8,17 @@ Police 主 OCR 训练在 per-sample normalization 修复后进行，结果在 ta
 
 | aux weight | Full | Province | Letter | Mid4 | Tail 警 | LenMatch |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| 0.00 (B) | 60.00% | 64.52% | 97.74% | 87.74% | **100.00%** | 88.71% |
+| 0.00 (B) | 60.00% | 64.52% | 97.74% | 87.74% | **91.94% (285/310)** | 88.71% |
 | 0.05 | 61.94% | 68.06% | 97.74% | 91.67% | 92.90% | 89.03% |
 | 0.10 | 64.84% | 69.68% | 98.39% | 92.87% | 93.23% | 89.68% |
 | 0.20 | 63.55% | 68.71% | 97.42% | 91.75% | 93.87% | 89.03% |
 
-**结论**：first-char aux loss 系统性破坏 tail 警（100% → ~93%），
-所有权重都 fail tail≥98% criterion。停止主 OCR aux 路线。
+**结论**：first-char aux loss 只能小幅改善首字，仍无法让主 OCR 达到可部署标准；所有权重都 fail tail≥98% criterion，province 也仍低于可用水平。停止主 OCR aux 路线，改走独立 sidecar。
 
 ### 根本原因
 
 警察号牌的特殊格式（最后一位固定为"警"）意味着 CTC 解码器
-在序列末尾必须精确输出"警"字。first-char aux loss 增加了一个
-与 CTC 主 loss 竞争的训练信号，干扰了尾部解码的稳定性。
+在序列末尾必须精确输出"警"字。主 OCR 同时承担首字、省份、body 和固定尾字，当前训练结果显示首字与尾字都不能稳定达到部署阈值。独立 sidecar 的目标是把首字问题从主 OCR 中拆出来。
 
 ## Sidecar 设计目标
 
@@ -83,7 +81,7 @@ Softmax → 31 省份概率
 |------|------|:---:|
 | Province accuracy | sidecar 首字正确率 / 310 | ≥ 85% |
 | Fused full exact | (OCR 第0位替换为 sidecar 第0位) 全串正确率 / 310 | ≥ B baseline 60% |
-| Tail invariance | sidecar 融合前后 tail 警 accuracy 不变 | = 100% |
+| Tail invariance | sidecar 融合前后 tail 警正确数不变 | 不降低主 OCR 当前值；当前 full-val 为 285/310 |
 | False overwrite | sidecar 改正了原本正确的首字 / 310 | 尽量少 |
 
 ### 不要仅关注 province accuracy 单项
@@ -123,7 +121,61 @@ if plate_routed_as_police:
 
 这些 ARM 改动**不在本计划范围内**，仅记录为前置条件。
 
-## 训练计划（暂不执行）
+## Phase 1 审计结果（2026-05-28）
+
+Phase 1 已执行完数据导出、训练、融合和泄露审计。当前结论：sidecar 在 clean synthetic police 全牌图上成立，且模型确实依赖图像左侧省份字符。
+
+### 数据和产物
+
+| 类型 | 路径 / 数量 |
+|------|------|
+| Train | `datasets/police_province_sidecar_20260528/fullplate_224x72/train/`，3,720 张 |
+| Val | `datasets/police_province_sidecar_20260528/fullplate_224x72/val/`，310 张 |
+| Hard holdout | `datasets/police_province_sidecar_20260528/fullplate_224x72/val_hard/`，186 张 |
+| Manifest | `manifests_rebased/police_province_sidecar_20260528/` |
+| Experiments | `experiments/police_province_sidecar_20260528/` |
+| Training script | `scripts/train_police_province_sidecar.py` |
+
+### 训练结果
+
+| 实验 | Val province acc | 说明 |
+|------|:---:|------|
+| gray3 pretrained | 100.00% (310/310) | 推荐候选 |
+| color pretrained | 100.00% (310/310) | 同样可行 |
+| gray3 random init | 100.00% (310/310) | 说明任务本身很简单 |
+| hard holdout | 100.00% (186/186, gray3 pretrained) | 不同生成批次，base ID 不重叠 |
+
+### 泄露和视觉依赖审计
+
+| 检查 | 结果 |
+|------|------|
+| Train/val warped basename overlap | 0 |
+| Original base image ID overlap | 0 |
+| Full text overlap | 0 |
+| Dataset label source | 只读 CSV `label` 字段，不解析文件名 |
+| Anonymous path test | 图片重命名后仍 310/310 = 100% |
+| Mask left 25% | 10/310 = 3.23%，遮住省份后接近随机 |
+| Mask right 75% | 310/310 = 100%，只保留左侧仍可识别 |
+| Random-label sanity | 400 张随机标签 10 epoch 可记忆，不作为泄露证据，只说明 ResNet18 容量足够大 |
+
+### 融合结果
+
+| 指标 | 值 |
+|------|:--:|
+| Main OCR full exact | 186/310 = 60.00% |
+| Sidecar province acc | 310/310 = 100.00% |
+| Fused full exact | 269/310 = 86.77% |
+| Tail 警 correct before/after | 285/310 → 285/310 |
+| Changed wrong | 0 |
+
+### 当前限制
+
+- 当前通过的是 clean synthetic / hard synthetic holdout，不等于板端完成。
+- 板端真实图像的模糊、压缩、定位误差、亮度变化仍需单独验证。
+- Sidecar 只能替换第 0 位省份，禁止修改 body 和末尾“警”。
+- ARM 接入前必须先完成 UNKNOWN 二级路由。
+
+## 训练计划（已执行，保留为复现实验参数）
 
 以下仅为参考，不在本次工作中执行：
 
