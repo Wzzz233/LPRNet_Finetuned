@@ -168,6 +168,26 @@ Phase 1 已执行完数据导出、训练、融合和泄露审计。当前结论
 | Tail 警 correct before/after | 285/310 → 285/310 |
 | Changed wrong | 0 |
 
+### Green → Police 权重迁移审计
+
+为确认是否可以直接复用绿牌首字 sidecar，已将两个绿牌 checkpoint 在 police val 上直接评估。31 省 label mapping 与 `keys/police_keys.txt` 前 31 行完全一致。
+
+| Checkpoint | 路径 | Police val accuracy |
+|------|------|:---:|
+| G0 baseline repro | `experiments/routeA_nextstage_20260512/G0_baseline_repro/best.pt` | 8/310 = 2.58% |
+| B3 fullplate gray | `experiments/routeA_prime_quadwarp_20260512/B3_fullplate_gray3_224x72_bal31/best.pt` | 10/310 = 3.23% |
+
+随机期望约为 1/31 = 3.23%。两个绿牌 checkpoint 都在随机水平，且错误呈现整类映射到固定错误省份的 collapse。
+
+结论：
+
+- 绿牌 sidecar 权重不能直接复用于 police。
+- 不建议用绿牌 sidecar checkpoint 作为 police warm start。
+- 可以复用的是架构和预处理：fullplate quad warp、224×72、灰度输入、ResNet18。
+- police sidecar 仍应使用 police 域训练，当前 police 专用 sidecar 已达到 100% clean val / hard holdout province accuracy。
+
+输出：`experiments/police_green_resnet18_transfer_20260528/`。
+
 ### 当前限制
 
 - 当前通过的是 clean synthetic / hard synthetic holdout，不等于板端完成。

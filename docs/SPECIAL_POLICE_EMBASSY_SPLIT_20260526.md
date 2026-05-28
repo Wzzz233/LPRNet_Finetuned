@@ -262,6 +262,8 @@ Sidecar 已完成第一阶段验证：224×72 全牌图 + ResNet18 只识别第 
 
 结论：没有发现数据泄露；模型确实读取图像左侧省份字符。100% 的原因是 clean synthetic 任务本身简单，不代表板端完成。下一步必须用真实板端 police 图像验证噪声、模糊、定位误差下的鲁棒性。
 
+Green → Police 权重迁移补充：两个绿牌首字 sidecar checkpoint 已直接评估 police val，label mapping 完全一致但准确率只有 2.58% / 3.23%。结论是绿牌权重不能复用，绿牌路线只能作为架构和预处理参考。
+
 产物：
 
 ```text
@@ -328,7 +330,7 @@ Embassy 验证: batch=1 vs batch=256, 300/300 predictions agree.
 | Police C2 first-char aux 3k | ✅ 完成 (63.55%, 超过 B) |
 | Police aux weight sweep (0.05/0.10/0.20) | ❌ 停止 — province 和 tail 均未达部署阈值 |
 | Police 主 OCR | ⏸️ 暂停，主 OCR 不继续训练 |
-| Police province sidecar | ✅ Phase 1 审计通过 ([sidecar plan](POLICE_PROVINCE_SIDECAR_PLAN_20260527.md))；待真实板端 police 图验证 |
+| Police province sidecar | ✅ Phase 1 审计通过 ([sidecar plan](POLICE_PROVINCE_SIDECAR_PLAN_20260527.md))；绿牌权重迁移失败；待真实板端 police 图验证 |
 | Police 旧 probe | 📋 仅参考 (79.03% fixed-eval, buggy training) |
 | LPRNet 归一化修复 | ✅ 5文件已修复 + 回归测试 PASS (9/9) |
 | Police+embassy 混合训练 | ❌ 永远禁止 |

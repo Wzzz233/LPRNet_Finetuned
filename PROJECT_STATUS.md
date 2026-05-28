@@ -23,7 +23,7 @@
 | **特殊牌 cvreplace 全量生成** | ✅ 已完成 — 14,150 张；已拆为 `yellow_single` 路由审计、`police`、`embassy` 三路 |
 | **Embassy 专家** | ✅ FixedNorm 重训 90.33%；ONNX op11/op18 300/300 decode consistent；RKNN fp16 已转换，待板端/simulator decode check |
 | **Police 主 OCR** | ⏸️ 暂停 — FixedNorm 主 OCR 最高 64.84%，无法同时满足省份和 tail 阈值；不继续主 OCR 训练 |
-| **Police Province Sidecar** | ✅ Phase 1 审计通过 — 224×72 全牌 ResNet18 省份分类在 clean val 100%，hard holdout 100%，融合后 60.00% → 86.77%；仍需真实板端/退化图验证 |
+| **Police Province Sidecar** | ✅ Phase 1 审计通过 — 224×72 全牌 ResNet18 省份分类在 clean val 100%，hard holdout 100%，融合后 60.00% → 86.77%；绿牌权重迁移失败，需 police 域训练；仍需真实板端/退化图验证 |
 | **蓝牌 CCPD2019 posquad v1** | ✅ 完成 — 旧蓝牌 53.0% → **59.5%** (+6.5pp) |
 | **蓝牌 posquad v2 hardmine** | ✅ 完成 — v1 59.5% → **60.6%** (+1.1pp) |
 | **蓝牌退化检查** | ✅ 无退化 — simple/val/hard 均提升 |
@@ -199,6 +199,24 @@ experiments/police_province_sidecar_20260528/
 | Random-label sanity | 400 张随机标签可被 ResNet18 记住；这说明模型容量足够大，不构成数据泄露证据 |
 | 融合评估 | 主 OCR 60.00% → sidecar 替换首字后 86.77%；changed wrong = 0 |
 
+### 6. Green → Police Sidecar 权重迁移审计
+
+已评估两个绿牌首字 sidecar checkpoint 直接识别 police 省份首字。label mapping 与 police keys 前 31 类完全一致，因此失败不是标签顺序问题，而是视觉域差距。
+
+| Green checkpoint | Police val accuracy | 结论 |
+|------|:---:|------|
+| `experiments/routeA_nextstage_20260512/G0_baseline_repro/best.pt` | 8/310 = 2.58% | 低于随机期望 |
+| `experiments/routeA_prime_quadwarp_20260512/B3_fullplate_gray3_224x72_bal31/best.pt` | 10/310 = 3.23% | 等于随机期望 |
+
+输出：
+
+```text
+experiments/police_green_resnet18_transfer_20260528/
+scripts/eval_green_resnet18_on_police_province.py
+```
+
+结论：绿牌 sidecar 的架构和 224×72 透视矫正预处理可以复用，但绿牌训练权重不能直接复用，也不建议作为 police warm start。police sidecar 应继续使用 police 域训练或 ImageNet pretrained / random init。
+
 限制：
 
 - 当前验证仍以 clean synthetic / hard synthetic holdout 为主。
@@ -206,7 +224,7 @@ experiments/police_province_sidecar_20260528/
 - 侧路只允许改第 0 位省份，不允许改 body 或末尾“警”。
 - ARM 接入前仍需要 UNKNOWN 二级路由区分 police / embassy。
 
-### 6. ARM / 板端口径
+### 7. ARM / 板端口径
 
 ARM 已有颜色分流：
 
