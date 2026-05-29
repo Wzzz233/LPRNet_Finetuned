@@ -1,6 +1,6 @@
 # LPRNet 工作区状态
 
-> 最后更新: 2026-05-28（特殊牌 police/embassy 已拆分；LPRNet FixedNorm 已修复；Embassy ONNX/RKNN 已完成；Police province sidecar Phase 1 审计通过）
+> 最后更新: 2026-05-29（特殊牌 police/embassy 已拆分；LPRNet FixedNorm 已修复；Embassy ONNX/RKNN 已完成；Police OCR + province sidecar RKNN 上板包已准备；ARM 特殊牌驱动接入进行中）
 
 ---
 
@@ -22,8 +22,8 @@
 | **普通单排黄色车牌 Phase 1** | ✅ 已收敛并已上板验证；ARM 已有按颜色路由到 yellow OCR 的分流逻辑 |
 | **特殊牌 cvreplace 全量生成** | ✅ 已完成 — 14,150 张；已拆为 `yellow_single` 路由审计、`police`、`embassy` 三路 |
 | **Embassy 专家** | ✅ FixedNorm 重训 90.33%；ONNX op11/op18 300/300 decode consistent；RKNN fp16 已转换，待板端/simulator decode check |
-| **Police 主 OCR** | ⏸️ 暂停 — FixedNorm 主 OCR 最高 64.84%，无法同时满足省份和 tail 阈值；不继续主 OCR 训练 |
-| **Police Province Sidecar** | ✅ Phase 1 审计通过 — 224×72 全牌 ResNet18 省份分类在 clean val 100%，hard holdout 100%，融合后 60.00% → 86.77%；绿牌权重迁移失败，需 police 域训练；仍需真实板端/退化图验证 |
+| **Police 主 OCR** | ✅ 已导出上板组件 — 单独使用不达标，但作为 police route 主 OCR + province sidecar 融合的一部分已准备 RKNN；不继续主 OCR 训练 |
+| **Police Province Sidecar** | ✅ Phase 1 审计通过并已导出 RKNN — 224×72 全牌 ResNet18 省份分类在 clean val 100%，hard holdout 100%，融合后 60.00% → 86.77%；绿牌权重迁移失败，需 police 域训练；ARM 驱动已加接入口，仍需真实板端/退化图验证 |
 | **蓝牌 CCPD2019 posquad v1** | ✅ 完成 — 旧蓝牌 53.0% → **59.5%** (+6.5pp) |
 | **蓝牌 posquad v2 hardmine** | ✅ 完成 — v1 59.5% → **60.6%** (+1.1pp) |
 | **蓝牌退化检查** | ✅ 无退化 — simple/val/hard 均提升 |
@@ -151,7 +151,7 @@ RKNN sha256:
 
 ### 4. Police 当前状态
 
-Police 主 OCR 当前暂停。FixedNorm 后主 OCR 的主要瓶颈是省份首字。
+Police 主 OCR 不再单独作为部署模型推进。FixedNorm 后主 OCR 的主要瓶颈是省份首字，因此当前部署口径是 police OCR + province sidecar 融合。
 
 关键结果：
 
@@ -164,8 +164,9 @@ Police 主 OCR 当前暂停。FixedNorm 后主 OCR 的主要瓶颈是省份首�
 结论：
 
 - 所有 first-char aux 权重都无法让主 OCR 同时达到 province 和 tail 部署阈值。
-- Police 主 OCR 不继续加步数，不导出 RKNN。
-- 下一步改为独立 province sidecar，只修第 0 位，不碰第 1 位到末尾“警”。
+- Police 主 OCR 不继续加步数；已导出 RKNN 作为融合链路中的 body/tail OCR 组件，不作为单独验收模型。
+- Province sidecar 已导出 RKNN，只修第 0 位，不碰第 1 位到末尾“警”。
+- 上板包位于 `artifacts/police_special_20260529/`。
 
 Sidecar 计划：
 
@@ -226,19 +227,44 @@ scripts/eval_green_resnet18_on_police_province.py
 
 ### 7. ARM / 板端口径
 
-ARM 已有颜色分流：
+ARM 驱动仓库：
 
-- `GREEN` -> green OCR
-- `YELLOW` -> yellow OCR
-- `UNKNOWN` -> special OCR
-- 默认 -> blue OCR
+```text
+/home/wzzz/VHDL_Project/ARM
+```
 
-但当前 ARM 仍只有单一 `--ocr-special-model` 槽位。Police / Embassy 双专家部署前需要 UNKNOWN 二级路由：
+当前已在 `fpga_lpr_display.c` / `run_lpr_kms.sh` 接入特殊牌部署入口：
 
-- police 白底 -> police OCR 或 police province sidecar + police OCR
-- embassy 黑底 -> embassy OCR
+- `GREEN` 仍走 green OCR。
+- `YELLOW` 仍走 yellow OCR。
+- `UNKNOWN` 会先按车牌裁剪图的明暗做二级路由。
+- 白底 UNKNOWN 优先走 police OCR。
+- 黑底 UNKNOWN 优先走 embassy OCR。
+- 未命中 police / embassy 时才回退到旧 `--ocr-special-model`。
+- police 路线在 OCR 后调用 police province sidecar，只替换第 0 位省份，不改 body 和末尾“警”。
 
-本轮未改 ARM。
+新增启动参数：
+
+```text
+--ocr-police-model
+--ocr-police-keys
+--ocr-embassy-model
+--ocr-embassy-keys
+--police-sidecar-model / --police-firstchar-model
+--police-sidecar-min-votes
+--police-sidecar-min-share
+--police-sidecar-min-conf
+```
+
+当前验证状态：
+
+- Police 上板包已生成：`artifacts/police_special_20260529/`。
+- 推荐上板文件：`police_LPRNet_fixednorm_20260529_fp16.rknn`、`police_province_sidecar_gray3_20260529_fp16.rknn`、`police_keys.txt`。
+- `run_lpr_kms.sh` 语法检查通过。
+- `git diff --check` 通过。
+- 启动脚本会阻止“给 police/embassy OCR 模型但不给对应 keys”的错误配置。
+- 本机 `make lprapp` 被环境阻塞：缺少 GStreamer / libdrm 开发头文件，尚未完成真实 C 编译。
+- 仍需在板端 SDK 或具备完整依赖的机器上执行 `make lprapp`，再做 UNKNOWN police/embassy 实拍路由验证。
 
 ---
 
