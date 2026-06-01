@@ -1,6 +1,6 @@
 # LPRNet 工作区状态
 
-> 最后更新: 2026-05-29（特殊牌 police/embassy 已拆分；LPRNet FixedNorm 已修复；Embassy ONNX/RKNN 已完成；Police OCR + province sidecar RKNN 上板包已准备；ARM 特殊牌驱动接入进行中）
+> 最后更新: 2026-06-01（special_split_v2 数据扩产完成：police 18,600 + embassy 12,000；含val_hard退化；审计通过）
 
 ---
 
@@ -8,6 +8,7 @@
 
 | 项目 | 状态 |
 |------|------|
+| **special_split_v2 数据扩产** | ✅ 完成 — 30,600 张新数据，police 31省均衡，含val_hard退化；详见文档和审计报告 |
 | 数据集目录 | ✅ CCPD2020、生成数据、原始 CCPD2019、special cvreplace 数据仍在位 |
 | 训练代码 (src/) | ✅ 已修复 LPRNet batch-dependent normalization；训练/导出统一使用 per-sample normalization |
 | manifests/ (旧绝对路径) | ✅ legacy 目录保留，仍可向后兼容 |
@@ -46,6 +47,124 @@
 | **绿牌当前部署主线** | ✅ 冻结维护 — `R50` 主 OCR 为当前推荐主模型；`prov_deg` 仅作为旧稳定回退；首字 sidecar 可选 |
 | Manifest/数据集清理 | 📋 候选清单已生成，未执行 |
 | 回滚方案 | ✅ 可用 |
+
+## 2026-06-01 增量更新（special_split_v2 数据扩产）
+
+### 1. 概述
+
+为解决 embassy/police 专家训练数据不足的问题，基于现有 cvreplace 生成链路做了 v2 数据扩产。本次只做数据和质量审计，不训练。
+
+### 2. 数据量
+
+| 类别 | Split | 目标 | 实际生成 | 省份均衡 |
+|------|-------|:---:|:--------:|:--------:|
+| Police | train | 15,500 | 15,500 | 每省500 ✅ |
+| Police | val_clean | 1,550 | 1,550 | 每省50 ✅ |
+| Police | val_hard | 1,550 | 1,550 | 每省50 ✅ |
+| Embassy | train | 10,000 | 10,000 | — |
+| Embassy | val_clean | 1,000 | 1,000 | — |
+| Embassy | val_hard | 1,000 | 1,000 | — |
+| **合计** | | **30,600** | **30,600** | |
+
+### 3. 关键结果
+
+- 底图去重：train / val_clean / val_hard 之间 0 共享底图 ✅
+- Police 31 省严格均衡（train 每省 500，val 每省 50）✅
+- 文本格式 100% 正确（police: 省+字母+4位+警；embassy: 使+6位数字）✅
+- Embassy 数字均匀分布（min=5,907, max=6,084）✅
+- 所有 manifest 字段与 v1 一致，路径为相对路径 ✅
+- 所有图片文件存在 ✅
+
+### 4. val_hard 退化类型
+
+每种 val_hard 图像随机应用 2-4 种退化：
+- 高斯模糊 (3x3/5x5, σ=0.3-1.0)
+- JPEG 压缩 (quality 60-90)
+- 亮度/对比度偏移 (±40, 0.7x-1.3x)
+- 局部曝光渐变
+- 散粒噪声 (σ=2-8)
+- 色相偏移 (Hue ±10°)
+
+### 5. 输出产物
+
+| 项目 | 路径 |
+|------|------|
+| 图像 | `datasets/special_ccpd2019_base_cvreplace_v2_20260601/images/{train,val_clean,val_hard}/` |
+| Manifests | `manifests_rebased/special_split_v2_20260601/` |
+| 生成脚本 | `scripts/special_gen/special_v2_generate.py` |
+| QA 脚本 | `scripts/special_gen/special_v2_qa.py` |
+| 审计报告 | `docs/SPECIAL_V2_DATA_AUDIT_20260601.md` |
+| QA 预览图 | `datasets/special_ccpd2019_base_cvreplace_v2_20260601/qa_v2/`（桌面同步） |
+
+### 6. 已知问题
+
+- Embassy 颜色守卫通过率低（~16%），因 style transfer 提亮黑底导致 dark_ratio 低于阈值。回退路径（raw rendering + capture finish）仍产生可用数据。
+- 全部为合成数据，存在域差距。建议后续用真实板端图验证。
+
+### 7. 下一步
+
+- 待用户确认 QA 图可接受后，进入训练阶段
+- 建议 police 全量微调（freeze_backbone=false），至少 backbone.16+ unfrozen
+- 建议 embassy 同样放宽冻结层
+
+---
+
+
+
+这一节是后续导出、重转、上板前的统一口径。板端主 OCR 路径当前送入的是 `uint8` 图像，C 代码不额外做 `(pixel - 127.5) / 128`；因此每个 RKNN 必须且只能有一处输入归一化。
+
+### 1. 不允许混用的两种主 OCR 方案
+
+LPRNet 主 OCR 训练输入是 `(pixel - 127.5) / 128`。部署时只能二选一：
+
+| 方案 | ONNX 图开头 | RKNN mean/std | 适用情况 |
+|------|------|------|------|
+| RKNN 预处理 | 无输入 Sub/Div | `mean=[127.5,127.5,127.5]`, `std=[128,128,128]` | 蓝牌、黄牌、special、police、embassy 这类 raw ONNX |
+| 图内预处理 | 有输入 Sub/Div，把 `uint8` 转到 `[-1,1]` | `mean=[0,0,0]`, `std=[1,1,1]` | `no_rknnpre` / graph-normalized 绿牌模型 |
+
+禁止事项：
+
+- 不要给已经图内归一化的 `no_rknnpre` 模型再加 `127.5/128`。
+- 不要把 raw ONNX 转成 `mean=0,std=1` 的 RKNN 后直接接当前板端 `uint8` OCR 路径。
+- 文件名里的 `no_rknnpre` 表示“不用 RKNN 预处理，因为图里已经做了”，不是“完全无归一化”。
+
+### 2. 当前专家归一化矩阵
+
+| 专家 / 组件 | 当前主文件 | 当前归一化方式 | 结论 |
+|------|------|------|------|
+| 蓝牌 OCR | `experiments/tilt_ocr_obbwarp_v7_from_v6_lenpos3_20260319/weights_stageC/LPRNet_stage3_rk3568_fp16_more_trained.rknn` | RKNN `127.5/128` | ✅ 正确，raw ONNX 重转时继续用 RKNN 预处理 |
+| 绿牌主 OCR R50 | `artifacts/r50_green_ocr/R50_green_multihead_no_rknnpre_rk3568_fp16.rknn` | 图内 Sub/Div，RKNN `0/1` | ✅ 正确，不要再加 RKNN `127.5/128` |
+| 绿牌旧回退 prov_deg | `experiments/green_e12_province_degrade_unfreeze/prov_deg_fp16_no_rknnpre.rknn` | 图内 Sub/Div，RKNN `0/1` | ✅ 正确，不要再加 RKNN `127.5/128` |
+| 绿牌 firstchar sidecar | `artifacts/green_firstchar_sidecar/green_firstchar_G0_refit_best_rk3568_fp16.rknn` | RKNN `0/255`，单通道 `72x224` | ✅ 正确，sidecar 训练就是 `/255` |
+| 黄牌 OCR | `artifacts/yellow_LPRNet_v5_phase2_fp16.rknn` | RKNN `127.5/128` | ✅ 正确 |
+| 通用 special OCR v1 | `artifacts/special_LPRNet_fp16.rknn` | RKNN `127.5/128` | ✅ 正确 |
+| 通用 special OCR v2 | `artifacts/special_LPRNet_v2_fp16.rknn` | RKNN `127.5/128` | ✅ 正确，但当前未部署 |
+| Police 主 OCR | `artifacts/police_special_20260529/police_LPRNet_fixednorm_20260529_fp16.rknn` | RKNN `127.5/128` | ✅ 当前本地 primary 已适配板端 `uint8` OCR 路径 |
+| Police province sidecar | `artifacts/police_special_20260529/police_province_sidecar_gray3_20260529_fp16.rknn` | RKNN `0/255`，三通道 `72x224` | ✅ 正确，sidecar 训练就是 `/255` |
+| Embassy 主 OCR primary | `artifacts/embassy_LPRNet_fixednorm_20260526_fp16.rknn` | RKNN `127.5/128` | ✅ 当前本地文件已重转；git 中显示为已修改 |
+| Embassy op18 fallback | `artifacts/embassy_LPRNet_fixednorm_20260526_fp16_op18.rknn` | RKNN `0/1`，未见图内输入 Sub/Div | ⚠️ 不要直接接当前板端 `uint8` OCR 路径，需重转或废弃 |
+
+当前本地哈希（2026-05-31）：
+
+| 文件 | SHA256 |
+|------|------|
+| `artifacts/embassy_LPRNet_fixednorm_20260526_fp16.rknn` | `c007c09b7ee55d1721f363bbc3eeb996ab59fa27ba112b7843cebe2fe4e5b53c` |
+| `artifacts/police_special_20260529/police_LPRNet_fixednorm_20260529_fp16.rknn` | `c90bda86e79fc910109303e7818f784fb7527dca7918fac619c52a398dc2c7e6` |
+
+### 3. 后续导出检查清单
+
+每次新增或替换 OCR RKNN 前，必须记录这四项：
+
+- 板端输入是什么：当前主 OCR 是 `uint8 NHWC`，sidecar 也是 `uint8`。
+- ONNX 图开头是否已经做输入归一化。
+- RKNN attrs 里的 `mean/std` 实际是什么。
+- 用至少一个代表性 OCR input 做 PyTorch / ONNX / RKNN 或板端 decode 对齐。
+
+快速自查命令示例：
+
+```bash
+strings path/to/model.rknn | rg "attrs|mean|std|Sub|Div|input"
+```
 
 ---
 
@@ -139,7 +258,7 @@ RKNN sha256:
 
 | Artifact | SHA256 |
 |------|------|
-| `embassy_LPRNet_fixednorm_20260526_fp16.rknn` | `4159d2ede625426cdc09df98be16584366681b7d400b23d92240854be2d9cce9` |
+| `embassy_LPRNet_fixednorm_20260526_fp16.rknn` | `c007c09b7ee55d1721f363bbc3eeb996ab59fa27ba112b7843cebe2fe4e5b53c` |
 | `embassy_LPRNet_fixednorm_20260526_fp16_op18.rknn` | `91dfb7a6020249f36023c1364a14d4489681bde0fd82dcc0cebda1129909f3ee` |
 
 限制：
@@ -148,6 +267,7 @@ RKNN sha256:
 - Embassy 模型不能替换通用 `--ocr-special-model`。
 - 后续必须先实现 UNKNOWN 二级路由，再将 embassy 作为独立专家接入。
 - 板端部署前至少做 50-sample simulator 或板端 decode check。
+- `embassy_LPRNet_fixednorm_20260526_fp16_op18.rknn` 仍是 `mean=0,std=1` fallback，不要直接接当前 `uint8` OCR 路径；如需 fallback，应按 2026-05-31 归一化契约重转。
 
 ### 4. Police 当前状态
 

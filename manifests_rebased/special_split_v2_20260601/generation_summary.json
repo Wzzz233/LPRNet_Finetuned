@@ -1,0 +1,60 @@
+{
+  "date_tag": "20260601",
+  "targets": {
+    "police": {
+      "train": 500,
+      "val_clean": 50,
+      "val_hard": 50
+    },
+    "embassy": {
+      "train": 10000,
+      "val_clean": 1000,
+      "val_hard": 1000
+    }
+  },
+  "generated": {
+    "police_train": {
+      "police": 15500
+    },
+    "police_val_clean": {
+      "police": 1550
+    },
+    "police_val_hard": {
+      "police": 1550
+    },
+    "embassy_train": {
+      "embassy": 10000
+    },
+    "embassy_val_clean": {
+      "embassy": 1000
+    },
+    "embassy_val_hard": {
+      "embassy": 1000
+    }
+  },
+  "skips": {
+    "police_train": {
+      "color_guard_fallback_raw": 3185
+    },
+    "police_val_clean": {
+      "color_guard_fallback_raw": 358
+    },
+    "police_val_hard": {
+      "color_guard_fallback_raw": 323
+    },
+    "embassy_train": {
+      "color_guard_fallback_raw": 8378
+    },
+    "embassy_val_clean": {
+      "color_guard_fallback_raw": 850
+    },
+    "embassy_val_hard": {
+      "color_guard_fallback_raw": 835
+    }
+  },
+  "pool_sizes": {
+    "train": 193996,
+    "val_clean": 3000,
+    "val_hard": 3000
+  }
+}
