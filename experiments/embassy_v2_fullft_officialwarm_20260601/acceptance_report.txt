@@ -1,0 +1,32 @@
+# Embassy V2 Full Fine-Tune Acceptance Report
+
+## Candidate: B — official weights warm start
+**Experiment:** `experiments/embassy_v2_fullft_officialwarm_20260601/`
+**Checkpoint:** `best_LPRNet_model.pth` (epoch 24)
+**Data:** `special_split_v2_20260601` (train 10K / val_clean 1K / val_hard 1K)
+**Config:** freeze_backbone=false, backbone_lr_mult=0.1, max_epoch=40, first_char_aux=0
+
+### Results
+
+| Split | Exact | Accuracy | Len Errors | Illegal |
+|-------|:-----:|:--------:|:----------:|:-------:|
+| val_clean (v2) | 998/1000 | **99.80%** | 1 | 0 |
+| val_hard (v2) | 991/1000 | **99.10%** | 9 | 0 |
+| v1_val (old) | 299/300 | **99.67%** | 1 | 0 |
+
+### Per-Position (val_clean)
+
+| Pos0 | Pos1 | Pos2 | Pos3 | Pos4 | Pos5 | Pos6 |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 100% | 100% | 99.9% | 99.9% | 99.9% | 99.8% | 99.8% |
+
+### Comparison vs Old Model
+
+| Metric | Old (v1, 3K) | New B (v2, 10K, full ft) |
+|--------|:------------:|:------------------------:|
+| v1_val accuracy | 90.33% | **99.67%** |
+| Len errors | 28/300 | **1/300** |
+
+### Verdict
+
+✅ **All targets met.** Slightly lower val_hard than Candidate A (99.10% vs 99.70%) but still strong. Export-ready if preferred over A.

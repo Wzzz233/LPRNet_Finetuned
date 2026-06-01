@@ -1,0 +1,41 @@
+# Police V2 Full Fine-Tune Acceptance Report
+
+## Candidate: A — special_special_v2 warm start
+**Experiment:** `experiments/police_v2_fullft_specialwarm_20260601/`
+**Checkpoint:** `best_LPRNet_model.pth` (epoch 43)
+**Data:** `special_split_v2_20260601` (train 15.5K / val_clean 1,550 / val_hard 1,550)
+**Config:** freeze_backbone=false, backbone_lr_mult=0.1, max_epoch=60, first_char_aux=0.05
+
+### Results
+
+| Split | Exact | Accuracy | Len Errors | Illegal | Province(p0) | Tail警(p6) |
+|-------|:-----:|:--------:|:----------:|:-------:|:-----------:|:----------:|
+| **val_clean (v2)** | 1526/1550 | **98.45%** | 9 | 0 | **98.77%** | **99.42%** |
+| **val_hard (v2)** | 1505/1550 | **97.10%** | 17 | 0 | 97.87% | 98.90% |
+| **v1_val (old)** | 304/310 | **98.06%** | 4 | 0 | 98.71% | 98.71% |
+
+### Per-Position (val_clean)
+
+| Pos0(p) | Pos1(L) | Pos2 | Pos3 | Pos4 | Pos5 | Pos6(警) |
+|:-------:|:-------:|:---:|:---:|:---:|:---:|:--------:|
+| 98.77% | 99.61% | 99.55% | 99.48% | 99.42% | 99.42% | 99.42% |
+
+### Comparison vs Old Police Model
+
+| Metric | Old (v1, 3.7K, freeze_bk) | New A (v2, 15.5K, full ft) |
+|--------|:--------------------------:|:---------------------------:|
+| Full val accuracy | 60.00% | **98.45%** |
+| Province (pos0) | 64.52% | **98.77%** |
+| Tail 警 (pos6) | 91.94% | **99.42%** |
+| Len errors | 35/310 | **9/1550** |
+| Illegal chars | 0 | 0 |
+
+### Province Confusion
+
+Scattered, no single dominant confusion (max 1 per pair). 17 confusions among 31 provinces on val_clean.
+
+### Verdict
+
+✅ **All targets met or exceeded.** val_clean 98.45% ≥ 85% target. Province 98.77% ≥ 90%. Tail 警 99.42% ≥ 98%. Province sidecar fusion not needed — main OCR alone solves the bottleneck.
+
+**Recommendation: Export ready.** Primary candidate for ONNX/RKNN export. No need for province sidecar route.

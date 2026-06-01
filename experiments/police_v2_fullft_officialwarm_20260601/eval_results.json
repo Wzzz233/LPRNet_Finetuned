@@ -1,0 +1,51 @@
+{
+  "checkpoint": "experiments/police_v2_fullft_officialwarm_20260601/best_LPRNet_model.pth",
+  "family": "police",
+  "results": {
+    "val_clean": {
+      "total": 1550,
+      "exact_ok": 1542,
+      "exact_acc": 0.9948387096774194,
+      "len_errors": 6,
+      "illegal_chars": 0,
+      "pos0_acc": 0.9980645161290322,
+      "pos1_acc": 0.9987096774193548,
+      "pos2_acc": 0.9974193548387097,
+      "pos3_acc": 0.9980645161290322,
+      "pos4_acc": 0.9967741935483871,
+      "pos5_acc": 0.9961290322580645,
+      "pos6_acc": 0.9961290322580645,
+      "pos7_acc": 0.0
+    },
+    "val_hard": {
+      "total": 1550,
+      "exact_ok": 1523,
+      "exact_acc": 0.9825806451612903,
+      "len_errors": 9,
+      "illegal_chars": 0,
+      "pos0_acc": 0.9864516129032258,
+      "pos1_acc": 0.9948387096774194,
+      "pos2_acc": 0.9948387096774194,
+      "pos3_acc": 0.9954838709677419,
+      "pos4_acc": 0.9935483870967742,
+      "pos5_acc": 0.9935483870967742,
+      "pos6_acc": 0.9941935483870967,
+      "pos7_acc": 0.0,
+      "pos8_acc": 0.0
+    },
+    "v1_val": {
+      "total": 310,
+      "exact_ok": 309,
+      "exact_acc": 0.9967741935483871,
+      "len_errors": 1,
+      "illegal_chars": 0,
+      "pos0_acc": 1.0,
+      "pos1_acc": 1.0,
+      "pos2_acc": 1.0,
+      "pos3_acc": 0.9967741935483871,
+      "pos4_acc": 0.9967741935483871,
+      "pos5_acc": 0.9967741935483871,
+      "pos6_acc": 0.9967741935483871
+    }
+  }
+}

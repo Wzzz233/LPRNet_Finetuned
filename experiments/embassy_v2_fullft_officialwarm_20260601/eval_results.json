@@ -1,0 +1,48 @@
+{
+  "checkpoint": "experiments/embassy_v2_fullft_officialwarm_20260601/best_LPRNet_model.pth",
+  "family": "embassy",
+  "results": {
+    "val_clean": {
+      "total": 1000,
+      "exact_ok": 998,
+      "exact_acc": 0.998,
+      "len_errors": 1,
+      "illegal_chars": 0,
+      "pos0_acc": 1.0,
+      "pos1_acc": 1.0,
+      "pos2_acc": 0.999,
+      "pos3_acc": 0.999,
+      "pos4_acc": 0.999,
+      "pos5_acc": 0.998,
+      "pos6_acc": 0.998
+    },
+    "val_hard": {
+      "total": 1000,
+      "exact_ok": 991,
+      "exact_acc": 0.991,
+      "len_errors": 9,
+      "illegal_chars": 0,
+      "pos0_acc": 1.0,
+      "pos1_acc": 0.999,
+      "pos2_acc": 0.997,
+      "pos3_acc": 0.997,
+      "pos4_acc": 0.997,
+      "pos5_acc": 0.996,
+      "pos6_acc": 0.991
+    },
+    "v1_val": {
+      "total": 300,
+      "exact_ok": 299,
+      "exact_acc": 0.9966666666666667,
+      "len_errors": 1,
+      "illegal_chars": 0,
+      "pos0_acc": 1.0,
+      "pos1_acc": 1.0,
+      "pos2_acc": 1.0,
+      "pos3_acc": 1.0,
+      "pos4_acc": 1.0,
+      "pos5_acc": 0.9966666666666667,
+      "pos6_acc": 0.9966666666666667
+    }
+  }
+}

@@ -1,6 +1,6 @@
 # LPRNet 工作区状态
 
-> 最后更新: 2026-06-01（special_split_v2 数据扩产完成：police 18,600 + embassy 12,000；含val_hard退化；审计通过）
+> 最后更新: 2026-06-01（special_split_v2 训练完成：embassy 99.8%, police 99.5%；v2 数据+全量微调解决旧专家哑火问题）
 
 ---
 
@@ -9,6 +9,7 @@
 | 项目 | 状态 |
 |------|------|
 | **special_split_v2 数据扩产** | ✅ 完成 — 30,600 张新数据，police 31省均衡，含val_hard退化；详见文档和审计报告 |
+| **special_split_v2 训练** | ✅ 完成 — embassy 99.8% (A, special warm), police 99.5% (B, official warm). 全量微调+扩产解决旧模型瓶颈 |
 | 数据集目录 | ✅ CCPD2020、生成数据、原始 CCPD2019、special cvreplace 数据仍在位 |
 | 训练代码 (src/) | ✅ 已修复 LPRNet batch-dependent normalization；训练/导出统一使用 per-sample normalization |
 | manifests/ (旧绝对路径) | ✅ legacy 目录保留，仍可向后兼容 |
@@ -106,6 +107,66 @@
 - 待用户确认 QA 图可接受后，进入训练阶段
 - 建议 police 全量微调（freeze_backbone=false），至少 backbone.16+ unfrozen
 - 建议 embassy 同样放宽冻结层
+
+---
+
+## 2026-06-01 增量更新（special_split_v2 训练完成）
+
+### 1. 训练结果总览
+
+所有 4 个候选实验全部完成。全量微调 + v2 扩产数据彻底解决了旧模型瓶颈。
+
+| 实验 | Warm Start | val_clean | val_hard | v1旧集 | 省份(p0) | 末尾警 |
+|------|:----------:|:---------:|:--------:|:------:|:--------:|:------:|
+| Embassy A | special_v2 | **99.80%** | **99.70%** | **99.33%** | 100% | — |
+| Embassy B | official | 99.80% | 99.10% | 99.67% | 100% | — |
+| Police A | special_v2 | 98.45% | 97.10% | 98.06% | 98.77% | 99.42% |
+| **Police B** | **official** | **99.48%** | **98.26%** | **99.68%** | **99.81%** | **99.61%** |
+
+### 2. 推荐候选
+
+| 任务 | 推荐 | Checkpoint |
+|------|:----:|-----------|
+| Embassy OCR | **A** (special warm) | `experiments/embassy_v2_fullft_specialwarm_20260601/best_LPRNet_model.pth` |
+| Police OCR | **B** (official warm) | `experiments/police_v2_fullft_officialwarm_20260601/best_LPRNet_model.pth` |
+
+### 3. 对比旧模型
+
+| 指标 | 旧 Embassy | 新 Embassy | 旧 Police | 新 Police |
+|------|:----------:|:----------:|:---------:|:---------:|
+| 准确率 | 90.33% | **99.80%** | 60.00% | **99.48%** |
+| 省份首字 | — | 100% | 64.52% | **99.81%** |
+| 末尾警 | — | 99.8% | 91.94% | **99.61%** |
+| 长度错误 | 28/300 | **2/1000** | 35/310 | **6/1550** |
+| Province sidecar | — | 不需要 | 必须 | **不需要** |
+
+### 4. 根因确认
+
+旧单独训练专家哑火的根因是 **冻结 backbone + 数据不足**：
+- Embassy: 3K→10K + 全量微调 → 90%→99.8%
+- Police: 3.7K→15.5K + 省均衡 + 全量微调 → 60%→99.5%
+
+special 模型之所以旧版"能用"，是因为它用了全量 28K 混合数据 + 不冻结 backbone 训练（96.6%），训练策略本身就比冻结微调的专家更合理。
+
+### 5. 实验产物
+
+| 实验 | 路径 |
+|------|------|
+| Embassy A | `experiments/embassy_v2_fullft_specialwarm_20260601/` |
+| Embassy B | `experiments/embassy_v2_fullft_officialwarm_20260601/` |
+| Police A | `experiments/police_v2_fullft_specialwarm_20260601/` |
+| Police B | `experiments/police_v2_fullft_officialwarm_20260601/` |
+| 训练脚本 | `scripts/train/run_embassy_v2_A.sh`, `run_embassy_v2_B.sh`, `run_police_v2_A.sh`, `run_police_v2_B.sh` |
+| 评估脚本 | `scripts/eval_special_v2.py` |
+| 训练总结 | `docs/SPECIAL_V2_TRAINING_SUMMARY_20260601.md` |
+
+### 6. 下一步（待决策）
+
+1. 选择最终候选模型（推荐 Embassy A, Police B）
+2. 导出 ONNX（使用 FixedNorm 导出代码）
+3. 转换 RKNN（mean=127.5, std=128, rk3568 fp16）
+4. 板端部署 + 实拍验证
+5. 补充 val_jitter / val_boardhard 真实板端验证集
 
 ---
 
