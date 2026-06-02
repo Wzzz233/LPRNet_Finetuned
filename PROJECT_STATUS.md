@@ -1828,3 +1828,15 @@ python src/training/train_LPRNet.py \
 - **绿牌实验**: 所有实验目录各自独立，v4b_clean / v5_sweet_spot 均可独立回退到 old_green baseline
 - **绿牌 v5 eval 脚本**: 已备份 5 份 `scripts/green_ccpd2019_final_eval.py.bak_supervisor_`（详见 v5 产出节），可任意回退历史版本
 - **绿牌 v5 sweet spot checkpoint**: 仅存一份拷贝 `experiments/green_ccpd2019_v5_final_20260509/v5_sweet_spot_iter8000_LPRNet_model.pth`（从训练中间状态提取的训练权重，非训练器自动保存产物；训练器自动保存的 best/last/Final 权重仍在同级目录下）
+
+
+### Plate Type Classifier 6cls Warped No-Crop (2026-06-02)
+
+- Rebuilt the classifier data path after finding the old run resized full frames to 224x72 instead of warping plates.
+- New scripts: `scripts/build_plate_type_classifier_manifests_warped.py`, `scripts/train_plate_type_classifier_warped.py`, `scripts/eval_plate_type_classifier_warped.py`, `scripts/generate_plate_classifier_qa_warped.py`.
+- Excluded `CRPD_raw_ccpd_board_v1`, `git_plate`, and `CBLPRD-330k_v1` from this run.
+- New manifest: `manifests_rebased/plate_type_classifier_6cls_warped_nocrop_20260602/`.
+- New experiment: `experiments/plate_type_classifier_6cls_warped_nocrop_20260602/`.
+- Best epoch 3: val_clean 99.60%, val_hard 99.84%, val_cross_source 100.00%, real embassy holdout 74/74 = 100.00%.
+- QA sheets: `C:\Users\Wzzz2\OneDrive\Desktop\QA\plate_type_classifier_6cls_warped_nocrop_20260602\`.
+- Caveat: after removing git_plate/CBLPRD, the `other` class has no meaningful training coverage; treat this as a five-route classifier until new other data is deliberately added.

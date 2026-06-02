@@ -1,0 +1,134 @@
+{
+  "train": {
+    "total": 39452,
+    "by_class": {
+      "blue": 8891,
+      "green": 4026,
+      "yellow": 1031,
+      "police": 15504,
+      "embassy": 10000
+    },
+    "by_source": {
+      "ccpd2019": {
+        "blue": 5626
+      },
+      "ccpd2020": {
+        "green": 4026
+      },
+      "crpd_double": {
+        "yellow": 106,
+        "blue": 1093,
+        "police": 1
+      },
+      "crpd_multi": {
+        "yellow": 19,
+        "blue": 580,
+        "police": 1
+      },
+      "crpd_single": {
+        "yellow": 906,
+        "blue": 1592,
+        "police": 2
+      },
+      "special_v2": {
+        "police": 15500,
+        "embassy": 10000
+      }
+    }
+  },
+  "val_clean": {
+    "total": 5057,
+    "by_class": {
+      "blue": 1684,
+      "green": 560,
+      "yellow": 261,
+      "police": 1552,
+      "embassy": 1000
+    },
+    "by_source": {
+      "ccpd2019": {
+        "blue": 797
+      },
+      "ccpd2020": {
+        "green": 560
+      },
+      "crpd_double": {
+        "blue": 286,
+        "yellow": 14
+      },
+      "crpd_multi": {
+        "blue": 147,
+        "yellow": 3
+      },
+      "crpd_single": {
+        "yellow": 244,
+        "blue": 454,
+        "police": 2
+      },
+      "special_v2": {
+        "police": 1550,
+        "embassy": 1000
+      }
+    }
+  },
+  "val_hard": {
+    "total": 5099,
+    "by_class": {
+      "blue": 1838,
+      "green": 609,
+      "yellow": 102,
+      "police": 1550,
+      "embassy": 1000
+    },
+    "by_source": {
+      "ccpd2019": {
+        "blue": 790
+      },
+      "ccpd2020": {
+        "green": 609
+      },
+      "crpd_double": {
+        "blue": 241,
+        "yellow": 59
+      },
+      "crpd_multi": {
+        "blue": 145,
+        "yellow": 5
+      },
+      "crpd_single": {
+        "blue": 662,
+        "yellow": 38
+      },
+      "special_v2": {
+        "police": 1550,
+        "embassy": 1000
+      }
+    }
+  },
+  "val_cross_source": {
+    "total": 1361,
+    "by_class": {
+      "blue": 787,
+      "green": 574
+    },
+    "by_source": {
+      "ccpd2019": {
+        "blue": 787
+      },
+      "ccpd2020": {
+        "green": 574
+      }
+    }
+  },
+  "final_holdout": {
+    "total": 74,
+    "by_class": {
+      "embassy": 74
+    },
+    "by_source": {
+      "real_embassy_board_dump": {
+        "embassy": 74
+      }
+    }
+  }
+}

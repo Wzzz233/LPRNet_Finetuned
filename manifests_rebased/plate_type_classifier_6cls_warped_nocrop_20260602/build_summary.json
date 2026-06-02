@@ -1,0 +1,38 @@
+{
+  "date": "20260602",
+  "class_map": {
+    "blue": 0,
+    "green": 1,
+    "yellow": 2,
+    "police": 3,
+    "embassy": 4,
+    "other": 5
+  },
+  "output_dir": "/home/wzzz/LPRNet/manifests_rebased/plate_type_classifier_6cls_warped_nocrop_20260602",
+  "excluded_sources": [
+    "datasets/CRPD_raw_ccpd_board_v1",
+    "datasets/git_plate",
+    "datasets/CBLPRD-330k_v1"
+  ],
+  "sources_used": [
+    "ccpd2019",
+    "ccpd2020",
+    "crpd_double",
+    "crpd_multi",
+    "crpd_single",
+    "real_embassy_board_dump",
+    "special_v2"
+  ],
+  "splits": {
+    "train": 39452,
+    "val_clean": 5057,
+    "val_hard": 5099,
+    "val_cross_source": 1361,
+    "final_holdout": 74
+  },
+  "notes": [
+    "All full-frame sources require perspective_warp or are excluded.",
+    "real_embassy_board_dump is final_holdout only.",
+    "special_v2 train samples are augmented in the training loader to resemble real board fc224 dumps."
+  ]
+}

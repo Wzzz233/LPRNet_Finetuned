@@ -1,0 +1,8 @@
+{
+  "blue": 0,
+  "green": 1,
+  "yellow": 2,
+  "police": 3,
+  "embassy": 4,
+  "other": 5
+}
