@@ -1,0 +1,161 @@
+{
+  "train": {
+    "total": 114026,
+    "by_class": {
+      "blue": 51248,
+      "green": 23579,
+      "other": 5390,
+      "police": 15514,
+      "embassy": 10827,
+      "yellow": 7468
+    },
+    "by_source": {
+      "cblprd": {
+        "other": 5233,
+        "blue": 9719,
+        "yellow": 7468,
+        "green": 19200,
+        "embassy": 827
+      },
+      "ccpd2019": {
+        "blue": 20818
+      },
+      "ccpd2020": {
+        "green": 4033
+      },
+      "crpd_double": {
+        "other": 22,
+        "blue": 2975,
+        "police": 3
+      },
+      "crpd_multi": {
+        "blue": 3190,
+        "other": 8,
+        "police": 10
+      },
+      "crpd_single": {
+        "blue": 1491,
+        "other": 8,
+        "police": 1
+      },
+      "git_plate": {
+        "other": 119,
+        "green": 346,
+        "blue": 13055
+      },
+      "special_v2": {
+        "police": 15500,
+        "embassy": 10000
+      }
+    }
+  },
+  "val_clean": {
+    "total": 11451,
+    "by_class": {
+      "blue": 6331,
+      "green": 1746,
+      "other": 328,
+      "police": 1550,
+      "embassy": 1050,
+      "yellow": 446
+    },
+    "by_source": {
+      "cblprd": {
+        "green": 1144,
+        "yellow": 446,
+        "blue": 592,
+        "other": 306,
+        "embassy": 50
+      },
+      "ccpd2019": {
+        "blue": 3062
+      },
+      "ccpd2020": {
+        "green": 559
+      },
+      "crpd_multi": {
+        "blue": 799,
+        "other": 7
+      },
+      "git_plate": {
+        "green": 43,
+        "blue": 1878,
+        "other": 15
+      },
+      "special_v2": {
+        "police": 1550,
+        "embassy": 1000
+      }
+    }
+  },
+  "val_hard": {
+    "total": 14036,
+    "by_class": {
+      "blue": 6970,
+      "green": 2911,
+      "other": 644,
+      "police": 1552,
+      "embassy": 1102,
+      "yellow": 857
+    },
+    "by_source": {
+      "cblprd": {
+        "green": 2278,
+        "blue": 1159,
+        "other": 619,
+        "yellow": 857,
+        "embassy": 102
+      },
+      "ccpd2019": {
+        "blue": 3083
+      },
+      "ccpd2020": {
+        "green": 589
+      },
+      "crpd_multi": {
+        "blue": 814,
+        "other": 2,
+        "police": 2
+      },
+      "git_plate": {
+        "other": 23,
+        "green": 44,
+        "blue": 1914
+      },
+      "special_v2": {
+        "police": 1550,
+        "embassy": 1000
+      }
+    }
+  },
+  "val_cross_source": {
+    "total": 6158,
+    "by_class": {
+      "blue": 4916,
+      "green": 638,
+      "embassy": 54,
+      "police": 536,
+      "other": 14
+    },
+    "by_source": {
+      "ccpd2019": {
+        "blue": 3007
+      },
+      "ccpd2020": {
+        "green": 588
+      },
+      "git_plate": {
+        "green": 50,
+        "blue": 1909,
+        "embassy": 54,
+        "police": 536,
+        "other": 14
+      }
+    }
+  },
+  "final_holdout": {
+    "total": 0,
+    "by_class": {},
+    "by_source": {}
+  }
+}

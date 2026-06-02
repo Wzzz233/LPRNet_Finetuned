@@ -1,0 +1,29 @@
+{
+  "date": "2026-06-02",
+  "class_map": {
+    "blue": 0,
+    "green": 1,
+    "yellow": 2,
+    "police": 3,
+    "embassy": 4,
+    "other": 5
+  },
+  "total_records": 145671,
+  "splits": {
+    "train": 114026,
+    "val_clean": 11451,
+    "val_hard": 14036,
+    "val_cross_source": 6158,
+    "final_holdout": 0
+  },
+  "sources_used": [
+    "cblprd",
+    "ccpd2019",
+    "ccpd2020",
+    "crpd_double",
+    "crpd_multi",
+    "crpd_single",
+    "git_plate",
+    "special_v2"
+  ]
+}

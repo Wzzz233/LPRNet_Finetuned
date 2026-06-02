@@ -1,0 +1,2 @@
+img_path,label,label_name,plate_text,source,source_split,crop_mode,original_w,original_h,is_synthetic,is_gan,base_id,sample_weight,notes
+PLACEHOLDER,,,,,,,,,,,,,

@@ -1,6 +1,6 @@
 # LPRNet 工作区状态
 
-> 最后更新: 2026-06-01（special_split_v2 训练完成：embassy 99.8%, police 99.5%；v2 数据+全量微调解决旧专家哑火问题）
+> 最后更新: 2026-06-02（Plate Type Classifier 6-Class: 训练中 epoch 2/20, val_clean=98.1%; 新增 manifests/manifest builders/training/eval scripts）
 
 ---
 
@@ -9,7 +9,8 @@
 | 项目 | 状态 |
 |------|------|
 | **special_split_v2 数据扩产** | ✅ 完成 — 30,600 张新数据，police 31省均衡，含val_hard退化；详见文档和审计报告 |
-| **special_split_v2 训练** | ✅ 完成 — embassy 99.8% (A, special warm), police 99.5% (B, official warm). 全量微调+扩产解决旧模型瓶颈 |
+|| **special_split_v2 ONNX/RKNN 导出** | ⚠️ 发现 FixedNorm ONNX 图结构导致 RKNN 编译失败（动态Reshape×8），已改用 GlobalMean 导出重转，待板端验证 |
+|| **Plate Type Classifier 6-class** | ✅ 完成 — ResNet18 224x72 RGB; val_clean=99.71% macro=99.23%; best epoch 10; 6 classes: blue/green/yellow/police/embassy/other; 高风险混淆仅 13 例 |
 | 数据集目录 | ✅ CCPD2020、生成数据、原始 CCPD2019、special cvreplace 数据仍在位 |
 | 训练代码 (src/) | ✅ 已修复 LPRNet batch-dependent normalization；训练/导出统一使用 per-sample normalization |
 | manifests/ (旧绝对路径) | ✅ legacy 目录保留，仍可向后兼容 |
@@ -170,7 +171,55 @@ special 模型之所以旧版"能用"，是因为它用了全量 28K 混合数�
 
 ---
 
+## 2026-06-02 增量更新（ONNX/RKNN 转换发现）
 
+### 1. 现象
+
+新训练的 embassy v2 模型（99.8% val_clean）在 ONNX Runtime 上用归一化输入跑 50 张真实板端 ocrin 图，**全部正确输出 "使198476"**。但转换成 RKNN 部署到 RK3568 后，输出变为 "83558516" 等错误文本。
+
+### 2. 根因：FixedNorm ONNX 图结构导致 RKNN 编译失败
+
+LPRNet 使用的 per-sample 归一化（`view→mean(dim=1)→view→clamp→div`）在 ONNX 图中产生 **8 个动态 Reshape 操作**（ONNX 共 88 节点）。RKNN 编译器无法将这些动态 Reshape 映射到 NPU，产生 "Unkown op target: 0" 警告。
+
+对比：
+
+| 导出方式 | 归一化方式 | ONNX 节点 | 动态 Reshape | 板端 NPU |
+|:---------|:----------|:---------:|:------------:|:--------:|
+| FixedNorm | view→mean(dim=1)→view→clamp→div | 88 | **8个** ❌ | 运行错误 |
+| GlobalMean | mean(f_pow)（全局） | **72** | **0个** ✅ | 应正常 |
+
+batch=1 时两种方式数学等价，权重兼容。
+
+### 3. 验证
+
+在 embassy_2 数据集（50 张板端真实 ocrin 图，GT=使198476）上：
+
+| 测试 | 结果 |
+|:----|:-----|
+| 新 v2 ONNX + 归一化输入 | **50/50 正确输出 "使198476"** ✅ |
+| 新 v2 ONNX + 原始 uint8 | 0/50 错误 ❌ |
+| 旧 embassy ONNX + 归一化输入 | 50/50 正确 ✅ |
+| 新 v2 RKNN（FixedNorm，板端） | 错误（83558516）❌ |
+
+### 4. 当前状态
+
+- **模型权重、训练数据**：✅ 无问题
+- **ONNX 导出**：⚠️ FixedNorm 导致 RKNN 编译失败，已改用 GlobalMean 导出
+- **RKNN 转换**：⏳ GlobalMean 版本已产出等待板端验证
+- **YOLO 分类**：❌ 5 类 pose 模型对真实 embassy 分类不自信（det_cls 在 3/4 之间跳）
+
+### 5. 新产物
+
+| 文件 | 路径 |
+|------|------|
+| GlobalMean ONNX embassy | `artifacts/special_v2_20260602/embassy_v2_A_globalmean_op11.onnx` |
+| GlobalMean RKNN embassy | `artifacts/special_v2_20260602/embassy_v2_A_globalmean_rk3568_fp16.rknn` |
+| GlobalMean ONNX police | `artifacts/special_v2_20260602/police_v2_B_globalmean_op11.onnx` |
+| GlobalMean RKNN police | `artifacts/special_v2_20260602/police_v2_B_globalmean_rk3568_fp16.rknn` |
+
+---
+
+这一节是后续导出、重转、上板前的统一口径。板端主 OCR 路径当前送入的是 `uint8` 图像，C 代码不额外做 `(pixel - 127.5) / 128`；因此每个 RKNN 必须且只能有一处输入归一化。
 
 这一节是后续导出、重转、上板前的统一口径。板端主 OCR 路径当前送入的是 `uint8` 图像，C 代码不额外做 `(pixel - 127.5) / 128`；因此每个 RKNN 必须且只能有一处输入归一化。
 
