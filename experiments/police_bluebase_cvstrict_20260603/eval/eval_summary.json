@@ -1,0 +1,27 @@
+{
+  "model": "experiments/police_bluebase_cvstrict_20260603/stageC/best_LPRNet_model.pth",
+  "gt_source_note": "real_mgC0001J uses user-verified GT=蒙C0001警",
+  "val_clean": {
+    "total": 1550,
+    "exact": 1509,
+    "province_ok": 1520,
+    "tail_ok": 1550,
+    "len7": 1534,
+    "has_io": 0,
+    "jing_at_pos1": 0
+  },
+  "real_mgC0001J": {
+    "total": 40,
+    "exact_mengC0001Jing": 20,
+    "province_meng": 40
+  },
+  "val_hard": {
+    "total": 1550,
+    "exact": 1477,
+    "province_ok": 1499,
+    "tail_ok": 1550,
+    "len7": 1523,
+    "has_io": 0,
+    "jing_at_pos1": 0
+  }
+}

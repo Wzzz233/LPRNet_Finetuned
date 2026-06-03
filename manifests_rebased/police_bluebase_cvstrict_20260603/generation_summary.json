@@ -1,0 +1,27 @@
+{
+  "mode": "SMOKE",
+  "total_generated": 2170,
+  "per_province_target": {
+    "train": 50,
+    "val_clean": 10,
+    "val_hard": 10
+  },
+  "per_split_counts": {
+    "train": 1550,
+    "val_clean": 310,
+    "val_hard": 310
+  },
+  "sources_used": 1550,
+  "source_total": 199996,
+  "feature_fields": [
+    "brightness_mean",
+    "brightness_std",
+    "blur_score",
+    "noise_estimate",
+    "dct_energy",
+    "exposure_gradient",
+    "saturation",
+    "contrast",
+    "sharpness"
+  ]
+}
