@@ -1,0 +1,27 @@
+{
+  "model": "BlueBase + strict CV smoke (strictcv_stageC)",
+  "dataset": "real_mgC0001J",
+  "gt": "蒙C0001警 (user verified)",
+  "total": 40,
+  "exact": 0,
+  "exact_pct": 0.0,
+  "province_meng": 0,
+  "province_meng_pct": 0.0,
+  "tail_jing_ok": 0,
+  "len7_ok": 15,
+  "has_io": 0,
+  "garbled_outputs": 25,
+  "representative_predictions": [
+    "川云33113",
+    "川津3H13",
+    "川J333133",
+    "川J3H313湘JJ",
+    "川云33131湘J",
+    "沪JH31313湘J",
+    "川云3H1313湘",
+    "川云331313JJ",
+    "川云3313湘",
+    "沪津3313沪"
+  ],
+  "bad_cases_summary": "25/40 garbled outputs (format broken)"
+}
