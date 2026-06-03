@@ -1,6 +1,6 @@
 # LPRNet 工作区状态
 
-> 最后更新: 2026-06-02（Plate Type Classifier 6-Class: 训练中 epoch 2/20, val_clean=98.1%; 新增 manifests/manifest builders/training/eval scripts）
+> 最后更新: 2026-06-03（Police Province Sidecar 全链路审计完成：CV-replace 31省在真实板端纹理下不可泛化，板端实拍确认 sidecar 在非蒙牌上坍塌到琼；sidecar 路线当前标记为暂停）
 
 ---
 
@@ -26,7 +26,8 @@
 | **特殊牌 cvreplace 全量生成** | ✅ 已完成 — 14,150 张；已拆为 `yellow_single` 路由审计、`police`、`embassy` 三路 |
 | **Embassy 专家** | ✅ FixedNorm 重训 90.33%；ONNX op11/op18 300/300 decode consistent；RKNN fp16 已转换，待板端/simulator decode check |
 | **Police 主 OCR** | ✅ 已导出上板组件 — 单独使用不达标，但作为 police route 主 OCR + province sidecar 融合的一部分已准备 RKNN；不继续主 OCR 训练 |
-| **Police Province Sidecar** | ✅ Phase 1 审计通过并已导出 RKNN — 224×72 全牌 ResNet18 省份分类在 clean val 100%，hard holdout 100%，融合后 60.00% → 86.77%；绿牌权重迁移失败，需 police 域训练；ARM 驱动已加接入口，仍需真实板端/退化图验证 |
+| **Police Province Sidecar** | ⛔ 暂停 — 详见下方 2026-06-03 审计。合成-only sidecar 在真实 dump 上 0%；5张真实蒙图+CV-replace 31省补训后，同牌修复 100% 但跨牌坍塌（皖→琼）。合成融合回归 -1.93pp val_clean / -3.29pp val_hard，changed_wrong 104。当前 sidecar 路线不足以支撑 31 省真实泛化。 |
+| **Police 主 OCR v2** | ✅ 已部署 — 单独使用 province acc 99.81%（val_clean），body 93%。0↔U 混淆是已知独立问题。 |
 | **蓝牌 CCPD2019 posquad v1** | ✅ 完成 — 旧蓝牌 53.0% → **59.5%** (+6.5pp) |
 | **蓝牌 posquad v2 hardmine** | ✅ 完成 — v1 59.5% → **60.6%** (+1.1pp) |
 | **蓝牌退化检查** | ✅ 无退化 — simple/val/hard 均提升 |
@@ -1840,3 +1841,72 @@ python src/training/train_LPRNet.py \
 - Best epoch 3: val_clean 99.60%, val_hard 99.84%, val_cross_source 100.00%, real embassy holdout 74/74 = 100.00%.
 - QA sheets: `C:\Users\Wzzz2\OneDrive\Desktop\QA\plate_type_classifier_6cls_warped_nocrop_20260602\`.
 - Caveat: after removing git_plate/CBLPRD, the `other` class has no meaningful training coverage; treat this as a five-route classifier until new other data is deliberately added.
+
+---
+
+## 2026-06-03 Police Province Sidecar 全链路审计
+
+### 1. 背景
+
+警牌路线部署了主 OCR + province sidecar 融合：sidecar 预测第 0 位省份，主 OCR 预测第 1 位到末尾。
+经真实 dump 验证发现主 OCR 把蒙C0001警输出为青C0001警（蒙→青混淆）。
+
+### 2. 诊断过程
+
+| 步骤 | 发现 |
+|------|------|
+| 真实 dump 评估（72帧） | 旧 sidecar 输出 0% 蒙（全→琼）。主 OCR 输出 0% 蒙（全→青）。body 正确率 92.9%。 |
+| PPM 通道问题 | `cv2.imread()` 读取 PPM 时做 RGB→BGR 转换，但板端 dump 存储的已经是 BGR → 通道反了。修复后主 OCR 输出青C0001警。 |
+| 5张真实蒙 patch | N=5, W=16: sidecar 在 mgC0001J holdout 上 100% 蒙，合成 31省 100%。同牌可修复。 |
+| CV-replace 31省补训 | 72个真实源帧 × 31省 = 2232张。合成+CV-replace+真实 anchor 混合训练。8 sweep 全部 100%。 |
+
+### 3. 融合回归验证
+
+| 指标 | val_clean | val_hard | 接受条件 |
+|------|:---------:|:--------:|:--------:|
+| 主 OCR exact | **99.48%** | **98.26%** | — |
+| Fusion exact | **97.55%** | **94.97%** | ≥ OCR-0.5pp ❌ |
+| Changed wrong | **33** | **71** | ≤1 ❌ |
+| Sidecar prov acc | **97.94%** | **95.61%** | ≥99% ❌ |
+| Non-meng→meng | 0/1500 | 1/1500 | ≤1% ✅ |
+| 真实同牌蒙 | 100% | — | 100% ✅ |
+
+**结论**: Sidecar 在合成域上 province 准确率 95-97%，低于主 OCR 的 99.8%。当 sidecar 猜错时覆盖了主 OCR 的正确结果。
+
+### 4. 板端实拍验证（决定性证据）
+
+```
+[ctc] frame=490 text=D1098警
+[ocr-smooth] frame=490 raw=(0.90,D1098警) smooth=(0.81,皖1098警)
+[police-fc] frame=490 replace raw=皖1098警 fused=琼1098警 sidecar=琼 votes=5/8
+[pred] frame=490 text=琼1098警 conf=0.81
+```
+
+真实车牌 = **皖1098警**。主 OCR 通过 smoothing 正确输出皖1098警。但 sidecar 输出琼 → fusion 结果是**琼1098警（错误）**。
+
+**核心证据**: CV-replace 31省补训的 sidecar 在真实 unseen 警牌上坍塌到琼。
+
+### 5. 实验产出
+
+| 实验 | 路径 | 状态 |
+|------|------|:----:|
+| 真实 dump 基本评估 | `experiments/police_real_dump_eval_20260603/` | ✅ |
+| 5蒙 patch sidecar | `experiments/police_sidecar_targeted_patch_20260603/` | ✅ 同牌修复 |
+| RealDomain CV-replace | `experiments/police_sidecar_realdomain_v1_20260603/` | ✅ CV-replace内100% |
+| 融合回归验证 | `experiments/police_sidecar_synth_fusion_regression_20260603/` | ✅ 未通过 |
+| 融合验证 | `experiments/police_sidecar_fusion_validation_20260603/` | ✅ |
+| CV-replace 数据 | `datasets/police_sidecar_realdomain_cvreplace_v1_20260603/`（2232张） | ✅ |
+| 新脚本 | `scripts/fusion_regression_eval.py`, `scripts/validate_fusion.py`, `scripts/train_sidecar_patch.py` | ✅ |
+
+### 6. 结论
+
+1. **合成-only sidecar 完全不可用**: 在真实 dump 上 0% 省份识别，全部坍塌到琼。
+2. **5张真实蒙图可修复同牌**: 但不是泛化，只是该特定车辆的过拟合。
+3. **CV-replace 31省补训有限**: CV-replace holdout 100%，但真实 unseen 警牌上仍然坍塌（皖→琼）。渲染字体（WQY）与实际车牌字体差异大。
+4. **Sidecar 路线暂停**: 合成域上低主 OCR 1.9-3.3pp，真实域上坍塌为单省输出。不足以支撑生产部署。
+
+### 7. 下一步方向
+
+**推荐：采集真实 ocrin 图微调主 OCR** — 收集 20-30 张不同省的真实警牌 ocrin 图，对主 OCR 做 minimal fine-tune。
+
+备选：更好的 CV-replace 渲染（匹配真实车牌字体）+ 30+ 省份 × 5 张以上真实底图。
