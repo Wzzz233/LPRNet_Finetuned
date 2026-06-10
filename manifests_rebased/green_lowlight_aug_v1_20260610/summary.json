@@ -1,0 +1,41 @@
+{
+  "source_manifest": "/home/wzzz/LPRNet/manifests_rebased/a_ratio_sweep_20260510/train_A_ratio_r50.csv",
+  "test_manifest": "/home/wzzz/LPRNet/manifests_rebased/curriculum_gray3/val_ccpd2020_green.csv",
+  "out_dataset": "/home/wzzz/LPRNet/datasets/green_lowlight_aug_v1_20260610",
+  "out_manifest_dir": "/home/wzzz/LPRNet/manifests_rebased/green_lowlight_aug_v1_20260610",
+  "train_count": 36000,
+  "heldout_count": 6000,
+  "real_dump_count": 39,
+  "train_profile_counts": {
+    "ultra": 25835,
+    "bridge": 2876,
+    "deep": 7289
+  },
+  "heldout_profile_counts": {
+    "ultra": 4340,
+    "deep": 1193,
+    "bridge": 467
+  },
+  "train_province_count": 31,
+  "heldout_province_count": 31,
+  "train_mean_min": 7.041370868682861,
+  "train_mean_p25": 9.3732271194458,
+  "train_mean_p50": 10.997783660888672,
+  "train_mean_p75": 13.978132247924805,
+  "train_mean_max": 70.18085479736328,
+  "train_dark30_avg": 0.9377708435058594,
+  "heldout_mean_p50": 10.95005989074707,
+  "manifests": {
+    "train_pool": "/home/wzzz/LPRNet/manifests_rebased/green_lowlight_aug_v1_20260610/lowlight_train_pool_36000.csv",
+    "heldout": "/home/wzzz/LPRNet/manifests_rebased/green_lowlight_aug_v1_20260610/lowlight_heldout_6000.csv",
+    "real_dump": "/home/wzzz/LPRNet/manifests_rebased/green_lowlight_aug_v1_20260610/real_green_dark_39.csv",
+    "lowlight10": "/home/wzzz/LPRNet/manifests_rebased/green_lowlight_aug_v1_20260610/train_v1_lowlight10.csv",
+    "lowlight15": "/home/wzzz/LPRNet/manifests_rebased/green_lowlight_aug_v1_20260610/train_v1_lowlight15.csv",
+    "lowlight25": "/home/wzzz/LPRNet/manifests_rebased/green_lowlight_aug_v1_20260610/train_v1_lowlight25.csv"
+  },
+  "notes": [
+    "Training rows are generated only from the R50 green train manifest; real dump is validation only.",
+    "Lowlight rows use board_dump 94x24 PPM payloads and should be read without additional crop/resize.",
+    "Province-balanced sampling intentionally repeats rare-province source rows when the source manifest is province-skewed."
+  ]
+}

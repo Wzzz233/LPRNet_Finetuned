@@ -1,0 +1,1251 @@
+{
+  "/home/wzzz/LPRNet/experiments/a_ratio_r50_20260510/best_LPRNet_model.pth": {
+    "config": {
+      "enhanced_green_head": "expD",
+      "adapter_families": [],
+      "pos0_target_families": [],
+      "province_target_families": [],
+      "slot_target_families": [],
+      "has_shared_pos0": false,
+      "has_any_pos0": false,
+      "has_shared_province": false,
+      "has_any_province": false,
+      "class_num": 68,
+      "pos0_head_cols": 0,
+      "pos0_num_classes": 31,
+      "province_num_classes": 31
+    },
+    "manifests": {
+      "val_ccpd2020_green.csv": {
+        "manifest": "/home/wzzz/LPRNet/manifests_rebased/curriculum_gray3/val_ccpd2020_green.csv",
+        "total": 833,
+        "exact": 208,
+        "exact_pct": 24.97,
+        "province_ok": 675,
+        "province_pct": 81.03,
+        "rear_ok": 212,
+        "rear_pct": 25.45,
+        "sample_predictions": [
+          {
+            "idx": 0,
+            "gt": "皖ADT1060",
+            "pred": "皖ADT1067",
+            "ok": false
+          },
+          {
+            "idx": 1,
+            "gt": "皖AD07619",
+            "pred": "皖A07019",
+            "ok": false
+          },
+          {
+            "idx": 2,
+            "gt": "皖AF06700",
+            "pred": "皖AF06700",
+            "ok": true
+          },
+          {
+            "idx": 3,
+            "gt": "浙AF03277",
+            "pred": "皖AF13271",
+            "ok": false
+          },
+          {
+            "idx": 4,
+            "gt": "皖ADT1137",
+            "pred": "皖ADT137",
+            "ok": false
+          },
+          {
+            "idx": 5,
+            "gt": "皖AD06565",
+            "pred": "皖AD5",
+            "ok": false
+          },
+          {
+            "idx": 6,
+            "gt": "皖AD28760",
+            "pred": "皖AD28767",
+            "ok": false
+          },
+          {
+            "idx": 7,
+            "gt": "皖AD09595",
+            "pred": "皖AD09595",
+            "ok": true
+          },
+          {
+            "idx": 8,
+            "gt": "皖AD02188",
+            "pred": "皖AD0210",
+            "ok": false
+          },
+          {
+            "idx": 9,
+            "gt": "皖AD04979",
+            "pred": "皖AD14970",
+            "ok": false
+          },
+          {
+            "idx": 10,
+            "gt": "皖AD04566",
+            "pred": "皖AD04566",
+            "ok": true
+          },
+          {
+            "idx": 11,
+            "gt": "皖AD10188",
+            "pred": "皖XD119",
+            "ok": false
+          },
+          {
+            "idx": 12,
+            "gt": "皖AD03600",
+            "pred": "皖AD0360",
+            "ok": false
+          },
+          {
+            "idx": 13,
+            "gt": "皖MD15666",
+            "pred": "皖D1566",
+            "ok": false
+          },
+          {
+            "idx": 14,
+            "gt": "皖ADT1496",
+            "pred": "GDT1405",
+            "ok": false
+          },
+          {
+            "idx": 15,
+            "gt": "皖AD46769",
+            "pred": "皖AD646769",
+            "ok": false
+          },
+          {
+            "idx": 16,
+            "gt": "皖AD06026",
+            "pred": "皖A0D0U6",
+            "ok": false
+          },
+          {
+            "idx": 17,
+            "gt": "皖AF19999",
+            "pred": "皖AF1970",
+            "ok": false
+          },
+          {
+            "idx": 18,
+            "gt": "皖AD47792",
+            "pred": "皖AD47792",
+            "ok": true
+          },
+          {
+            "idx": 19,
+            "gt": "皖AD02176",
+            "pred": "皖AD021765",
+            "ok": false
+          },
+          {
+            "idx": 20,
+            "gt": "皖AD26629",
+            "pred": "皖AD26290",
+            "ok": false
+          },
+          {
+            "idx": 21,
+            "gt": "皖AD21636",
+            "pred": "皖AD21636",
+            "ok": true
+          },
+          {
+            "idx": 22,
+            "gt": "皖AD26629",
+            "pred": "皖AD266209",
+            "ok": false
+          },
+          {
+            "idx": 23,
+            "gt": "皖AD02580",
+            "pred": "皖AD02580",
+            "ok": true
+          },
+          {
+            "idx": 24,
+            "gt": "皖AD02898",
+            "pred": "冀HD020",
+            "ok": false
+          },
+          {
+            "idx": 25,
+            "gt": "皖AD00188",
+            "pred": "皖AD00188",
+            "ok": true
+          },
+          {
+            "idx": 26,
+            "gt": "皖ADT0983",
+            "pred": "皖ADT07903",
+            "ok": false
+          },
+          {
+            "idx": 27,
+            "gt": "皖AD18899",
+            "pred": "皖AD118899",
+            "ok": false
+          },
+          {
+            "idx": 28,
+            "gt": "皖AD35322",
+            "pred": "皖AD135322",
+            "ok": false
+          },
+          {
+            "idx": 29,
+            "gt": "皖AD11011",
+            "pred": "皖AD11011",
+            "ok": true
+          },
+          {
+            "idx": 30,
+            "gt": "皖AD23363",
+            "pred": "皖AD23363",
+            "ok": true
+          },
+          {
+            "idx": 31,
+            "gt": "皖ADT1011",
+            "pred": "T1",
+            "ok": false
+          },
+          {
+            "idx": 32,
+            "gt": "苏AF10203",
+            "pred": "AF10203",
+            "ok": false
+          },
+          {
+            "idx": 33,
+            "gt": "皖AD09900",
+            "pred": "皖AD09900",
+            "ok": true
+          },
+          {
+            "idx": 34,
+            "gt": "皖AD00916",
+            "pred": "皖AD091",
+            "ok": false
+          },
+          {
+            "idx": 35,
+            "gt": "皖AD04830",
+            "pred": "皖AD09483",
+            "ok": false
+          },
+          {
+            "idx": 36,
+            "gt": "皖AD02163",
+            "pred": "皖AD0216",
+            "ok": false
+          },
+          {
+            "idx": 37,
+            "gt": "皖AD04650",
+            "pred": "沪AD7415F",
+            "ok": false
+          },
+          {
+            "idx": 38,
+            "gt": "皖AD02546",
+            "pred": "皖A24",
+            "ok": false
+          },
+          {
+            "idx": 39,
+            "gt": "皖AD22123",
+            "pred": "皖AD221263",
+            "ok": false
+          },
+          {
+            "idx": 40,
+            "gt": "皖AF05900",
+            "pred": "皖AF05900",
+            "ok": true
+          },
+          {
+            "idx": 41,
+            "gt": "皖AD20621",
+            "pred": "皖A72062",
+            "ok": false
+          },
+          {
+            "idx": 42,
+            "gt": "皖AD05840",
+            "pred": "皖AD0584",
+            "ok": false
+          },
+          {
+            "idx": 43,
+            "gt": "皖AD29123",
+            "pred": "皖AD29123",
+            "ok": true
+          },
+          {
+            "idx": 44,
+            "gt": "皖AD16668",
+            "pred": "AD156",
+            "ok": false
+          },
+          {
+            "idx": 45,
+            "gt": "皖AD03691",
+            "pred": "皖FD83601",
+            "ok": false
+          },
+          {
+            "idx": 46,
+            "gt": "皖AD06989",
+            "pred": "皖AD590879",
+            "ok": false
+          },
+          {
+            "idx": 47,
+            "gt": "皖AD11188",
+            "pred": "皖AD11100",
+            "ok": false
+          },
+          {
+            "idx": 48,
+            "gt": "皖AD16688",
+            "pred": "皖AD10",
+            "ok": false
+          },
+          {
+            "idx": 49,
+            "gt": "皖AD09340",
+            "pred": "皖AD09340",
+            "ok": true
+          },
+          {
+            "idx": 50,
+            "gt": "皖AD23353",
+            "pred": "皖AD23358",
+            "ok": false
+          },
+          {
+            "idx": 51,
+            "gt": "皖AD06281",
+            "pred": "FA5284",
+            "ok": false
+          },
+          {
+            "idx": 52,
+            "gt": "皖AD00360",
+            "pred": "皖AD001360",
+            "ok": false
+          },
+          {
+            "idx": 53,
+            "gt": "皖AD06565",
+            "pred": "皖AD0655",
+            "ok": false
+          },
+          {
+            "idx": 54,
+            "gt": "皖ADT0902",
+            "pred": "皖ADT09025",
+            "ok": false
+          },
+          {
+            "idx": 55,
+            "gt": "皖BD51270",
+            "pred": "SD51F270",
+            "ok": false
+          },
+          {
+            "idx": 56,
+            "gt": "皖AD09522",
+            "pred": "HD09522",
+            "ok": false
+          },
+          {
+            "idx": 57,
+            "gt": "皖AD02404",
+            "pred": "皖AD02478",
+            "ok": false
+          },
+          {
+            "idx": 58,
+            "gt": "皖AD07117",
+            "pred": "皖AD07117",
+            "ok": true
+          },
+          {
+            "idx": 59,
+            "gt": "皖AD09292",
+            "pred": "皖A092976",
+            "ok": false
+          },
+          {
+            "idx": 60,
+            "gt": "浙AF66790",
+            "pred": "F2C",
+            "ok": false
+          },
+          {
+            "idx": 61,
+            "gt": "皖AD00856",
+            "pred": "皖AD00856",
+            "ok": true
+          },
+          {
+            "idx": 62,
+            "gt": "皖AD08808",
+            "pred": "皖AD08810",
+            "ok": false
+          },
+          {
+            "idx": 63,
+            "gt": "皖AD16688",
+            "pred": "皖AD10428",
+            "ok": false
+          },
+          {
+            "idx": 64,
+            "gt": "皖AD08760",
+            "pred": "皖AD08767",
+            "ok": false
+          },
+          {
+            "idx": 65,
+            "gt": "皖AD06558",
+            "pred": "皖AD655F",
+            "ok": false
+          },
+          {
+            "idx": 66,
+            "gt": "皖ADT1039",
+            "pred": "皖ADT1039",
+            "ok": true
+          },
+          {
+            "idx": 67,
+            "gt": "皖AD03259",
+            "pred": "皖AD013259",
+            "ok": false
+          },
+          {
+            "idx": 68,
+            "gt": "皖AF00768",
+            "pred": "皖A1160",
+            "ok": false
+          },
+          {
+            "idx": 69,
+            "gt": "皖AF06585",
+            "pred": "皖AF6585",
+            "ok": false
+          },
+          {
+            "idx": 70,
+            "gt": "皖AD01980",
+            "pred": "皖AD01980",
+            "ok": true
+          },
+          {
+            "idx": 71,
+            "gt": "皖AD10208",
+            "pred": "皖AD10208",
+            "ok": true
+          },
+          {
+            "idx": 72,
+            "gt": "皖AD09849",
+            "pred": "AD19840",
+            "ok": false
+          },
+          {
+            "idx": 73,
+            "gt": "皖AD07664",
+            "pred": "皖AD076646",
+            "ok": false
+          },
+          {
+            "idx": 74,
+            "gt": "皖AD19986",
+            "pred": "皖AD199086",
+            "ok": false
+          },
+          {
+            "idx": 75,
+            "gt": "皖AD08617",
+            "pred": "皖AD08617",
+            "ok": true
+          },
+          {
+            "idx": 76,
+            "gt": "皖AD18898",
+            "pred": "HD18111",
+            "ok": false
+          },
+          {
+            "idx": 77,
+            "gt": "皖AD09506",
+            "pred": "皖AD09506",
+            "ok": true
+          },
+          {
+            "idx": 78,
+            "gt": "皖AD11000",
+            "pred": "皖AD11404",
+            "ok": false
+          },
+          {
+            "idx": 79,
+            "gt": "皖AD06686",
+            "pred": "AD069",
+            "ok": false
+          }
+        ]
+      },
+      "lowlight_heldout_6000.csv": {
+        "manifest": "/home/wzzz/LPRNet/manifests_rebased/green_lowlight_aug_v1_20260610/lowlight_heldout_6000.csv",
+        "total": 6000,
+        "exact": 355,
+        "exact_pct": 5.92,
+        "province_ok": 700,
+        "province_pct": 11.67,
+        "rear_ok": 568,
+        "rear_pct": 9.47,
+        "sample_predictions": [
+          {
+            "idx": 0,
+            "gt": "云UF36479",
+            "pred": "NF3479",
+            "ok": false
+          },
+          {
+            "idx": 1,
+            "gt": "琼CF20135",
+            "pred": "I4324131",
+            "ok": false
+          },
+          {
+            "idx": 2,
+            "gt": "鲁UF64707",
+            "pred": "甘O鄂湘41琼36",
+            "ok": false
+          },
+          {
+            "idx": 3,
+            "gt": "宁DD21583",
+            "pred": "QD21583",
+            "ok": false
+          },
+          {
+            "idx": 4,
+            "gt": "青EF84816",
+            "pred": "甘D61101",
+            "ok": false
+          },
+          {
+            "idx": 5,
+            "gt": "宁JF08165",
+            "pred": "7I3642323230434",
+            "ok": false
+          },
+          {
+            "idx": 6,
+            "gt": "川UF73649",
+            "pred": "浙UF349",
+            "ok": false
+          },
+          {
+            "idx": 7,
+            "gt": "粤KD31105",
+            "pred": "I03043434",
+            "ok": false
+          },
+          {
+            "idx": 8,
+            "gt": "皖AD07679",
+            "pred": "40243",
+            "ok": false
+          },
+          {
+            "idx": 9,
+            "gt": "鄂AD58938",
+            "pred": "589",
+            "ok": false
+          },
+          {
+            "idx": 10,
+            "gt": "蒙AF18897",
+            "pred": "蒙AF18897",
+            "ok": true
+          },
+          {
+            "idx": 11,
+            "gt": "陕VD31112",
+            "pred": "D111",
+            "ok": false
+          },
+          {
+            "idx": 12,
+            "gt": "赣LF29018",
+            "pred": "8I36403232034",
+            "ok": false
+          },
+          {
+            "idx": 13,
+            "gt": "吉KF73722",
+            "pred": "7I3434343D3236",
+            "ok": false
+          },
+          {
+            "idx": 14,
+            "gt": "陕HF75430",
+            "pred": "OI20343431",
+            "ok": false
+          },
+          {
+            "idx": 15,
+            "gt": "冀PF51923",
+            "pred": "PF51923",
+            "ok": false
+          },
+          {
+            "idx": 16,
+            "gt": "晋BD24415",
+            "pred": "BD0245",
+            "ok": false
+          },
+          {
+            "idx": 17,
+            "gt": "藏LD19813",
+            "pred": "LD19813",
+            "ok": false
+          },
+          {
+            "idx": 18,
+            "gt": "黑GF68016",
+            "pred": "I24032034",
+            "ok": false
+          },
+          {
+            "idx": 19,
+            "gt": "辽WF21705",
+            "pred": "J31D42313130",
+            "ok": false
+          },
+          {
+            "idx": 20,
+            "gt": "京CD53786",
+            "pred": "CD53786",
+            "ok": false
+          },
+          {
+            "idx": 21,
+            "gt": "辽SD69349",
+            "pred": "I36123040134",
+            "ok": false
+          },
+          {
+            "idx": 22,
+            "gt": "辽CD20276",
+            "pred": "O豫60232323鄂6",
+            "ok": false
+          },
+          {
+            "idx": 23,
+            "gt": "浙SF55849",
+            "pred": "SF559",
+            "ok": false
+          },
+          {
+            "idx": 24,
+            "gt": "闽DD71065",
+            "pred": "7632364231636",
+            "ok": false
+          },
+          {
+            "idx": 25,
+            "gt": "渝WD28868",
+            "pred": "WD28968",
+            "ok": false
+          },
+          {
+            "idx": 26,
+            "gt": "吉UD96003",
+            "pred": "晋UD9603",
+            "ok": false
+          },
+          {
+            "idx": 27,
+            "gt": "粤BF43129",
+            "pred": "D029",
+            "ok": false
+          },
+          {
+            "idx": 28,
+            "gt": "冀QD86231",
+            "pred": "琼K9渝3634",
+            "ok": false
+          },
+          {
+            "idx": 29,
+            "gt": "赣YF52334",
+            "pred": "0Y53",
+            "ok": false
+          },
+          {
+            "idx": 30,
+            "gt": "陕XF21756",
+            "pred": "新NF21756",
+            "ok": false
+          },
+          {
+            "idx": 31,
+            "gt": "辽QF35076",
+            "pred": "I320343234321D31",
+            "ok": false
+          },
+          {
+            "idx": 32,
+            "gt": "沪AF55091",
+            "pred": "沪AF55091",
+            "ok": true
+          },
+          {
+            "idx": 33,
+            "gt": "赣RD33310",
+            "pred": "423243240461",
+            "ok": false
+          },
+          {
+            "idx": 34,
+            "gt": "吉XF03020",
+            "pred": "IDF01634",
+            "ok": false
+          },
+          {
+            "idx": 35,
+            "gt": "渝BF31826",
+            "pred": "I赣23041324",
+            "ok": false
+          },
+          {
+            "idx": 36,
+            "gt": "陕WF56934",
+            "pred": "1F4936",
+            "ok": false
+          },
+          {
+            "idx": 37,
+            "gt": "蒙PF76370",
+            "pred": "6I236306136",
+            "ok": false
+          },
+          {
+            "idx": 38,
+            "gt": "沪VD75504",
+            "pred": "I39464D0D5034",
+            "ok": false
+          },
+          {
+            "idx": 39,
+            "gt": "新WD47826",
+            "pred": "11",
+            "ok": false
+          },
+          {
+            "idx": 40,
+            "gt": "青GF01682",
+            "pred": "G198",
+            "ok": false
+          },
+          {
+            "idx": 41,
+            "gt": "新CF95969",
+            "pred": "冀06343藏916",
+            "ok": false
+          },
+          {
+            "idx": 42,
+            "gt": "吉FD62864",
+            "pred": "I343431",
+            "ok": false
+          },
+          {
+            "idx": 43,
+            "gt": "粤UF01881",
+            "pred": "UF011",
+            "ok": false
+          },
+          {
+            "idx": 44,
+            "gt": "辽SF84969",
+            "pred": "IZ浙ED3D648046",
+            "ok": false
+          },
+          {
+            "idx": 45,
+            "gt": "云FF79732",
+            "pred": "云FF3321",
+            "ok": false
+          },
+          {
+            "idx": 46,
+            "gt": "津EF65305",
+            "pred": "IF5F",
+            "ok": false
+          },
+          {
+            "idx": 47,
+            "gt": "桂AF74190",
+            "pred": "DN031D豫4",
+            "ok": false
+          },
+          {
+            "idx": 48,
+            "gt": "浙AF48534",
+            "pred": "IF84",
+            "ok": false
+          },
+          {
+            "idx": 49,
+            "gt": "湘AD31709",
+            "pred": "AD31D",
+            "ok": false
+          },
+          {
+            "idx": 50,
+            "gt": "宁GF44502",
+            "pred": "I3D4032403D124",
+            "ok": false
+          },
+          {
+            "idx": 51,
+            "gt": "蒙ZF71219",
+            "pred": "鄂6343F6",
+            "ok": false
+          },
+          {
+            "idx": 52,
+            "gt": "贵PD76204",
+            "pred": "粤2420420D1",
+            "ok": false
+          },
+          {
+            "idx": 53,
+            "gt": "冀WD03096",
+            "pred": "66",
+            "ok": false
+          },
+          {
+            "idx": 54,
+            "gt": "粤UF17735",
+            "pred": "粤UF1735",
+            "ok": false
+          },
+          {
+            "idx": 55,
+            "gt": "皖AF00202",
+            "pred": "皖AF002D2",
+            "ok": false
+          },
+          {
+            "idx": 56,
+            "gt": "湘RD91560",
+            "pred": "冀RD91560",
+            "ok": false
+          },
+          {
+            "idx": 57,
+            "gt": "闽LF12740",
+            "pred": "F10",
+            "ok": false
+          },
+          {
+            "idx": 58,
+            "gt": "浙YF32145",
+            "pred": "蒙19464",
+            "ok": false
+          },
+          {
+            "idx": 59,
+            "gt": "鄂LF04909",
+            "pred": "3浙1632343D",
+            "ok": false
+          },
+          {
+            "idx": 60,
+            "gt": "陕PD99206",
+            "pred": "陕PD99206",
+            "ok": true
+          },
+          {
+            "idx": 61,
+            "gt": "冀BF55209",
+            "pred": "F55209",
+            "ok": false
+          },
+          {
+            "idx": 62,
+            "gt": "鲁BD60513",
+            "pred": "黑BD60513",
+            "ok": false
+          },
+          {
+            "idx": 63,
+            "gt": "黑BF62895",
+            "pred": "6I36303432420326",
+            "ok": false
+          },
+          {
+            "idx": 64,
+            "gt": "津PD69524",
+            "pred": "青PD69524",
+            "ok": false
+          },
+          {
+            "idx": 65,
+            "gt": "皖AD01550",
+            "pred": "沪AD01550",
+            "ok": false
+          },
+          {
+            "idx": 66,
+            "gt": "甘RF98763",
+            "pred": "1F89366",
+            "ok": false
+          },
+          {
+            "idx": 67,
+            "gt": "蒙ED27226",
+            "pred": "浙FD23216",
+            "ok": false
+          },
+          {
+            "idx": 68,
+            "gt": "川JF87797",
+            "pred": "赣04163S新",
+            "ok": false
+          },
+          {
+            "idx": 69,
+            "gt": "沪UD22727",
+            "pred": "3O6026琼46",
+            "ok": false
+          },
+          {
+            "idx": 70,
+            "gt": "蒙JD83098",
+            "pred": "OI431",
+            "ok": false
+          },
+          {
+            "idx": 71,
+            "gt": "渝GF91509",
+            "pred": "7IO602323J豫136",
+            "ok": false
+          },
+          {
+            "idx": 72,
+            "gt": "皖AD10002",
+            "pred": "I4032420431",
+            "ok": false
+          },
+          {
+            "idx": 73,
+            "gt": "冀DF26423",
+            "pred": "QF26423",
+            "ok": false
+          },
+          {
+            "idx": 74,
+            "gt": "冀KF18993",
+            "pred": "YF1899",
+            "ok": false
+          },
+          {
+            "idx": 75,
+            "gt": "豫VD11618",
+            "pred": "豫VD1618",
+            "ok": false
+          },
+          {
+            "idx": 76,
+            "gt": "宁PF32492",
+            "pred": "I2013404034",
+            "ok": false
+          },
+          {
+            "idx": 77,
+            "gt": "陕SD58471",
+            "pred": "甘O蒙413409624",
+            "ok": false
+          },
+          {
+            "idx": 78,
+            "gt": "粤HD32594",
+            "pred": "黑HD32594",
+            "ok": false
+          },
+          {
+            "idx": 79,
+            "gt": "闽RF10239",
+            "pred": "6I3626343236",
+            "ok": false
+          }
+        ]
+      },
+      "real_green_dark_39.csv": {
+        "manifest": "/home/wzzz/LPRNet/manifests_rebased/green_lowlight_aug_v1_20260610/real_green_dark_39.csv",
+        "total": 39,
+        "exact": 0,
+        "exact_pct": 0.0,
+        "province_ok": 2,
+        "province_pct": 5.13,
+        "rear_ok": 2,
+        "rear_pct": 5.13,
+        "sample_predictions": [
+          {
+            "idx": 0,
+            "gt": "京ADA5396",
+            "pred": "WD",
+            "ok": false
+          },
+          {
+            "idx": 1,
+            "gt": "京ADA5396",
+            "pred": "ADA5396",
+            "ok": false
+          },
+          {
+            "idx": 2,
+            "gt": "京ADA5396",
+            "pred": "ADA57396",
+            "ok": false
+          },
+          {
+            "idx": 3,
+            "gt": "京ADA5396",
+            "pred": "ADA5396",
+            "ok": false
+          },
+          {
+            "idx": 4,
+            "gt": "京ADA5396",
+            "pred": "ADA5396",
+            "ok": false
+          },
+          {
+            "idx": 5,
+            "gt": "京ADA5396",
+            "pred": "ADA5396",
+            "ok": false
+          },
+          {
+            "idx": 6,
+            "gt": "京ADA5396",
+            "pred": "皖ADA5396",
+            "ok": false
+          },
+          {
+            "idx": 7,
+            "gt": "京ADA5396",
+            "pred": "ADA5396",
+            "ok": false
+          },
+          {
+            "idx": 8,
+            "gt": "京ADA5396",
+            "pred": "ADA5396",
+            "ok": false
+          },
+          {
+            "idx": 9,
+            "gt": "京ADA5396",
+            "pred": "ADA5396",
+            "ok": false
+          },
+          {
+            "idx": 10,
+            "gt": "京ADA5396",
+            "pred": "ADA5396",
+            "ok": false
+          },
+          {
+            "idx": 11,
+            "gt": "京ADA5396",
+            "pred": "皖ADA5396",
+            "ok": false
+          },
+          {
+            "idx": 12,
+            "gt": "京ADA5396",
+            "pred": "AD5396",
+            "ok": false
+          },
+          {
+            "idx": 13,
+            "gt": "京ADA5396",
+            "pred": "AD5390",
+            "ok": false
+          },
+          {
+            "idx": 14,
+            "gt": "京ADA5396",
+            "pred": "IAD5396",
+            "ok": false
+          },
+          {
+            "idx": 15,
+            "gt": "京ADA5396",
+            "pred": "AD5396",
+            "ok": false
+          },
+          {
+            "idx": 16,
+            "gt": "京ADA5396",
+            "pred": "AD53960",
+            "ok": false
+          },
+          {
+            "idx": 17,
+            "gt": "京ADA5396",
+            "pred": "AD5390",
+            "ok": false
+          },
+          {
+            "idx": 18,
+            "gt": "京ADA5396",
+            "pred": "AD5390",
+            "ok": false
+          },
+          {
+            "idx": 19,
+            "gt": "京ADA5396",
+            "pred": "AD5395",
+            "ok": false
+          },
+          {
+            "idx": 20,
+            "gt": "京ADA5396",
+            "pred": "IAD45396",
+            "ok": false
+          },
+          {
+            "idx": 21,
+            "gt": "京ADA5396",
+            "pred": "AD45396",
+            "ok": false
+          },
+          {
+            "idx": 22,
+            "gt": "京ADA5396",
+            "pred": "AD5396",
+            "ok": false
+          },
+          {
+            "idx": 23,
+            "gt": "京ADA5396",
+            "pred": "IAD5396",
+            "ok": false
+          },
+          {
+            "idx": 24,
+            "gt": "京ADA5396",
+            "pred": "IAD15396",
+            "ok": false
+          },
+          {
+            "idx": 25,
+            "gt": "京ADA5396",
+            "pred": "AD5396",
+            "ok": false
+          },
+          {
+            "idx": 26,
+            "gt": "京ADA5396",
+            "pred": "IAD53",
+            "ok": false
+          },
+          {
+            "idx": 27,
+            "gt": "京ADA5396",
+            "pred": "AD85396",
+            "ok": false
+          },
+          {
+            "idx": 28,
+            "gt": "京ADA5396",
+            "pred": "AD53920",
+            "ok": false
+          },
+          {
+            "idx": 29,
+            "gt": "京ADA5396",
+            "pred": "京D1D",
+            "ok": false
+          },
+          {
+            "idx": 30,
+            "gt": "京ADA5396",
+            "pred": "AD5396",
+            "ok": false
+          },
+          {
+            "idx": 31,
+            "gt": "京ADA5396",
+            "pred": "AD53960",
+            "ok": false
+          },
+          {
+            "idx": 32,
+            "gt": "京ADA5396",
+            "pred": "AD5396",
+            "ok": false
+          },
+          {
+            "idx": 33,
+            "gt": "京ADA5396",
+            "pred": "AD53960",
+            "ok": false
+          },
+          {
+            "idx": 34,
+            "gt": "京ADA5396",
+            "pred": "京AD5390",
+            "ok": false
+          },
+          {
+            "idx": 35,
+            "gt": "京ADA5396",
+            "pred": "AD539",
+            "ok": false
+          },
+          {
+            "idx": 36,
+            "gt": "京ADA5396",
+            "pred": "AD5390",
+            "ok": false
+          },
+          {
+            "idx": 37,
+            "gt": "京ADA5396",
+            "pred": "AD15390",
+            "ok": false
+          },
+          {
+            "idx": 38,
+            "gt": "京ADA5396",
+            "pred": "15",
+            "ok": false
+          }
+        ]
+      }
+    }
+  }
+}
