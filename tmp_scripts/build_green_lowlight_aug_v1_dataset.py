@@ -101,8 +101,20 @@ def resolve_img(root: Path, raw: str):
     return p if p.is_absolute() else root / p
 
 
-def row_quad(row, img_path, img_w, img_h):
+def row_quad(row, img_path, img_w, img_h, geometry_source="filename_first"):
     keys = ["quad_1x", "quad_1y", "quad_2x", "quad_2y", "quad_3x", "quad_3y", "quad_4x", "quad_4y"]
+
+    def filename_quad():
+        q = parse_ccpd_quad_from_name(row.get("img_rel_path") or row.get("img_path") or "")
+        if q is None:
+            q = parse_ccpd_quad_from_name(str(img_path))
+        return clip_quad_to_image(q, img_w, img_h) if q is not None else None
+
+    if geometry_source == "filename_first":
+        q = filename_quad()
+        if q is not None:
+            return q, "ccpd_filename"
+
     try:
         if all(row.get(k) not in (None, "") for k in keys):
             q = np.asarray(
@@ -114,22 +126,21 @@ def row_quad(row, img_path, img_w, img_h):
                 ],
                 dtype=np.float32,
             )
-            return clip_quad_to_image(q, img_w, img_h)
+            return clip_quad_to_image(q, img_w, img_h), row.get("quad_source") or "manifest_quad"
     except (ValueError, TypeError):
         pass
-    q = parse_ccpd_quad_from_name(row.get("img_rel_path") or row.get("img_path") or "")
-    if q is None:
-        q = parse_ccpd_quad_from_name(str(img_path))
-    return clip_quad_to_image(q, img_w, img_h) if q is not None else None
+
+    q = filename_quad()
+    return (q, "ccpd_filename") if q is not None else (None, "")
 
 
-def board_ocr_from_row(root: Path, row, img_size=(94, 24)):
+def board_ocr_from_row(root: Path, row, img_size=(94, 24), geometry_source="filename_first", resize_kernel_override=""):
     img_path = resolve_img(root, row["img_path"])
     image = cv2.imread(str(img_path))
     if image is None:
         raise RuntimeError(f"failed to read {img_path}")
     img_h, img_w = image.shape[:2]
-    quad = row_quad(row, img_path, img_w, img_h)
+    quad, resolved_quad_source = row_quad(row, img_path, img_w, img_h, geometry_source=geometry_source)
     bbox = parse_ccpd_bbox_from_name(row.get("img_rel_path") or row.get("img_path") or "")
     if bbox is None:
         bbox = parse_ccpd_bbox_from_name(str(img_path))
@@ -141,7 +152,7 @@ def board_ocr_from_row(root: Path, row, img_size=(94, 24)):
 
     crop_mode = row.get("ocr_crop_mode") or "obb_warp"
     resize_mode = row.get("ocr_resize_mode") or "letterbox"
-    resize_kernel = row.get("ocr_resize_kernel") or "nn"
+    resize_kernel = resize_kernel_override or row.get("ocr_resize_kernel") or "nn"
     preproc_mode = row.get("ocr_preproc") or "none"
     channel_order = row.get("ocr_channel_order") or "bgr"
     min_occ_ratio = float(row.get("ocr_min_occ_ratio") or 0.90)
@@ -161,7 +172,7 @@ def board_ocr_from_row(root: Path, row, img_size=(94, 24)):
             channel_order,
             quad_pad_ratio=quad_pad_ratio,
         )
-        return out
+        return out, {"resolved_quad_source": resolved_quad_source, "resolved_resize_kernel": resize_kernel}
 
     crop_box = compute_ocr_crop_box(bbox, img_w, img_h, crop_mode)
     occ = estimate_ocr_occ_ratio(crop_box.w, crop_box.h, img_size[0], img_size[1], resize_mode)
@@ -176,35 +187,75 @@ def board_ocr_from_row(root: Path, row, img_size=(94, 24)):
     out, _ = prepare_board_ocr_input_bgr888(
         crop_bgr, img_size[0], img_size[1], resize_mode, resize_kernel, preproc_mode, channel_order
     )
-    return out
+    return out, {"resolved_quad_source": resolved_quad_source or "bbox_crop", "resolved_resize_kernel": resize_kernel}
 
 
-def lowlight_transform(img_bgr: np.ndarray, rng: np.random.Generator, profile: str) -> np.ndarray:
+def lowlight_transform(img_bgr: np.ndarray, rng: np.random.Generator, profile: str, style: str = "edge_preserve") -> np.ndarray:
     x = img_bgr.astype(np.float32)
     gray = cv2.cvtColor(x.astype(np.uint8), cv2.COLOR_BGR2GRAY).astype(np.float32)
     gray_mean = float(gray.mean())
-    if profile == "ultra":
-        target = rng.uniform(8.0, 12.5)
-        contrast = rng.uniform(0.10, 0.22)
-        noise_sigma = rng.uniform(0.6, 1.8)
-        crush_prob = 0.72
-    elif profile == "deep":
-        target = rng.uniform(12.5, 18.0)
-        contrast = rng.uniform(0.14, 0.30)
-        noise_sigma = rng.uniform(0.8, 2.2)
-        crush_prob = 0.52
+    if style == "green_dark_match":
+        # Match observed green_dark ocrin more closely: dark but not flat,
+        # with green channel dominant and red channel suppressed.
+        if profile == "ultra":
+            target = rng.uniform(13.0, 18.0)
+            contrast = rng.uniform(0.42, 0.68)
+            noise_sigma = rng.uniform(0.25, 0.85)
+            crush_prob = 0.08
+        elif profile == "deep":
+            target = rng.uniform(18.0, 25.5)
+            contrast = rng.uniform(0.48, 0.76)
+            noise_sigma = rng.uniform(0.35, 1.05)
+            crush_prob = 0.06
+        else:
+            target = rng.uniform(25.5, 33.0)
+            contrast = rng.uniform(0.55, 0.88)
+            noise_sigma = rng.uniform(0.45, 1.25)
+            crush_prob = 0.04
+    elif style == "edge_preserve":
+        # Real green_dark dumps are dark, but local character edges remain visible.
+        # Avoid crushing already tiny 94x24 strokes into a flat field.
+        if profile == "ultra":
+            target = rng.uniform(11.5, 16.5)
+            contrast = rng.uniform(0.32, 0.55)
+            noise_sigma = rng.uniform(0.35, 1.1)
+            crush_prob = 0.18
+        elif profile == "deep":
+            target = rng.uniform(16.5, 23.0)
+            contrast = rng.uniform(0.38, 0.65)
+            noise_sigma = rng.uniform(0.45, 1.3)
+            crush_prob = 0.12
+        else:
+            target = rng.uniform(23.0, 31.0)
+            contrast = rng.uniform(0.45, 0.78)
+            noise_sigma = rng.uniform(0.55, 1.6)
+            crush_prob = 0.06
     else:
-        target = rng.uniform(18.0, 29.0)
-        contrast = rng.uniform(0.20, 0.42)
-        noise_sigma = rng.uniform(1.0, 2.8)
-        crush_prob = 0.25
+        if profile == "ultra":
+            target = rng.uniform(8.0, 12.5)
+            contrast = rng.uniform(0.10, 0.22)
+            noise_sigma = rng.uniform(0.6, 1.8)
+            crush_prob = 0.72
+        elif profile == "deep":
+            target = rng.uniform(12.5, 18.0)
+            contrast = rng.uniform(0.14, 0.30)
+            noise_sigma = rng.uniform(0.8, 2.2)
+            crush_prob = 0.52
+        else:
+            target = rng.uniform(18.0, 29.0)
+            contrast = rng.uniform(0.20, 0.42)
+            noise_sigma = rng.uniform(1.0, 2.8)
+            crush_prob = 0.25
 
     y = (x - gray_mean) * contrast + target
     h, w = y.shape[:2]
     gx = np.linspace(rng.uniform(0.80, 1.05), rng.uniform(0.86, 1.18), w, dtype=np.float32)[None, :, None]
     gy = np.linspace(rng.uniform(0.86, 1.12), rng.uniform(0.84, 1.10), h, dtype=np.float32)[:, None, None]
     y = y * gx * gy
-    if rng.random() < 0.60:
+    if style == "green_dark_match":
+        color = rng.normal([1.02, 1.18, 0.68], [0.05, 0.06, 0.07], size=(1, 1, 3)).astype(np.float32)
+        y = y * np.clip(color, 0.45, 1.35)
+    elif rng.random() < 0.60:
         # Very slight color bias. This keeps the dump-like RGB channel imbalance without changing labels.
         color = rng.normal(1.0, 0.035, size=(1, 1, 3)).astype(np.float32)
         y = y * color
@@ -213,12 +264,17 @@ def lowlight_transform(img_bgr: np.ndarray, rng: np.random.Generator, profile: s
         threshold = rng.uniform(5.0, 14.0)
         floor = rng.uniform(0.0, 3.5)
         y = np.where(y < threshold, floor, y)
-    if rng.random() < 0.28:
-        y = np.round(y / rng.choice([1.0, 2.0, 3.0])) * rng.choice([1.0, 2.0, 3.0])
+    quant_prob = 0.03 if style == "green_dark_match" else (0.08 if style == "edge_preserve" else 0.28)
+    if rng.random() < quant_prob:
+        step = float(rng.choice([1.0, 2.0, 3.0]))
+        y = np.round(y / step) * step
     # Keep the pool concentrated on the intended low-light target instead of
     # letting high-contrast source plates leak back into normal brightness.
     y = y + (target - float(np.mean(y)))
-    return np.clip(y, 0, 255).astype(np.uint8)
+    y = np.clip(y, 0, 255)
+    if style in ("edge_preserve", "green_dark_match"):
+        y = np.clip(y + (target - float(np.mean(y))), 0, 255)
+    return y.astype(np.uint8)
 
 
 def image_stats(img: np.ndarray):
@@ -262,7 +318,20 @@ def select_weighted(rows, count, seed, split_tag):
     return selected
 
 
-def make_lowlight_rows(root, source_rows, header, out_dataset, out_manifest_dir, count, seed, split_name, start_idx=0):
+def make_lowlight_rows(
+    root,
+    source_rows,
+    header,
+    out_dataset,
+    out_manifest_dir,
+    count,
+    seed,
+    split_name,
+    start_idx=0,
+    geometry_source="filename_first",
+    lowlight_style="edge_preserve",
+    resize_kernel_override="",
+):
     selected = select_weighted(source_rows, count, seed, split_name)
     rng_py = random.Random(seed + 17)
     rng_np = np.random.default_rng(seed + 31)
@@ -280,8 +349,13 @@ def make_lowlight_rows(root, source_rows, header, out_dataset, out_manifest_dir,
             profile = "bridge"
         profile_counts[profile] += 1
         province_counts[prov] += 1
-        board = board_ocr_from_row(root, row)
-        img = lowlight_transform(board, rng_np, profile)
+        board, board_meta = board_ocr_from_row(
+            root,
+            row,
+            geometry_source=geometry_source,
+            resize_kernel_override=resize_kernel_override,
+        )
+        img = lowlight_transform(board, rng_np, profile, style=lowlight_style)
         idx = start_idx + i
         rel = Path("datasets") / out_dataset.name / "images" / split_name / f"lowlight_{split_name}_{idx:06d}.ppm"
         abs_path = root / rel
@@ -300,6 +374,7 @@ def make_lowlight_rows(root, source_rows, header, out_dataset, out_manifest_dir,
         nr["ocr_preproc"] = "none"
         nr["ocr_channel_order"] = row.get("ocr_channel_order") or "bgr"
         nr["ocr_quad_pad_ratio"] = "0.0"
+        nr["quad_source"] = board_meta.get("resolved_quad_source", nr.get("quad_source", ""))
         out_rows.append(nr)
 
         sr = {
@@ -311,6 +386,9 @@ def make_lowlight_rows(root, source_rows, header, out_dataset, out_manifest_dir,
             "img_path": str(rel),
             "text": row["text"],
             "source_repeat_idx": repeat_idx,
+            "resolved_quad_source": board_meta.get("resolved_quad_source", ""),
+            "resolved_resize_kernel": board_meta.get("resolved_resize_kernel", ""),
+            "lowlight_style": lowlight_style,
         }
         sr.update(image_stats(img))
         sr["mean_bucket"] = bucket_mean(sr["mean"])
@@ -383,6 +461,9 @@ def main():
     parser.add_argument("--seed", type=int, default=20260610)
     parser.add_argument("--real-dump-dir", default=str(DEFAULT_REAL_DUMP))
     parser.add_argument("--real-dump-gt", default="京ADA5396")
+    parser.add_argument("--geometry-source", default="filename_first", choices=["filename_first", "manifest_first"])
+    parser.add_argument("--lowlight-style", default="edge_preserve", choices=["edge_preserve", "green_dark_match", "legacy"])
+    parser.add_argument("--resize-kernel-override", default="")
     args = parser.parse_args()
 
     root = Path(args.dataset_root)
@@ -391,10 +472,14 @@ def main():
     source_rows, header = load_rows(Path(args.source_manifest))
     train_rows = [r for r in source_rows if r.get("split") == "train" and r.get("family") == "green8"]
     train_low, train_stats, train_profiles, train_prov = make_lowlight_rows(
-        root, train_rows, header, out_dataset, out_manifest_dir, args.train_count, args.seed, "train", 0
+        root, train_rows, header, out_dataset, out_manifest_dir, args.train_count, args.seed, "train", 0,
+        geometry_source=args.geometry_source, lowlight_style=args.lowlight_style,
+        resize_kernel_override=args.resize_kernel_override,
     )
     heldout_low, heldout_stats, heldout_profiles, heldout_prov = make_lowlight_rows(
-        root, train_rows, header, out_dataset, out_manifest_dir, args.heldout_count, args.seed + 100000, "heldout", 0
+        root, train_rows, header, out_dataset, out_manifest_dir, args.heldout_count, args.seed + 100000, "heldout", 0,
+        geometry_source=args.geometry_source, lowlight_style=args.lowlight_style,
+        resize_kernel_override=args.resize_kernel_override,
     )
 
     write_manifest(out_manifest_dir / f"lowlight_train_pool_{len(train_low)}.csv", header, train_low)
@@ -448,6 +533,9 @@ def main():
             "real_dump": str(out_manifest_dir / "real_green_dark_39.csv"),
             **{name: str(out_manifest_dir / f"train_v1_{name}.csv") for name in variants},
         },
+        "geometry_source": args.geometry_source,
+        "lowlight_style": args.lowlight_style,
+        "resize_kernel_override": args.resize_kernel_override,
         "notes": [
             "Training rows are generated only from the R50 green train manifest; real dump is validation only.",
             "Lowlight rows use board_dump 94x24 PPM payloads and should be read without additional crop/resize.",
